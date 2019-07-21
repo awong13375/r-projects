@@ -7,7 +7,6 @@ library(blandr)
 library(ggplot2)
 library(cowplot)
 
-drive_find(type = "spreadsheet")
 for_gs <- gs_title("PREDICT ROI File Issues")
 
 
@@ -63,9 +62,9 @@ baseline_predict=merge(baseline_predict_AW, baseline_predict_SN, by="PID")
 followup_predict=merge(followup_predict_AW, followup_predict_SN, by="PID")
 combined=merge(baseline_predict, followup_predict, by="PID", all.x=TRUE)
 
-pt_char$ï..patient_site=str_pad(pt_char$ï..patient_site, 2, pad="0")
+pt_char$?..patient_site=str_pad(pt_char$?..patient_site, 2, pad="0")
 pt_char$patient_study=str_pad(pt_char$patient_study, 3, pad="0")
-pt_char$PID=paste(pt_char$ï..patient_site, pt_char$patient_study, sep="", collapse=NULL)
+pt_char$PID=paste(pt_char$?..patient_site, pt_char$patient_study, sep="", collapse=NULL)
 
 predict_pt_char=merge(pt_char, combined, by="PID", all.y=TRUE)
 
@@ -75,7 +74,7 @@ predict_pt_char=merge(pt_char, combined, by="PID", all.y=TRUE)
 # SPOTLIGHT Data merging --------------------------------------------------
 setwd("C:/Users/alexw/OneDrive/Dal Med/ICH")
 pt_char=read.csv("SPOTLIGHT_Baseline_data.csv")
-pt_char$ï..Subject=str_pad(pt_char$ï..Subject, 6, pad="0")
+pt_char$?..Subject=str_pad(pt_char$?..Subject, 6, pad="0")
 colnames(pt_char)[1]<-"PID"
 
 
