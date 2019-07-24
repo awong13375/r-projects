@@ -9,10 +9,6 @@ import time
 
 path = r"C:\Users\alexw\Desktop\PREDICT"
 
-for root, dirs, files in os.walk(path, topdown=False):
-
-    break
-
 dcmpath = r"D:\Alex Files\SPOTLIGHT\SPOTLIGHT"
 mhdpath = r"D:\Alex Files\SPOTLIGHT\SPOTLIGHT_MHD_MAC"
 dcmoutputpath = r"D:\Alex Files\SPOTLIGHT\SPOTLIGHT_DCM_NII"
@@ -21,9 +17,11 @@ mhdoutputpath = r"D:\Alex Files\SPOTLIGHT\SPOTLIGHT_ROI_NII"
 reader = sitk.ImageSeriesReader()
 reader2 = sitk.ImageFileReader()
 
-for (root,dirs,files) in os.walk(dcmpath, topdown=True): 
-    for (dir in dirs):
+for root,dirs,files in os.walk(dcmpath, topdown=True): 
+    for dir in dirs:
         print (dir)
+
+
 
 
 
