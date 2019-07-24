@@ -19,7 +19,16 @@ reader2 = sitk.ImageFileReader()
 
 for root,dirs,files in os.walk(dcmpath, topdown=True): 
     for dir in dirs:
-        print (dir)
+        directory = root + "\\" + dir
+        files = next(os.walk(directory))[2]
+        number_files = len(files)
+        if number_files > 5:
+            endpath = ntpath.basename(directory)
+            print (endpath)
+            files_in_endpath=os.listdir(directory)
+            print(files_in_endpath)
+            dicom_names = reader.GetGDCMSeriesFileNames
+
 
 
 
