@@ -2,7 +2,6 @@ library(googlesheets)
 library(googledrive)
 library(irr)
 library(stringr)
-library(BlandAltmanLeh)
 library(blandr)
 library(ggplot2)
 library(cowplot)
@@ -860,3 +859,5 @@ plot_grid(Predict_AW_SN, Predict_AW_Quant, Predict_SN_Quant, Predict_Avg_Quant,
           Combined_AW_SN, Combined_AW_Quant, Combined_SN_Quant, Combined_Avg_Quant,
           labels = c("A","B","C","D","E","F","G","H","I","J","K","L"),
           ncol = 4, nrow = 3)
+
+
