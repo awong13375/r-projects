@@ -7,10 +7,10 @@ import SimpleITK as sitk
 import time
 
 
-dcmpath = r"D:\Alex Files\SPOTLIGHT\SPOTLIGHT"
-mhdpath = r"D:\Alex Files\SPOTLIGHT\SPOTLIGHT_MHD_MAC"
-dcmoutputpath = r"D:\Alex Files\SPOTLIGHT\SPOTLIGHT_DCM_NII"
-mhdoutputpath = r"D:\Alex Files\SPOTLIGHT\SPOTLIGHT_ROI_NII"
+dcmpath = r"E:\Alex Files\SPOTLIGHT\SPOTLIGHT"
+mhdpath = r"E:\Alex Files\SPOTLIGHT\SPOTLIGHT_MHD_MAC"
+dcmoutputpath = r"E:\Alex Files\SPOTLIGHT\SPOTLIGHT_DCM_NII"
+mhdoutputpath = r"E:\Alex Files\SPOTLIGHT\SPOTLIGHT_ROI_NII"
 
 reader = sitk.ImageSeriesReader()
 reader2 = sitk.ImageFileReader()
@@ -19,7 +19,7 @@ i=0
 for r, d, f in os.walk(dcmpath):
     for dir1 in d:
         direct1=r+"\\"+dir1
-        print(direct1)
+        #print(direct1)
         direct1b = direct1.replace('\\','\\\\')
         onlyfiles = next(os.walk(direct1b))[2] #dir is your directory path as string
         totalfiles = len(onlyfiles)
@@ -56,7 +56,6 @@ for r, d, f in os.walk(dcmpath):
             sitk.WriteImage(image, dcmoutputpath+"\\\\"+thepath+".nii")
             i = i+1
             
-print(i)
 
 
 
