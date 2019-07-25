@@ -3,6 +3,9 @@
 2) Copy supplemental list of nii files in google sheet that match files from old, to new directory
 3) Create text file listing all files in new directory 
 """
+#pip install gspread
+#pip install pandas
+#pip install oauth2client
 
 import os, shutil
 import gspread
@@ -13,6 +16,7 @@ from pandas import DataFrame
 #Set working directory
 os.chdir(r"C:\R workspace\r-projects\ICH project")
 
+#Connect to Google sheets
 scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
 creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
 client = gspread.authorize(creds)
