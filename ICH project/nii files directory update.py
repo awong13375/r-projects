@@ -1,8 +1,16 @@
+"""
+1) Obtain supplemental list of nii files from google sheet
+2) Copy supplemental list of nii files in google sheet that match files from old, to new directory
+3) Create text file listing all files in new directory 
+"""
+
 import os, shutil
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from pandas import DataFrame
 
+
+#Set working directory
 os.chdir(r"C:\R workspace\r-projects\ICH project")
 
 scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
@@ -17,7 +25,6 @@ file_list=[]
 for index, row in df.iterrows():
     if row['include']=='1':
         file_list.append(row['file_names'])
-
 
 
 #DCM
@@ -49,5 +56,6 @@ for file in newdir_list:
     f.write(file)
     f.write("\n")
 f.close()
+
 
 

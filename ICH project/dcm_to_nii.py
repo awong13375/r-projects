@@ -55,8 +55,7 @@ for r, d, f in os.walk(dcmpath):
             
             sitk.WriteImage(image, dcmoutputpath+"\\\\"+thepath+".nii")
             i = i+1
-            
-
+print(i)
 
 
 
