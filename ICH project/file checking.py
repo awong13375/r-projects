@@ -20,20 +20,34 @@ for index, row in df.iterrows():
 
 
 
+#DCM
+old_directory=r"C:\Users\alexw\Desktop\Alex Files\PREDICTv1\PREDICT_DCM_NII"
+new_directory=r"C:\Users\alexw\Desktop\Alex Files\PREDICTv4\PREDICT_DCM_NII"
 
-old_directory=r"C:\Users\alexw\Desktop\Alex Files\PREDICT"
-new_directory=r"C:\Users\alexw\Desktop\Alex Files\test"
+#Copy supplemental PREDICT DCM nii's from old directory to new directory
+oldlist=os.listdir(old_directory)
+for oldfile in oldlist:
+    for newfile in file_list:
+        if newfile[8:10] == oldfile[8:10] and newfile[11:14]==oldfile[11:14]:
+            if "Ba" in oldfile and ("Ba" or "ba") in newfile:
+                src = old_directory + "//" + oldfile
+                dst = new_directory + "//" + oldfile
+                shutil.copyfile(src, dst)
+            if "Fol" in oldfile and ("24h" or "Fo") in newfile:
+                src = old_directory + "//" + oldfile
+                dst = new_directory + "//" + oldfile
+                shutil.copyfile(src, dst)
 
+#Create text file of nii files
+newdir_list=os.listdir(new_directory)
+if "dcm_files.txt" in newdir_list: 
+    newdir_list.remove("dcm_files.txt")
+if "dcm_files.txt" in os.listdir(new_directory):
+    os.remove(new_directory+"//"+"dcm_files.txt")
+f= open(new_directory+"//"+"dcm_files.txt","w+")
+for file in newdir_list:
+    f.write(file)
+    f.write("\n")
+f.close()
 
-for ro, do, fo in os.walk(old_directory):
-    for r, d, f in os.walk(new_directory):
-
-        print (ro)
-        print (do)
-        print (fo)
-        print (";")
-        print (r)
-        print(d)
-        print(f)
-        print("-----------------")
 
