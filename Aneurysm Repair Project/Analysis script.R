@@ -88,6 +88,38 @@ data$GOS.at.12....3.months[data$GOS.at.12....3.months=="4"|data$GOS.at.12....3.m
 data$GOS.at.12....3.months=as.factor(data$GOS.at.12....3.months)
 data$GOS.at.12....3.months <- factor(data$GOS.at.12....3.months, levels=c(0,1,2), ordered=FALSE)
 
+#Recategorize date of admission
+data$Admission.Date=as.Date(data$Admission.Date)
+data$date=c(0)
+data$date[data$Admission.Date <= as.Date("2007-12-31")] = "date_1"
+data$date[data$Admission.Date > as.Date("2007-12-31") & data$Admission.Date <=as.Date("2012-12-31")] = "date_2"
+data$date[data$Admission.Date > as.Date("2012-12-31")] = "date_3"
+data$date=as.character(data$date)
+
+#loss to followup table
+treattype=c("Coil","Clip")
+yeartype=c("date_1","date_2","date_3")
+for (year in yeartype){
+  for (treat in treattype){
+    column=c()
+    datayear=subset(data, data[,"date"]==year)
+    datatreat=subset(datayear, datayear[,"Treatment"]==treat)
+    
+    column=append(column, nrow(datatreat))
+    datatreat=subset(datatreat, datatreat$GOS.at.6....3.months!="NA")
+    column=append(column, nrow(datatreat))
+    datatreat=subset(datatreat, datatreat$GOS.at.12....3.months!="NA")
+    column=append(column, nrow(datatreat))
+
+    if (treat=="Coil" & year=="date_1"){
+      lof_table=as.data.frame(column)
+    } else {
+      lof_table=cbind(lof_table, column)
+    }
+  }
+}
+
+
 #Remove missing GOS data
 data=subset(data, data$GOS.at.discharge!="NA")
 data=subset(data, data$GOS.at.6....3.months!="NA")
@@ -116,12 +148,6 @@ data$A1.location=as.factor(data$A1.location)
 # Subgroup analyses by 5-year ---------------------------------------------
 
 ##Create age table
-data$Admission.Date=as.Date(data$Admission.Date)
-data$date=c(0)
-data$date[data$Admission.Date <= as.Date("2007-12-31")] = "date_1"
-data$date[data$Admission.Date > as.Date("2007-12-31") & data$Admission.Date <=as.Date("2012-12-31")] = "date_2"
-data$date[data$Admission.Date > as.Date("2012-12-31")] = "date_3"
-data$date=as.character(data$date)
 
 datetype=c("date_1","date_2","date_3")
 
@@ -162,6 +188,7 @@ age_table_stats=append(age_table_stats,
 age_table_stats=as.data.frame(age_table_stats)
 rownames(age_table_stats)=c("Coil mean age","Clip mean age")
 colnames(age_table_stats)=c("p-value")
+
 
 # Table 1 values ----------------------------------------------------------
 treattype=c("Coil","Clip")
