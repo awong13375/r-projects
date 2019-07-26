@@ -113,6 +113,56 @@ data$A1.location[data$A1.location=="AICA" |
 data$A1.location=as.factor(data$A1.location)
 
 
+# Subgroup analyses by 5-year ---------------------------------------------
+
+##Create age table
+data$Admission.Date=as.Date(data$Admission.Date)
+data$date=c(0)
+data$date[data$Admission.Date <= as.Date("2007-12-31")] = "date_1"
+data$date[data$Admission.Date > as.Date("2007-12-31") & data$Admission.Date <=as.Date("2012-12-31")] = "date_2"
+data$date[data$Admission.Date > as.Date("2012-12-31")] = "date_3"
+data$date=as.character(data$date)
+
+datetype=c("date_1","date_2","date_3")
+
+for(year in datetype){
+  column=c()
+  datadate=subset(data, data[,"date"]==year)
+  
+  column=nrow(datadate)
+  
+  column=append(column, round(mean(subset(datadate, datadate$Treatment=="Coil")$Age.at.admission), digits=1))
+  column=append(column, round(sd(subset(datadate, datadate$Treatment=="Coil")$Age.at.admission), digits=1))
+  column=append(column, round(mean(subset(datadate, datadate$Treatment=="Clip")$Age.at.admission), digits=1))
+  column=append(column, round(sd(subset(datadate, datadate$Treatment=="Clip")$Age.at.admission), digits=1))
+  print(date)
+  print(column)
+  print(datadate)
+  
+  if (year=="date_1"){
+    agetable=as.data.frame(column)
+  }else{
+    agetable=cbind(agetable, column)
+  }
+}
+colnames(agetable)=c("2002-2007","2008-2012","2013-2017")
+rownames(agetable)=c("n", "Coil mean age","Coil sd age", "Clip mean age","Clip sd age")
+
+#Age table stats
+age_table_stats=c()
+
+age_table_stats=append(age_table_stats,
+                       oneway.test(Age.at.admission ~ date, 
+                       data=subset(data,data$Treatment=="Coil"))$p.value)
+  
+age_table_stats=append(age_table_stats,
+                       oneway.test(Age.at.admission ~ date, 
+                       data=subset(data,data$Treatment=="Clip"))$p.value)
+
+age_table_stats=as.data.frame(age_table_stats)
+rownames(age_table_stats)=c("Coil mean age","Clip mean age")
+colnames(age_table_stats)=c("p-value")
+
 # Table 1 values ----------------------------------------------------------
 treattype=c("Coil","Clip")
 for(treat in treattype){
@@ -217,7 +267,6 @@ rownames(table1)=c("n",
                    )
 #write.csv(table1,"C:/Users/alexw/OneDrive/Dal Med/Aneurysm Repair Project/Data Analysis/Results/Table 1.csv")
 
-
 # Table 1 statistics ------------------------------------------------------
 data$Treatment <- factor(data$Treatment)
 table1stats=c()
@@ -264,8 +313,8 @@ M=as.table(cbind(c(nrow(subset(datacoil, datacoil$Past.stroke==1)),nrow(subset(d
 ))
 table1stats=append(table1stats,fisher.test(M)$p.value)
 
-##T-test for Time to treatment
-table1stats=append(table1stats, t.test(Time.to.Treatment..days. ~ Treatment, data=data)$p.value)
+##Mann_whitney test for Time to treatment
+table1stats=append(table1stats, wilcox.test(Time.to.Treatment..days. ~ Treatment, data=data)$p.value)
 
 ##Chi-sq test for single vs multiple aneurysms
 M=as.table(cbind(c(nrow(subset(datacoil, datacoil$X..Aneurysms==1)),nrow(subset(datacoil, datacoil$X..Aneurysms>1))),
@@ -273,8 +322,8 @@ M=as.table(cbind(c(nrow(subset(datacoil, datacoil$X..Aneurysms==1)),nrow(subset(
 ))
 table1stats=append(table1stats,chisq.test(M)$p.value)
 
-##T-test for culprit aneurysm size
-table1stats=append(table1stats, t.test(A1.size ~ Treatment, data=data)$p.value)
+##Mann-Whitney test for culprit aneurysm size
+table1stats=append(table1stats, wilcox.test(A1.size ~ Treatment, data=data)$p.value)
 
 ##Chi-sq test for aneurysm location
 M=as.table(cbind(c(nrow(subset(datacoil, datacoil$A1.location=="Anterior")),nrow(subset(datacoil, datacoil$A1.location=="Posterior"))),
@@ -294,8 +343,8 @@ M=as.table(cbind(c(nrow(subset(datacoil, datacoil$Fisher<3)),nrow(subset(datacoi
 ))
 table1stats=append(table1stats,chisq.test(M)$p.value)
 
-##T-test for length of hospital stay
-table1stats=append(table1stats, t.test(Length.of.hospital.stay..day. ~ Treatment, data=data)$p.value)
+##Mann Whitney test for length of hospital stay
+table1stats=append(table1stats, wilcox.test(Length.of.hospital.stay..day. ~ Treatment, data=data)$p.value)
 
 table1stats=as.data.frame(table1stats)
 rownames(table1stats)=c("Age at admission",
@@ -589,6 +638,16 @@ exp(coef(modeladjusted))
 exp(cbind(OR = coef(modeladjusted), ci))
 PseudoR2(modeladjusted, which="all")
 
+modeladjustedinteract <- polr(GOS.at.discharge ~ Treatment + HTN + Age.at.admission1 
+                              + HTN*Age.at.admission1, data = data, Hess=TRUE)
+ctable <- coef(summary(modeladjustedinteract))
+p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
+ctable <- cbind(ctable, "p value" = p)
+ci <- confint(modeladjustedinteract)
+exp(coef(modeladjustedinteract))
+exp(cbind(OR = coef(modeladjustedinteract), ci))
+PseudoR2(modeladjustedinteract, which="all")
+
 ###Confusion matrix to calculate misclassification rate
 predictGOS = predict(modeladjusted,data)
 table(data$GOS.at.discharge, predictGOS)
@@ -613,6 +672,16 @@ exp(coef(modeladjusted))
 exp(cbind(OR = coef(modeladjusted), ci))
 PseudoR2(modeladjusted, which="all")
 
+modeladjustedinteract <- polr(GOS.at.6....3.months ~ Treatment + HTN + Age.at.admission1 
+                      + HTN*Age.at.admission1, data = data, Hess=TRUE)
+ctable <- coef(summary(modeladjustedinteract))
+p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
+ctable <- cbind(ctable, "p value" = p)
+ci <- confint(modeladjustedinteract)
+exp(coef(modeladjustedinteract))
+exp(cbind(OR = coef(modeladjustedinteract), ci))
+PseudoR2(modeladjustedinteract, which="all")
+
 ###Confusion matrix to calculate misclassification rate
 predictGOS = predict(modeladjusted,data)
 table(data$GOS.at.6....3.months, predictGOS)
@@ -636,6 +705,17 @@ ci <- confint(modeladjusted)
 exp(coef(modeladjusted))
 exp(cbind(OR = coef(modeladjusted), ci))
 PseudoR2(modeladjusted, which="all")
+
+
+modeladjustedinteract <- polr(GOS.at.12....3.months ~ Treatment + HTN + Age.at.admission1 
+                      + HTN*Age.at.admission1, data = data, Hess=TRUE)
+ctable <- coef(summary(modeladjustedinteract))
+p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
+ctable <- cbind(ctable, "p value" = p)
+ci <- confint(modeladjustedinteract)
+exp(coef(modeladjustedinteract))
+exp(cbind(OR = coef(modeladjustedinteract), ci))
+PseudoR2(modeladjustedinteract, which="all")
 
 ###Confusion matrix to calculate misclassification rate
 predictGOS = predict(modeladjusted,data)
