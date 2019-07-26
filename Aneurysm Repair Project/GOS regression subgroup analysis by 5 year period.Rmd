@@ -1,3 +1,29 @@
+---
+title: "GOS regression subgroup analysis by 5 year period"
+date: "`r Sys.Date()`"
+output:
+  rmdformats::material:
+    highlight: kate
+---
+
+
+```{r knitr_init, echo=FALSE, cache=FALSE}
+library(knitr)
+library(rmdformats)
+
+## Global options
+options(max.print="75")
+opts_chunk$set(echo=FALSE,
+	             cache=TRUE,
+               prompt=FALSE,
+               tidy=TRUE,
+               comment=NA,
+               message=FALSE,
+               warning=FALSE)
+opts_knit$set(width=75)
+```
+
+```{r echo=FALSE, eval=TRUE, warning=FALSE, message=FALSE, error=FALSE, results="hide"}
 # Load data ---------------------------------------------------------------
 setwd("C:/Users/alexw/OneDrive/Dal Med/Aneurysm Repair Project/Data Analysis")
 data=read.csv("Data table FINAL.csv")
@@ -88,38 +114,6 @@ data$GOS.at.12....3.months[data$GOS.at.12....3.months=="4"|data$GOS.at.12....3.m
 data$GOS.at.12....3.months=as.factor(data$GOS.at.12....3.months)
 data$GOS.at.12....3.months <- factor(data$GOS.at.12....3.months, levels=c(0,1,2), ordered=FALSE)
 
-#Recategorize date of admission
-data$Admission.Date=as.Date(data$Admission.Date)
-data$date=c(0)
-data$date[data$Admission.Date <= as.Date("2007-12-31")] = "date_1"
-data$date[data$Admission.Date > as.Date("2007-12-31") & data$Admission.Date <=as.Date("2012-12-31")] = "date_2"
-data$date[data$Admission.Date > as.Date("2012-12-31")] = "date_3"
-data$date=as.character(data$date)
-
-#loss to followup table
-treattype=c("Coil","Clip")
-yeartype=c("date_1","date_2","date_3")
-for (year in yeartype){
-  for (treat in treattype){
-    column=c()
-    datayear=subset(data, data[,"date"]==year)
-    datatreat=subset(datayear, datayear[,"Treatment"]==treat)
-    
-    column=append(column, nrow(datatreat))
-    datatreat=subset(datatreat, datatreat$GOS.at.6....3.months!="NA")
-    column=append(column, nrow(datatreat))
-    datatreat=subset(datatreat, datatreat$GOS.at.12....3.months!="NA")
-    column=append(column, nrow(datatreat))
-
-    if (treat=="Coil" & year=="date_1"){
-      lof_table=as.data.frame(column)
-    } else {
-      lof_table=cbind(lof_table, column)
-    }
-  }
-}
-
-
 #Remove missing GOS data
 data=subset(data, data$GOS.at.discharge!="NA")
 data=subset(data, data$GOS.at.6....3.months!="NA")
@@ -148,6 +142,12 @@ data$A1.location=as.factor(data$A1.location)
 # Subgroup analyses by 5-year ---------------------------------------------
 
 ##Create age table
+data$Admission.Date=as.Date(data$Admission.Date)
+data$date=c(0)
+data$date[data$Admission.Date <= as.Date("2007-12-31")] = "date_1"
+data$date[data$Admission.Date > as.Date("2007-12-31") & data$Admission.Date <=as.Date("2012-12-31")] = "date_2"
+data$date[data$Admission.Date > as.Date("2012-12-31")] = "date_3"
+data$date=as.character(data$date)
 
 datetype=c("date_1","date_2","date_3")
 
@@ -185,7 +185,6 @@ age_table_stats=append(age_table_stats,
 age_table_stats=as.data.frame(age_table_stats)
 rownames(age_table_stats)=c("Coil mean age","Clip mean age")
 colnames(age_table_stats)=c("p-value")
-
 
 # Table 1 values ----------------------------------------------------------
 treattype=c("Coil","Clip")
@@ -772,8 +771,11 @@ data1=subset(data, data$date=="date_1")
 data2=subset(data, data$date=="date_2")
 data3=subset(data, data$date=="date_3")
 
+```
+
 # 2002-2007
 ### GOS at discharge
+```{r}
 modelcrude <- polr(GOS.at.discharge ~ Treatment, data = data1, Hess=TRUE)
 ctable <- coef(summary(modelcrude))
 p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
@@ -796,8 +798,10 @@ exp(coef(modeladjusted))
 exp(cbind(OR = coef(modeladjusted), ci))
 PseudoR2(modeladjusted, which="all")
 ctable
-
+```
 ### GOS at 6 months
+
+```{r}
 modelcrude <- polr(GOS.at.6....3.months ~ Treatment, data = data1, Hess=TRUE)
 ctable <- coef(summary(modelcrude))
 p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
@@ -820,8 +824,11 @@ exp(coef(modeladjusted))
 exp(cbind(OR = coef(modeladjusted), ci))
 PseudoR2(modeladjusted, which="all")
 ctable
+```
 
 ### GOS at 12 months
+
+```{r}
 
 modelcrude <- polr(GOS.at.12....3.months ~ Treatment, data = data1, Hess=TRUE)
 ctable <- coef(summary(modelcrude))
@@ -845,9 +852,10 @@ exp(coef(modeladjusted))
 exp(cbind(OR = coef(modeladjusted), ci))
 PseudoR2(modeladjusted, which="all")
 ctable
-
+```
 # 2008-2012
 ### GOS at discharge
+```{r}
 modelcrude <- polr(GOS.at.discharge ~ Treatment, data = data2, Hess=TRUE)
 ctable <- coef(summary(modelcrude))
 p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
@@ -870,8 +878,9 @@ exp(coef(modeladjusted))
 exp(cbind(OR = coef(modeladjusted), ci))
 PseudoR2(modeladjusted, which="all")
 ctable
-
+```
 ### GOS at 6 months
+```{r}
 modelcrude <- polr(GOS.at.6....3.months ~ Treatment, data = data2, Hess=TRUE)
 ctable <- coef(summary(modelcrude))
 p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
@@ -894,9 +903,9 @@ exp(coef(modeladjusted))
 exp(cbind(OR = coef(modeladjusted), ci))
 PseudoR2(modeladjusted, which="all")
 ctable
-
+```
 ### GOS at 12 months
-
+```{r}
 modelcrude <- polr(GOS.at.12....3.months ~ Treatment, data = data2, Hess=TRUE)
 ctable <- coef(summary(modelcrude))
 p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
@@ -919,10 +928,12 @@ exp(coef(modeladjusted))
 exp(cbind(OR = coef(modeladjusted), ci))
 PseudoR2(modeladjusted, which="all")
 ctable
+```
 
-#2013-2017
+# 2013-2017
 
 ### GOS at discharge
+```{r}
 modelcrude <- polr(GOS.at.discharge ~ Treatment, data = data3, Hess=TRUE)
 ctable <- coef(summary(modelcrude))
 p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
@@ -945,8 +956,10 @@ exp(coef(modeladjusted))
 exp(cbind(OR = coef(modeladjusted), ci))
 PseudoR2(modeladjusted, which="all")
 ctable
+```
 
 ### GOS at 6 months
+```{r}
 modelcrude <- polr(GOS.at.6....3.months ~ Treatment, data = data3, Hess=TRUE)
 ctable <- coef(summary(modelcrude))
 p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
@@ -969,9 +982,9 @@ exp(coef(modeladjusted))
 exp(cbind(OR = coef(modeladjusted), ci))
 PseudoR2(modeladjusted, which="all")
 ctable
-
+```
 ### GOS at 12 months
-
+```{r}
 modelcrude <- polr(GOS.at.12....3.months ~ Treatment, data = data3, Hess=TRUE)
 ctable <- coef(summary(modelcrude))
 p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
@@ -996,129 +1009,4 @@ PseudoR2(modeladjusted, which="all")
 ctable
 
 
-# Secondary Outcomes Regression Analyses ----------------------------------
-
-#Crude models
-
-data$Mortality <- factor(data$Mortality, levels=c(0,1), ordered=FALSE)
-modelmort=glm(Mortality ~ Treatment, data=data, family="binomial")
-summary(modelmort)
-#wald.test(b = coef(modelmort), Sigma = vcov(modelmort), Terms = 4:6)
-exp(coef(modelmort))
-exp(cbind(OR = coef(modelmort), confint(modelmort)))
-
-data$Rebleed <- factor(data$Rebleed, levels=c(0,1), ordered=FALSE)
-modelrebleed=glm(Rebleed ~ Treatment, data=data, family="binomial")
-summary(modelrebleed)
-exp(coef(modelrebleed))
-exp(cbind(OR = coef(modelrebleed), confint(modelrebleed)))
-
-data$Vasospasm <- factor(data$Vasospasm, levels=c(0,1), ordered=FALSE)
-modelvasospasm=glm(Vasospasm ~ Treatment, data=data, family="binomial")
-summary(modelvasospasm)
-exp(coef(modelvasospasm))
-exp(cbind(OR = coef(modelvasospasm), confint(modelvasospasm)))
-
-data$Infarct <- factor(data$Infarct, levels=c(0,1), ordered=FALSE)
-modelinfarct=glm(Infarct ~ Treatment, data=data, family="binomial")
-summary(modelinfarct)
-exp(coef(modelinfarct))
-exp(cbind(OR = coef(modelinfarct), confint(modelinfarct)))
-
-data$Hydrocephalus <- factor(data$Hydrocephalus, levels=c(0,1), ordered=FALSE)
-modelhydro=glm(Hydrocephalus ~ Treatment, data=data, family="binomial")
-summary(modelhydro)
-exp(coef(modelhydro))
-exp(cbind(OR = coef(modelhydro), confint(modelhydro)))
-
-data$Seizure <- factor(data$Seizure, levels=c(0,1), ordered=FALSE)
-modelseize=glm(Seizure ~ Treatment, data=data, family="binomial")
-summary(modelseize)
-exp(coef(modelseize))
-exp(cbind(OR = coef(modelseize), confint(modelseize)))
-
-data$Infection <- factor(data$Infection, levels=c(0,1), ordered=FALSE)
-modelinfect=glm(Infection ~ Treatment, data=data, family="binomial")
-summary(modelinfect)
-exp(coef(modelinfect))
-exp(cbind(OR = coef(modelinfect), confint(modelinfect)))
-
-data$Pneumonia <- factor(data$Pneumonia, levels=c(0,1), ordered=FALSE)
-modelpneum=glm(Pneumonia ~ Treatment, data=data, family="binomial")
-summary(modelpneum)
-exp(coef(modelpneum))
-exp(cbind(OR = coef(modelpneum), confint(modelpneum)))
-
-#Adjusted models
-
-modelmort=glm(Mortality ~ Treatment + HTN + Age.at.admission1, data=data, family="binomial")
-summary(modelmort)
-exp(coef(modelmort))
-exp(cbind(OR = coef(modelmort), confint(modelmort)))
-logitgof(data$Mortality, fitted(modelmort))
-rocmort=roc(data$Mortality, predict(modelmort,type=c("response")), ci=TRUE, auc=TRUE)
-plot.roc(rocmort, print.auc=TRUE, xlim=c(1,0), xlab="1-Specificity", asp=NA)
-
-modelrebleed=glm(Rebleed ~ Treatment + HTN + Age.at.admission1, data=data, family="binomial")
-summary(modelrebleed)
-exp(coef(modelrebleed))
-exp(cbind(OR = coef(modelrebleed), confint(modelrebleed)))
-logitgof(data$Rebleed, fitted(modelrebleed))
-rocrebleed=roc(data$Rebleed, predict(modelrebleed,type=c("response")), ci=TRUE, auc=TRUE)
-plot.roc(rocrebleed, print.auc=TRUE, xlim=c(1,0), xlab="1-Specificity", asp=NA)
-
-
-modelvasospasm=glm(Vasospasm ~ Treatment + HTN + Age.at.admission1, data=data, family="binomial")
-summary(modelvasospasm)
-exp(coef(modelvasospasm))
-exp(cbind(OR = coef(modelvasospasm), confint(modelvasospasm)))
-logitgof(data$Vasospasm, fitted(modelvasospasm))
-rocvasospasm=roc(data$Vasospasm, predict(modelvasospasm,type=c("response")), ci=TRUE, auc=TRUE)
-plot.roc(rocvasospasm, print.auc=TRUE, xlim=c(1,0), xlab="1-Specificity", asp=NA)
-
-
-modelinfarct=glm(Infarct ~ Treatment + HTN + Age.at.admission1, data=data, family="binomial")
-summary(modelinfarct)
-exp(coef(modelinfarct))
-exp(cbind(OR = coef(modelinfarct), confint(modelinfarct)))
-logitgof(data$Infarct, fitted(modelinfarct))
-rocinfarct=roc(data$Infarct, predict(modelinfarct,type=c("response")), ci=TRUE, auc=TRUE)
-plot.roc(rocinfarct, print.auc=TRUE, xlim=c(1,0), xlab="1-Specificity", asp=NA)
-
-
-modelhydro=glm(Hydrocephalus ~ Treatment + HTN + Age.at.admission1, data=data, family="binomial")
-summary(modelhydro)
-exp(coef(modelhydro))
-exp(cbind(OR = coef(modelhydro), confint(modelhydro)))
-logitgof(data$Hydrocephalus, fitted(modelhydro))
-rochydro=roc(data$Hydrocephalus, predict(modelhydro,type=c("response")), ci=TRUE, auc=TRUE)
-plot.roc(rochydro, print.auc=TRUE, xlim=c(1,0), xlab="1-Specificity", asp=NA)
-
-
-modelseize=glm(Seizure ~ Treatment + HTN + Age.at.admission1, data=data, family="binomial")
-summary(modelseize)
-exp(coef(modelseize))
-exp(cbind(OR = coef(modelseize), confint(modelseize)))
-logitgof(data$Seizure, fitted(modelseize))
-rocseize=roc(data$Seizure, predict(modelseize,type=c("response")), ci=TRUE, auc=TRUE)
-plot.roc(rocseize, print.auc=TRUE, xlim=c(1,0), xlab="1-Specificity", asp=NA)
-
-
-modelinfect=glm(Infection ~ Treatment + HTN + Age.at.admission1, data=data, family="binomial")
-summary(modelinfect)
-exp(coef(modelinfect))
-exp(cbind(OR = coef(modelinfect), confint(modelinfect)))
-logitgof(data$Infection, fitted(modelinfect))
-rocinfect=roc(data$Infection, predict(modelinfect,type=c("response")), ci=TRUE, auc=TRUE)
-plot.roc(rocinfect, print.auc=TRUE, xlim=c(1,0), xlab="1-Specificity", asp=NA)
-
-
-modelpneum=glm(Pneumonia ~ Treatment + HTN + Age.at.admission1, data=data, family="binomial")
-summary(modelpneum)
-exp(coef(modelpneum))
-exp(cbind(OR = coef(modelpneum), confint(modelpneum)))
-logitgof(data$Pneumonia, fitted(modelpneum))
-rocpneum=roc(data$Pneumonia, predict(modelpneum,type=c("response")), ci=TRUE, auc=TRUE)
-plot.roc(rocpneum, print.auc=TRUE, xlim=c(1,0), xlab="1-Specificity", asp=NA)
-
-
+```

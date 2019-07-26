@@ -1,0 +1,15 @@
+base
+knitr
+rmdformats
+MASS
+lattice
+survival
+Formula
+ggplot2
+Hmisc
+brant
+reshape
+generalhoslem
+DescTools
+aod
+pROC
