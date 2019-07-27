@@ -1,5 +1,9 @@
 library(plyr)
-setwd("C:/Users/alexw/OneDrive/Dal Med/RIM")
+setwd("C:/Users/alexw/Google Drive/Desktop files/Dal Med/RIM")
+
+
+# Match CJC and JK data ---------------------------------------------------
+
 
 data=read.csv("Data Collection Form - compiled.csv")
 data$keros=c(0)
@@ -13,7 +17,6 @@ data$carotiddehisc=c(0)
 data$ondehisc=c(0)
 data$sinussep=c(0)
 data$supraorbpneum=c(0)
-
 
 data$keros[data$Keros.Classification.CJC!=data$Keros.Classification.JK]=1
 data$asym[data$Asymmetry.CJC!=data$Asymmetry.JK]=1
@@ -63,3 +66,93 @@ cat(total_conflicts, "/", nrow(dataconflict)*ncol(dataconflict),",",total_confli
 
 
 
+
+
+
+# Calculate CLOSE rates --------------------------------------------------
+data=read.csv("Data Collection Form - Final.csv")
+
+table1=c()
+
+table1=append(table1, nrow(data))
+
+table1=append(table1, nrow(subset(data, data$Gender=="M")))
+table1=append(table1, nrow(subset(data, data$Gender=="M"))/nrow(data)*100)
+table1=append(table1, nrow(subset(data, data$Gender=="F")))
+table1=append(table1, nrow(subset(data, data$Gender=="F"))/nrow(data)*100)
+
+table1=append(table1, nrow(subset(data, data$Keros.Classification..Type.I.III.==1)))
+table1=append(table1, nrow(subset(data, data$Keros.Classification..Type.I.III.==1))/nrow(data)*100)
+table1=append(table1, nrow(subset(data, data$Keros.Classification..Type.I.III.==2)))
+table1=append(table1, nrow(subset(data, data$Keros.Classification..Type.I.III.==2))/nrow(data)*100)
+table1=append(table1, nrow(subset(data, data$Keros.Classification..Type.I.III.==3)))
+table1=append(table1, nrow(subset(data, data$Keros.Classification..Type.I.III.==3))/nrow(data)*100)
+
+table1=append(table1, nrow(subset(data, data$Asymmetry..height.difference.1mm.==1)))
+table1=append(table1, nrow(subset(data, data$Asymmetry..height.difference.1mm.==1))/nrow(data)*100)
+table1=append(table1, nrow(subset(data, data$Asymmetry..height.difference.1mm.==0)))
+table1=append(table1, nrow(subset(data, data$Asymmetry..height.difference.1mm.==0))/nrow(data)*100)
+
+table1=append(table1, nrow(subset(data, data$Bony.dehiscence==1)))
+table1=append(table1, nrow(subset(data, data$Bony.dehiscence==1))/nrow(data)*100)
+table1=append(table1, nrow(subset(data, data$Bony.dehiscence==0)))
+table1=append(table1, nrow(subset(data, data$Bony.dehiscence==0))/nrow(data)*100)
+
+table1=append(table1, nrow(subset(data, data$Intact.lamina==0)))
+table1=append(table1, nrow(subset(data, data$Intact.lamina==0))/nrow(data)*100)
+table1=append(table1, nrow(subset(data, data$Intact.lamina==1)))
+table1=append(table1, nrow(subset(data, data$Intact.lamina==1))/nrow(data)*100)
+
+table1=append(table1, nrow(subset(data, data$Orbital.dehiscence.into.ethmoid.sinus==1)))
+table1=append(table1, nrow(subset(data, data$Orbital.dehiscence.into.ethmoid.sinus==1))/nrow(data)*100)
+table1=append(table1, nrow(subset(data, data$Orbital.dehiscence.into.ethmoid.sinus==0)))
+table1=append(table1, nrow(subset(data, data$Orbital.dehiscence.into.ethmoid.sinus==0))/nrow(data)*100)
+
+table1=append(table1, nrow(subset(data, data$Ucinate.process.contacting.orbital.wall==1)))
+table1=append(table1, nrow(subset(data, data$Ucinate.process.contacting.orbital.wall==1))/nrow(data)*100)
+table1=append(table1, nrow(subset(data, data$Ucinate.process.contacting.orbital.wall==0)))
+table1=append(table1, nrow(subset(data, data$Ucinate.process.contacting.orbital.wall==0))/nrow(data)*100)
+
+table1=append(table1, nrow(subset(data, data$Presence==1)))
+table1=append(table1, nrow(subset(data, data$Presence==1))/nrow(data)*100)
+table1=append(table1, nrow(subset(data, data$Presence==0)))
+table1=append(table1, nrow(subset(data, data$Presence==0))/nrow(data)*100)
+
+table1=append(table1, nrow(subset(data, data$Carotid.dehiscence==1)))
+table1=append(table1, nrow(subset(data, data$Carotid.dehiscence==1))/nrow(data)*100)
+table1=append(table1, nrow(subset(data, data$Carotid.dehiscence==0)))
+table1=append(table1, nrow(subset(data, data$Carotid.dehiscence==0))/nrow(data)*100)
+
+table1=append(table1, nrow(subset(data, data$Optic.nerve.dehiscence==1)))
+table1=append(table1, nrow(subset(data, data$Optic.nerve.dehiscence==1))/nrow(data)*100)
+table1=append(table1, nrow(subset(data, data$Optic.nerve.dehiscence==0)))
+table1=append(table1, nrow(subset(data, data$Optic.nerve.dehiscence==0))/nrow(data)*100)
+
+table1=append(table1, nrow(subset(data, data$Sinus.septation.inserting.on.carotid.canal==1)))
+table1=append(table1, nrow(subset(data, data$Sinus.septation.inserting.on.carotid.canal==1))/nrow(data)*100)
+table1=append(table1, nrow(subset(data, data$Sinus.septation.inserting.on.carotid.canal==0)))
+table1=append(table1, nrow(subset(data, data$Sinus.septation.inserting.on.carotid.canal==0))/nrow(data)*100)
+
+table1=append(table1, nrow(subset(data, data$Supraortibal.pneumatization==1)))
+table1=append(table1, nrow(subset(data, data$Supraortibal.pneumatization==1))/nrow(data)*100)
+table1=append(table1, nrow(subset(data, data$Supraortibal.pneumatization==0)))
+table1=append(table1, nrow(subset(data, data$Supraortibal.pneumatization==0))/nrow(data)*100)
+
+
+
+table1=as.data.frame(table1)
+rownames(table1)=c("n","M","M%","F","F%",
+                   "Keros1","Keros1%","Keros2","Keros2%","Keros3","Keros3%",
+                   "Y Asym","Y Asym%","N Asym","N Asym%",
+                   "Y Bony dehisc","Y Bony dehisc%","N Bony dehisc","N Bony dehisc%",
+                   "Y intact lamina","Y Intact lamina%","N intact lamina","N intact lamina%",
+                   "Y orbit dehisc","Y orbit dehisc%","N orbit dehisc","N orbit dehisc%",
+                   "Y ucinate contact","Y ucinate contact%","N ucinate contact","N ucinate contact%",
+                   "Y onodi","Y onodi%","N onodi","N onodi%",
+                   "Y carotid dehisc","Y carotid dehisc%","N carotid dehisc","N carotid dehisc%",
+                   "Y ON dehisc","Y ON dehisc%","N ON dehisc","N ON dehisc%",
+                   "Y sinus sept","Y sinus sept%","N sinus sept","N sinus sept%",
+                   "Y supraorb pneum","Y supraorb pneum%","N supraorb pneum","N supraorb pneum%"
+                   )
+
+write.csv(table1, "table1.csv")
