@@ -175,16 +175,31 @@ rownames(agetable)=c("n", "Coil mean age","Coil sd age", "Clip mean age","Clip s
 age_table_stats=c()
 
 age_table_stats=append(age_table_stats,
-                       oneway.test(Age.at.admission ~ date, 
+                       kruskal.test(Age.at.admission ~ date, 
                        data=subset(data,data$Treatment=="Coil"))$p.value)
   
 age_table_stats=append(age_table_stats,
-                       oneway.test(Age.at.admission ~ date, 
+                       kruskal.test(Age.at.admission ~ date, 
                        data=subset(data,data$Treatment=="Clip"))$p.value)
 
 age_table_stats=as.data.frame(age_table_stats)
 rownames(age_table_stats)=c("Coil mean age","Clip mean age")
 colnames(age_table_stats)=c("p-value")
+
+data1=subset(data, data$date=="date_1")
+data2=subset(data, data$date=="date_2")
+data3=subset(data, data$date=="date_3")
+
+age_table_stats_2 = c()
+
+age_table_stats_2 = append(age_table_stats_2,
+                           t.test(Age.at.admission ~ Treatment, data=data1)$p.value)
+
+age_table_stats_2 = append(age_table_stats_2,
+                           t.test(Age.at.admission ~ Treatment, data=data2)$p.value)
+
+age_table_stats_2 = append(age_table_stats_2,
+                           wilcox.test(Age.at.admission ~ Treatment, data=data3)$p.value)
 
 
 # Table 1 values ----------------------------------------------------------
