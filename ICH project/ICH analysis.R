@@ -10,10 +10,10 @@ for_gs <- gs_title("PREDICT ROI File Issues")
 
 
 # PREDICT Data merging ------------------------------------------------------------
-setwd("C:/Users/alexw/OneDrive/Dal Med/ICH")
+setwd("C:/Users/alexw/Google Drive/Desktop files/Dal Med/ICH")
 pt_char=read.csv("PREDICT_baseline_data.csv")
-alex_predict_sheet <- gs_read(for_gs, ws="Alex version of PREDICTv3")
-X2=as.vector(alex_predict_sheet$X2)
+alex_predict_sheet <- as.data.frame(gs_read(for_gs, ws="PREDICT V6 TOTAL"))
+X2=as.vector(predict_sheet$`Abbrev filename`)
 
 baseline=c()
 for (i in X2){
@@ -31,43 +31,38 @@ for (i in X2){
     baseline=append(baseline, 1)
   }
 }
-alex_predict_sheet=cbind(alex_predict_sheet, baseline)
-sean_predict_sheet=cbind(sean_predict_sheet, baseline)
+predict_sheet=cbind(alex_predict_sheet, baseline)
 
-psite=as.character(as.vector(alex_predict_sheet$Psite))
-pnum=as.character(as.vector(alex_predict_sheet$Pnum))
+psite=as.character(as.vector(predict_sheet$Psite))
+pnum=as.character(as.vector(predict_sheet$Pnum))
 PID=paste(psite, pnum, sep="", collapse=NULL)
 
-alex_predict_sheet=cbind(alex_predict_sheet, PID)
-sean_predict_sheet=cbind(sean_predict_sheet, PID)
+predict_sheet=cbind(predict_sheet, PID)
 
-baseline_predict_AW=subset(alex_predict_sheet, alex_predict_sheet$baseline==0)
-followup_predict_AW=subset(alex_predict_sheet, alex_predict_sheet$baseline==1)
-baseline_predict_SN=subset(sean_predict_sheet, sean_predict_sheet$baseline==0)
-followup_predict_SN=subset(sean_predict_sheet, sean_predict_sheet$baseline==1)
+baseline_predict=subset(predict_sheet, predict_sheet$baseline==0)
+followup_predict=subset(predict_sheet, predict_sheet$baseline==1)
 
-keeps=c("PID","Irregular?","ABC-A","ABC-B","ABC-C","ABC/2","QuantomoVol")
-keep=c("PID","Irregular?","ABC-A","ABC-B","ABC-C","ABC/2")
-baseline_predict_AW=baseline_predict_AW[keeps]
-baseline_predict_SN=baseline_predict_SN[keep]
-colnames(baseline_predict_AW)=c("PID","b_Irregular?_AW","b_ABC-A_AW","b_ABC-B_AW","b_ABC-C_AW","b_ABC/2_AW","b_Quantomovol")
-colnames(baseline_predict_SN)=c("PID","b_Irregular?_SN","b_ABC-A_SN","b_ABC-B_SN","b_ABC-C_SN","b_ABC/2_SN")
-followup_predict_AW=followup_predict_AW[keeps]
-followup_predict_SN=followup_predict_SN[keep]
-colnames(followup_predict_AW)=c("PID","fu_Irregular?_AW","fu_ABC-A_AW","fu_ABC-B_AW","fu_ABC-C_AW","fu_ABC/2_AW","fu_Quantomovol")
-colnames(followup_predict_SN)=c("PID","fu_Irregular?_SN","fu_ABC-A_SN","fu_ABC-B_SN","fu_ABC-C_SN","fu_ABC/2_SN")
+keep=c("PID","baseline","Irregular_SN","ABC-A_SN","ABC-B_SN","ABC-C_SN","ABC/2_SN","Irregular_AW","ABC-A_AW",
+       "ABC-B_AW","ABC-C_AW","ABC/2_AW","ABC/2-Diff","ABC/2AVG-Quantomo")
+baseline_predict=baseline_predict[keep]
+followup_predict=followup_predict[keep]
 
-baseline_predict=merge(baseline_predict_AW, baseline_predict_SN, by="PID")
-followup_predict=merge(followup_predict_AW, followup_predict_SN, by="PID")
+colnames(baseline_predict)=c("PID","baseline","b_Irregular_SN","b_ABC-A_SN","b_ABC-B_SN","b_ABC-C_SN","b_ABC/2_SN",
+                             "b_Irregular_AW","b_ABC-A_AW","b_ABC-B_AW","b_ABC-C_AW","b_ABC/2_AW","b_ABC/2-Diff",
+                             "b_ABC/2AVG-Quantomo")
+colnames(followup_predict)=c("PID","baseline","fu_Irregular_SN","fu_ABC-A_SN","fu_ABC-B_SN","fu_ABC-C_SN",
+                             "fu_ABC/2_SN","fu_Irregular_AW","fu_ABC-A_AW","fu_ABC-B_AW","fu_ABC-C_AW","fu_ABC/2_AW",
+                             "fu_ABC/2-Diff","fu_ABC/2AVG-Quantomo")
+
 combined=merge(baseline_predict, followup_predict, by="PID", all.x=TRUE)
 
-pt_char$?..patient_site=str_pad(pt_char$?..patient_site, 2, pad="0")
+pt_char$ï..patient_site=str_pad(pt_char$ï..patient_site, 2, pad="0")
 pt_char$patient_study=str_pad(pt_char$patient_study, 3, pad="0")
-pt_char$PID=paste(pt_char$?..patient_site, pt_char$patient_study, sep="", collapse=NULL)
+pt_char$PID=paste(pt_char$ï..patient_site, pt_char$patient_study, sep="", collapse=NULL)
 
 predict_pt_char=merge(pt_char, combined, by="PID", all.y=TRUE)
 
-#write.csv(predict_pt_char, "PREDICTv3 merged database.csv")
+#write.csv(predict_pt_char, "PREDICTv5 merged database.csv")
 
 
 # SPOTLIGHT Data merging --------------------------------------------------

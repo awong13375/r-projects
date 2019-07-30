@@ -1,5 +1,5 @@
 # Load data ---------------------------------------------------------------
-setwd("C:/Users/alexw/OneDrive/Dal Med/Aneurysm Repair Project/Data Analysis")
+setwd("C:/Users/alexw/Google Drive/Desktop files/Dal Med/Aneurysm Repair Project/Data Analysis")
 data=read.csv("Data table FINAL.csv")
 library(MASS)
 library(Hmisc)
