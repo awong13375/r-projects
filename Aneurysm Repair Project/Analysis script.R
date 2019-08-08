@@ -1,5 +1,5 @@
 # Load data ---------------------------------------------------------------
-setwd("C:/Users/alexw/OneDrive/Dal Med/Aneurysm Repair Project/Data Analysis")
+setwd("C:/Users/alexw/Google Drive/Desktop files/Dal Med/Aneurysm Repair Project/Data Analysis")
 data=read.csv("Data table FINAL.csv")
 library(MASS)
 library(Hmisc)
@@ -88,6 +88,38 @@ data$GOS.at.12....3.months[data$GOS.at.12....3.months=="4"|data$GOS.at.12....3.m
 data$GOS.at.12....3.months=as.factor(data$GOS.at.12....3.months)
 data$GOS.at.12....3.months <- factor(data$GOS.at.12....3.months, levels=c(0,1,2), ordered=FALSE)
 
+#Recategorize date of admission
+data$Admission.Date=as.Date(data$Admission.Date)
+data$date=c(0)
+data$date[data$Admission.Date <= as.Date("2007-12-31")] = "date_1"
+data$date[data$Admission.Date > as.Date("2007-12-31") & data$Admission.Date <=as.Date("2012-12-31")] = "date_2"
+data$date[data$Admission.Date > as.Date("2012-12-31")] = "date_3"
+data$date=as.character(data$date)
+
+#loss to followup table
+treattype=c("Coil","Clip")
+yeartype=c("date_1","date_2","date_3")
+for (year in yeartype){
+  for (treat in treattype){
+    column=c()
+    datayear=subset(data, data[,"date"]==year)
+    datatreat=subset(datayear, datayear[,"Treatment"]==treat)
+    
+    column=append(column, nrow(datatreat))
+    datatreat=subset(datatreat, datatreat$GOS.at.6....3.months!="NA")
+    column=append(column, nrow(datatreat))
+    datatreat=subset(datatreat, datatreat$GOS.at.12....3.months!="NA")
+    column=append(column, nrow(datatreat))
+
+    if (treat=="Coil" & year=="date_1"){
+      lof_table=as.data.frame(column)
+    } else {
+      lof_table=cbind(lof_table, column)
+    }
+  }
+}
+
+
 #Remove missing GOS data
 data=subset(data, data$GOS.at.discharge!="NA")
 data=subset(data, data$GOS.at.6....3.months!="NA")
@@ -116,12 +148,6 @@ data$A1.location=as.factor(data$A1.location)
 # Subgroup analyses by 5-year ---------------------------------------------
 
 ##Create age table
-data$Admission.Date=as.Date(data$Admission.Date)
-data$date=c(0)
-data$date[data$Admission.Date <= as.Date("2007-12-31")] = "date_1"
-data$date[data$Admission.Date > as.Date("2007-12-31") & data$Admission.Date <=as.Date("2012-12-31")] = "date_2"
-data$date[data$Admission.Date > as.Date("2012-12-31")] = "date_3"
-data$date=as.character(data$date)
 
 datetype=c("date_1","date_2","date_3")
 
@@ -149,16 +175,32 @@ rownames(agetable)=c("n", "Coil mean age","Coil sd age", "Clip mean age","Clip s
 age_table_stats=c()
 
 age_table_stats=append(age_table_stats,
-                       oneway.test(Age.at.admission ~ date, 
+                       kruskal.test(Age.at.admission ~ date, 
                        data=subset(data,data$Treatment=="Coil"))$p.value)
   
 age_table_stats=append(age_table_stats,
-                       oneway.test(Age.at.admission ~ date, 
+                       kruskal.test(Age.at.admission ~ date, 
                        data=subset(data,data$Treatment=="Clip"))$p.value)
 
 age_table_stats=as.data.frame(age_table_stats)
 rownames(age_table_stats)=c("Coil mean age","Clip mean age")
 colnames(age_table_stats)=c("p-value")
+
+data1=subset(data, data$date=="date_1")
+data2=subset(data, data$date=="date_2")
+data3=subset(data, data$date=="date_3")
+
+age_table_stats_2 = c()
+
+age_table_stats_2 = append(age_table_stats_2,
+                           t.test(Age.at.admission ~ Treatment, data=data1)$p.value)
+
+age_table_stats_2 = append(age_table_stats_2,
+                           t.test(Age.at.admission ~ Treatment, data=data2)$p.value)
+
+age_table_stats_2 = append(age_table_stats_2,
+                           wilcox.test(Age.at.admission ~ Treatment, data=data3)$p.value)
+
 
 # Table 1 values ----------------------------------------------------------
 treattype=c("Coil","Clip")

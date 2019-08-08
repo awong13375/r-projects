@@ -1,0 +1,52 @@
+"","Gold standard","MT"
+"n",100,100
+"M",46,46
+"M%",46,46
+"F",54,54
+"F%",54,54
+"Keros1",19,4
+"Keros1%",19,4
+"Keros2",73,78
+"Keros2%",73,78
+"Keros3",8,18
+"Keros3%",8,18
+"Y Asym",6,28
+"Y Asym%",6,28
+"N Asym",94,72
+"N Asym%",94,72
+"Y Bony dehisc",1,2
+"Y Bony dehisc%",1,2
+"N Bony dehisc",99,98
+"N Bony dehisc%",99,98
+"Y intact lamina",100,99
+"Y Intact lamina%",100,99
+"N intact lamina",0,1
+"N intact lamina%",0,1
+"Y orbit dehisc",0,1
+"Y orbit dehisc%",0,1
+"N orbit dehisc",100,99
+"N orbit dehisc%",100,99
+"Y ucinate contact",1,8
+"Y ucinate contact%",1,8
+"N ucinate contact",99,92
+"N ucinate contact%",99,92
+"Y onodi",12,34
+"Y onodi%",12,34
+"N onodi",88,66
+"N onodi%",88,66
+"Y carotid dehisc",11,48
+"Y carotid dehisc%",11,48
+"N carotid dehisc",89,52
+"N carotid dehisc%",89,52
+"Y ON dehisc",5,39
+"Y ON dehisc%",5,39
+"N ON dehisc",95,61
+"N ON dehisc%",95,61
+"Y sinus sept",45,19
+"Y sinus sept%",45,19
+"N sinus sept",55,81
+"N sinus sept%",55,81
+"Y supraorb pneum",30,53
+"Y supraorb pneum%",30,53
+"N supraorb pneum",70,47
+"N supraorb pneum%",70,47
