@@ -56,9 +56,9 @@ colnames(followup_predict)=c("PID","baseline","fu_Irregular_SN","fu_ABC-A_SN","f
 
 combined=merge(baseline_predict, followup_predict, by="PID", all.x=TRUE, all.y=TRUE)
 
-pt_char$ï..patient_site=str_pad(pt_char$ï..patient_site, 2, pad="0")
+pt_char$?..patient_site=str_pad(pt_char$?..patient_site, 2, pad="0")
 pt_char$patient_study=str_pad(pt_char$patient_study, 3, pad="0")
-pt_char$PID=paste(pt_char$ï..patient_site, pt_char$patient_study, sep="", collapse=NULL)
+pt_char$PID=paste(pt_char$?..patient_site, pt_char$patient_study, sep="", collapse=NULL)
 
 predict_pt_char=merge(pt_char, combined, by="PID", all.y=TRUE)
 
@@ -68,7 +68,7 @@ predict_pt_char=merge(pt_char, combined, by="PID", all.y=TRUE)
 # SPOTLIGHT Data merging --------------------------------------------------
 setwd("C:/Users/alexw/Google Drive/Desktop files/Dal Med/ICH")
 pt_char=read.csv("SPOTLIGHT_Baseline_data.csv")
-pt_char$ï..Subject=str_pad(pt_char$ï..Subject, 6, pad="0")
+pt_char$?..Subject=str_pad(pt_char$?..Subject, 6, pad="0")
 colnames(pt_char)[1]<-"PID"
 
 
@@ -382,9 +382,10 @@ table1stats=append(table1stats, t.test(Time.from.STROKE_ONSET.to.INITIAL_CT_SCAN
 
 
 table1stats=as.data.frame(table1stats)
+table1stats=cbind(table1stats, c("t-test","chisq","chisq","fisher","fisher","fisher","chisq","chisq","fisher","chisq","t-test"))
 rownames(table1stats)=c("ageatevent","gender","hypertension","diabetes","on_antiplatelet_therapy","on_warfarin","ICH_lobar.base",
                         "ICH_deep.base","ICH_post.base","IVH.base","Time.from.STROKE_ONSET.to.INITIAL_CT_SCAN")
-colnames(table1stats)=c("p-value")
+colnames(table1stats)=c("p-value","stat test")
 
 #write.csv(table1stats, "C:/Users/alexw/Google Drive/Desktop files/Dal Med/ICH/Results/Table 1 stats.csv")
 
@@ -782,27 +783,27 @@ for (pt_id in levels(data$PID)){
   }
 }
 expansion$PID <- factor(expansion$PID)
-fulldata=subset(data, duplicated(data$PID)==FALSE)
+b_fu_data=subset(data, duplicated(data$PID)==TRUE)
+b_fu_data$PID <- factor(b_fu_data$PID)
 
 
-
-cat("Proportion of patients with hematoma expansion = ",length(levels(expansion$PID)),"/",length(levels(fulldata$PID)),",",
-        length(levels(expansion$PID))/length(levels(fulldata$PID))*100,"%")
+cat("Proportion of patients with hematoma expansion = ",length(levels(expansion$PID)),"/",length(levels(b_fu_data$PID)),",",
+        length(levels(expansion$PID))/length(levels(b_fu_data$PID))*100,"%")
 
 ABC2_expansion=subset(expansion, expansion$expansion_ABC==1)
 ABC2_expansion$PID <- factor(ABC2_expansion$PID)
-cat("Proportion of patients with hematoma expansion by ABC2 measure = ",length(levels(ABC2_expansion$PID)),"/",length(levels(fulldata$PID)),",",
-    length(levels(ABC2_expansion$PID))/length(levels(fulldata$PID))*100,"%")
+cat("Proportion of patients with hematoma expansion by ABC2 measure = ",length(levels(ABC2_expansion$PID)),"/",length(levels(b_fu_data$PID)),",",
+    length(levels(ABC2_expansion$PID))/length(levels(b_fu_data$PID))*100,"%")
 
 QT_expansion=subset(expansion, expansion$expansion_QT==1)
 QT_expansion$PID <- factor(QT_expansion$PID)
-cat("Proportion of patients with hematoma expansion by QT measure = ",length(levels(QT_expansion$PID)),"/",length(levels(fulldata$PID)),",",
-    length(levels(QT_expansion$PID))/length(levels(fulldata$PID))*100,"%")
+cat("Proportion of patients with hematoma expansion by QT measure = ",length(levels(QT_expansion$PID)),"/",length(levels(b_fu_data$PID)),",",
+    length(levels(QT_expansion$PID))/length(levels(b_fu_data$PID))*100,"%")
 
 DM_expansion=subset(expansion, expansion$expansion_DM==1)
 DM_expansion$PID <- factor(DM_expansion$PID)
-cat("Proportion of patients with hematoma expansion by DM measure = ",length(levels(DM_expansion$PID)),"/",length(levels(fulldata$PID)),",",
-    length(levels(DM_expansion$PID))/length(levels(fulldata$PID))*100,"%")
+cat("Proportion of patients with hematoma expansion by DM measure = ",length(levels(DM_expansion$PID)),"/",length(levels(b_fu_data$PID)),",",
+    length(levels(DM_expansion$PID))/length(levels(b_fu_data$PID))*100,"%")
 
 
 #write.csv(expansion, "C:/Users/alexw/Google Drive/Desktop files/Dal Med/ICH/Results/Hematoma expansion.csv")

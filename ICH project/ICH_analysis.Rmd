@@ -20,7 +20,7 @@ opts_chunk$set(echo=FALSE,
                comment=NA,
                message=FALSE,
                warning=FALSE)
-opts_knit$set(width=100)
+opts_knit$set(width=75)
 ```
 
 ```{r echo=FALSE, eval=TRUE, warning=FALSE, message=FALSE, error=FALSE, results="hide"}
@@ -295,9 +295,10 @@ table1stats=append(table1stats, t.test(Time.from.STROKE_ONSET.to.INITIAL_CT_SCAN
 
 
 table1stats=as.data.frame(table1stats)
+table1stats=cbind(table1stats, c("t-test","chisq","chisq","fisher","fisher","fisher","chisq","chisq","fisher","chisq","t-test"))
 rownames(table1stats)=c("ageatevent","gender","hypertension","diabetes","on_antiplatelet_therapy","on_warfarin","ICH_lobar.base",
                         "ICH_deep.base","ICH_post.base","IVH.base","Time.from.STROKE_ONSET.to.INITIAL_CT_SCAN")
-colnames(table1stats)=c("p-value")
+colnames(table1stats)=c("p-value","stat test")
 
 #write.csv(table1stats, "C:/Users/alexw/Google Drive/Desktop files/Dal Med/ICH/Results/Table 1 stats.csv")
 
@@ -758,40 +759,40 @@ for (pt_id in levels(data$PID)){
   }
 }
 expansion$PID <- factor(expansion$PID)
-fulldata=subset(data, duplicated(data$PID)==TRUE)
-
+b_fu_data=subset(data, duplicated(data$PID)==TRUE)
+b_fu_data$PID <- factor(b_fu_data$PID)
 ```
 
 ## Proportion of patients with hematoma expansion
 
 ### By any measure
 ```{r}
-cat("Proportion of patients with hematoma expansion = ",length(levels(expansion$PID)),"/",length(levels(fulldata$PID)),",",
-        length(levels(expansion$PID))/length(levels(fulldata$PID))*100,"%")
+cat("Proportion of patients with hematoma expansion = ",length(levels(expansion$PID)),"/",length(levels(b_fu_data$PID)),",",
+        length(levels(expansion$PID))/length(levels(b_fu_data$PID))*100,"%")
 ```
 
 ### By ABC2 measurement
 ```{r}
 ABC2_expansion=subset(expansion, expansion$expansion_ABC==1)
 ABC2_expansion$PID <- factor(ABC2_expansion$PID)
-cat("Proportion of patients with hematoma expansion by ABC2 measure = ",length(levels(ABC2_expansion$PID)),"/",length(levels(fulldata$PID)),",",
-    length(levels(ABC2_expansion$PID))/length(levels(fulldata$PID))*100,"%")
+cat("Proportion of patients with hematoma expansion by ABC2 measure = ",length(levels(ABC2_expansion$PID)),"/",length(levels(b_fu_data$PID)),",",
+    length(levels(ABC2_expansion$PID))/length(levels(b_fu_data$PID))*100,"%")
 ```
 
 ### By Quantomo measurement
 ```{r}
 QT_expansion=subset(expansion, expansion$expansion_QT==1)
 QT_expansion$PID <- factor(QT_expansion$PID)
-cat("Proportion of patients with hematoma expansion by QT measure = ",length(levels(QT_expansion$PID)),"/",length(levels(fulldata$PID)),",",
-    length(levels(QT_expansion$PID))/length(levels(fulldata$PID))*100,"%")
+cat("Proportion of patients with hematoma expansion by QT measure = ",length(levels(QT_expansion$PID)),"/",length(levels(b_fu_data$PID)),",",
+    length(levels(QT_expansion$PID))/length(levels(b_fu_data$PID))*100,"%")
 ```
 
 ### By Deep Medic measurement
 ```{r}
 DM_expansion=subset(expansion, expansion$expansion_DM==1)
 DM_expansion$PID <- factor(DM_expansion$PID)
-cat("Proportion of patients with hematoma expansion by DM measure = ",length(levels(DM_expansion$PID)),"/",length(levels(fulldata$PID)),",",
-    length(levels(DM_expansion$PID))/length(levels(fulldata$PID))*100,"%")
+cat("Proportion of patients with hematoma expansion by DM measure = ",length(levels(DM_expansion$PID)),"/",length(levels(b_fu_data$PID)),",",
+    length(levels(DM_expansion$PID))/length(levels(b_fu_data$PID))*100,"%")
 ```
 
 
