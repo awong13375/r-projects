@@ -11,7 +11,7 @@ scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/aut
 creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
 client = gspread.authorize(creds)
 
-sheet = client.open("PREDICT ROI File Issues").worksheet("SPOTLIGHT v2")
+sheet = client.open("PREDICT ROI File Issues").worksheet("SPOTLIGHT v2 RENAME")
 
 data={'original_DCM_filename':sheet.col_values(1)[1:],
 'DCM_change_to':sheet.col_values(2)[1:],
@@ -20,8 +20,8 @@ data={'original_DCM_filename':sheet.col_values(1)[1:],
 df=DataFrame(data)
 
 
-dcm_directory=r"D:\Alex Files\SPOTLIGHT_V3\SPOTLIGHT_NII_V3"
-roi_directory=r"D:\Alex Files\SPOTLIGHT_V3\SPOTLIGHT_ROI_NII_V3"
+dcm_directory=r"C:\Users\alexw\Downloads\SPOTLIGHT_V3b\SPOTLIGHT_V3\SPOTLIGHT_NII_V3"
+roi_directory=r"C:\Users\alexw\Downloads\SPOTLIGHT_V3b\SPOTLIGHT_V3\SPOTLIGHT_ROI_NII_V3"
 
 for original_filename, change_to_filename in zip(data['original_DCM_filename'], data['DCM_change_to']):
     for dcmfile in os.listdir(dcm_directory):
