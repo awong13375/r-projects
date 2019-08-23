@@ -13,11 +13,11 @@ client = gspread.authorize(creds)
 
 sheet = client.open("PREDICT ROI File Issues").worksheet("SPOTLIGHT v2 RENAME")
 
-data={'original_DCM_filename':sheet.col_values(1)[1:],
-'DCM_change_to':sheet.col_values(2)[1:],
-'original_ROI_filename':sheet.col_values(3)[1:],
-'ROI_change_to':sheet.col_values(4)[1:]}
-df=DataFrame(data)
+    data={'original_DCM_filename':sheet.col_values(1)[1:],
+    'DCM_change_to':sheet.col_values(2)[1:],
+    'original_ROI_filename':sheet.col_values(3)[1:],
+    'ROI_change_to':sheet.col_values(4)[1:]}
+    df=DataFrame(data)
 
 
 dcm_directory=r"C:\Users\alexw\Downloads\SPOTLIGHT_V3b\SPOTLIGHT_V3\SPOTLIGHT_NII_V3"
