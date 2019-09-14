@@ -4,7 +4,8 @@ from oauth2client.service_account import ServiceAccountCredentials
 from pandas import DataFrame
 
 #Set working directory
-os.chdir(r"C:\R workspace\r-projects\ICH project")
+os.chdir(r"C:\Users\alexw\Desktop")
+directory=r"C:\Users\alexw\Desktop"
 
 #Connect to Google sheets
 scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
@@ -32,5 +33,20 @@ f.close()
 
 
 
-
+#Generate text file directly from file directory
+for r,d,f in os.walk(directory):
+    if r==r"C:\Users\alexw\Desktop\STOPIT Followup Cases\STOPIT_DCM_NII":
+        txt=open("stopit_dcm.txt","w+")
+        for file in f:
+            print(file)
+            txt.write(file)
+            txt.write("\n")
+        txt.close()
+    if r==r"C:\Users\alexw\Desktop\STOPIT Followup Cases\STOPIT_MHD_NII":
+        txt=open("stopit_mhd.txt","w+")
+        for file in f:
+            txt.write(file)
+            txt.write("\n")
+        txt.close()
+    
 

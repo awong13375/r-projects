@@ -7,8 +7,8 @@ import SimpleITK as sitk
 import time
 import nibabel as nib
 
-mhdpath = r"D:\Virtual Machine\Shared Folder\DAL_ICH_MHD_MAC"
-outputpath = r"D:\Virtual Machine\Shared Folder\DAL_ICH_MHD_NII"
+mhdpath = r"D:\Virtual Machine\Shared Folder\STOPIT_MHD_MAC"
+outputpath = r"D:\Virtual Machine\Shared Folder\STOPIT_MHD_NII"
 
 dirfiles = os.listdir(mhdpath)
 i=0;

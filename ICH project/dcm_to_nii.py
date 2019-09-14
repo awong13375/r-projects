@@ -7,8 +7,8 @@ import SimpleITK as sitk
 import time
 
 
-dcmpath = r"D:\Virtual Machine\Shared Folder\DAL_ICH_DCM"
-dcmoutputpath = r"D:\Virtual Machine\Shared Folder\DAL_ICH_DCM_NII"
+dcmpath = r"D:\Virtual Machine\Shared Folder\STOPIT_DCM"
+dcmoutputpath = r"D:\Virtual Machine\Shared Folder\STOPIT_DCM"
 
 reader = sitk.ImageSeriesReader()
 reader2 = sitk.ImageFileReader()
@@ -42,10 +42,18 @@ for r, d, f in os.walk(dcmpath):
             #print(xarr)
             sitk.WriteImage(image, dcmoutputpath+"\\\\"+thepath+".nii")
 
-            while True:
-                direct1b = os.path.dirname(direct1b)
-                #print(direct1b)
-                pardir = ntpath.basename(direct1b)
-                thepath = pardir + "-" + thepath
 
 
+
+
+
+path=r"D:\Virtual Machine\Shared Folder\STOPIT_DCM"
+for r,d,f in os.walk(path):
+
+    if ntpath.basename(r)[0:2] in ["05","06","08","09","13"]:
+        print(r)
+        print(d)
+        print(f)
+        print("--------")
+        for file in f:
+            os.rename(r+"\\"+file,r+"\\"+file+".dcm")
