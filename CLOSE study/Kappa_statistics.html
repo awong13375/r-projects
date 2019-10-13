@@ -9,7 +9,7 @@
 <meta name="generator" content="pandoc" />
 
 
-<meta name="date" content="2019-07-27" />
+<meta name="date" content="2019-10-13" />
 
 <title>CLOSE study analysis</title>
 <!-- Material Design fonts -->
@@ -850,7 +850,7 @@ $(document).ready(function () {
             <div class="col-xs-3">
         <div id="header">
     <h1 class="title">CLOSE study analysis</h1>
-                <h4 class="date">2019-07-27</h4>
+                <h4 class="date">2019-10-13</h4>
         </div>
     </div>
 </div>
@@ -938,133 +938,236 @@ N supraorb pneum%             70  47</code></pre>
 <h2>Cribriform Plate</h2>
 <div id="keros-classification" class="section level3">
 <h3>Keros classification</h3>
-<pre><code> Cohen&#39;s Kappa for 2 Raters (Weights: equal)
+<pre><code> Percentage agreement (Tolerance=0)
 
  Subjects = 100 
    Raters = 2 
-    Kappa = 0.126 
+  %-agree = 63 </code></pre>
+<pre><code>Call:
+ckap(data = cbind(as.factor(data1$Keros.Classification..Type.I.III.), 
+    as.factor(data2$Keros.Classification..Type.I.III.)), weight = &quot;linear&quot;, 
+    std.err = &quot;Cohen&quot;, conf.level = 0.95)
 
-        z = 2.15 
-  p-value = 0.0317 </code></pre>
+       Estimate    StdErr   LowerCB UpperCB
+Const  0.125561  0.076535 -0.026302  0.2774
+
+Maximum kappa = 0.33
+Kappa/maximum kappa = 0.38
+Confidence level = 95%
+Observations = 2
+Sample size = 100</code></pre>
 </div>
 <div id="asymmetry" class="section level3">
 <h3>Asymmetry</h3>
-<pre><code> Cohen&#39;s Kappa for 2 Raters (Weights: unweighted)
+<pre><code> Percentage agreement (Tolerance=0)
 
  Subjects = 100 
    Raters = 2 
-    Kappa = 0.0862 
+  %-agree = 72 </code></pre>
+<pre><code>Call:
+ckap(data = cbind(data1$Asymmetry..height.difference.1mm., data2$Asymmetry..height.difference.1mm.), 
+    weight = &quot;unweighted&quot;, std.err = &quot;Cohen&quot;, conf.level = 0.95)
 
-        z = 1.24 
-  p-value = 0.216 </code></pre>
+       Estimate    StdErr   LowerCB UpperCB
+Const  0.086162  0.146540 -0.204605  0.3769
+
+Maximum kappa = 0.28
+Kappa/maximum kappa = 0.31
+Confidence level = 95%
+Observations = 2
+Sample size = 100</code></pre>
 </div>
 <div id="bony-dehiscence" class="section level3">
 <h3>Bony dehiscence</h3>
-<pre><code> Cohen&#39;s Kappa for 2 Raters (Weights: unweighted)
+<pre><code> Percentage agreement (Tolerance=0)
 
  Subjects = 100 
    Raters = 2 
-    Kappa = 0.662 
+  %-agree = 99 </code></pre>
+<pre><code>Call:
+ckap(data = cbind(data1$Bony.dehiscence, data2$Bony.dehiscence), 
+    weight = &quot;unweighted&quot;, std.err = &quot;Cohen&quot;, conf.level = 0.95)
 
-        z = 7.04 
-  p-value = 1.99e-12 </code></pre>
+        Estimate     StdErr    LowerCB UpperCB
+Const  0.6621622  0.3361444 -0.0048213  1.3291
+
+Maximum kappa = 0.66
+Kappa/maximum kappa = 1
+Confidence level = 95%
+Observations = 2
+Sample size = 100</code></pre>
 </div>
 </div>
 <div id="lamina-papyracea" class="section level2">
 <h2>Lamina papyracea</h2>
 <div id="intact-lamina" class="section level3">
 <h3>Intact lamina</h3>
-<pre><code> Cohen&#39;s Kappa for 2 Raters (Weights: unweighted)
+<pre><code> Percentage agreement (Tolerance=0)
 
  Subjects = 100 
    Raters = 2 
-    Kappa = 0 
+  %-agree = 99 </code></pre>
+<pre><code>Call:
+ckap(data = cbind(data1$Intact.lamina, data2$Intact.lamina), 
+    weight = &quot;unweighted&quot;, std.err = &quot;Cohen&quot;, conf.level = 0.95)
 
-        z = NaN 
-  p-value = NaN </code></pre>
+      Estimate   StdErr  LowerCB UpperCB
+Const  0.00000  0.99499 -1.97427  1.9743
+
+Maximum kappa = 0
+Kappa/maximum kappa = NaN
+Confidence level = 95%
+Observations = 2
+Sample size = 100</code></pre>
 </div>
 <div id="orbital-dehiscence-into-ethmoid-sinus" class="section level3">
 <h3>Orbital dehiscence into ethmoid sinus</h3>
-<pre><code> Cohen&#39;s Kappa for 2 Raters (Weights: unweighted)
+<pre><code> Percentage agreement (Tolerance=0)
 
  Subjects = 100 
    Raters = 2 
-    Kappa = 0 
+  %-agree = 99 </code></pre>
+<pre><code>Call:
+ckap(data = cbind(data1$Orbital.dehiscence.into.ethmoid.sinus, 
+    data2$Orbital.dehiscence.into.ethmoid.sinus), weight = &quot;unweighted&quot;, 
+    std.err = &quot;Cohen&quot;, conf.level = 0.95)
 
-        z = NaN 
-  p-value = NaN </code></pre>
+      Estimate   StdErr  LowerCB UpperCB
+Const  0.00000  0.99499 -1.97427  1.9743
+
+Maximum kappa = 0
+Kappa/maximum kappa = NaN
+Confidence level = 95%
+Observations = 2
+Sample size = 100</code></pre>
 </div>
 <div id="ucinate-process-contacting-orbital-wall" class="section level3">
 <h3>Ucinate process contacting orbital wall</h3>
-<pre><code> Cohen&#39;s Kappa for 2 Raters (Weights: unweighted)
+<pre><code> Percentage agreement (Tolerance=0)
 
  Subjects = 100 
    Raters = 2 
-    Kappa = -0.0181 
+  %-agree = 91 </code></pre>
+<pre><code>Call:
+ckap(data = cbind(data1$Ucinate.process.contacting.orbital.wall, 
+    data2$Ucinate.process.contacting.orbital.wall), weight = &quot;unweighted&quot;, 
+    std.err = &quot;Cohen&quot;, conf.level = 0.95)
 
-        z = -0.296 
-  p-value = 0.767 </code></pre>
+      Estimate   StdErr  LowerCB UpperCB
+Const -0.01810  0.32373 -0.66046  0.6243
+
+Maximum kappa = 0.21
+Kappa/maximum kappa = -0.09
+Confidence level = 95%
+Observations = 2
+Sample size = 100</code></pre>
 </div>
 </div>
 <div id="onodi-cell-presence" class="section level2">
 <h2>Onodi cell presence</h2>
-<pre><code> Cohen&#39;s Kappa for 2 Raters (Weights: unweighted)
+<pre><code> Percentage agreement (Tolerance=0)
 
  Subjects = 100 
    Raters = 2 
-    Kappa = 0.26 
+  %-agree = 72 </code></pre>
+<pre><code>Call:
+ckap(data = cbind(data1$Presence, data2$Presence), weight = &quot;unweighted&quot;, 
+    std.err = &quot;Cohen&quot;, conf.level = 0.95)
 
-        z = 3.2 
-  p-value = 0.00139 </code></pre>
+      Estimate   StdErr  LowerCB UpperCB
+Const 0.260042 0.118657 0.024601  0.4955
+
+Maximum kappa = 0.42
+Kappa/maximum kappa = 0.62
+Confidence level = 95%
+Observations = 2
+Sample size = 100</code></pre>
 </div>
 <div id="sphenoid-sinus" class="section level2">
 <h2>Sphenoid sinus</h2>
 <div id="carotid-artery-dehiscence" class="section level3">
 <h3>Carotid artery dehiscence</h3>
-<pre><code> Cohen&#39;s Kappa for 2 Raters (Weights: unweighted)
+<pre><code> Percentage agreement (Tolerance=0)
 
  Subjects = 100 
    Raters = 2 
-    Kappa = 0.071 
+  %-agree = 55 </code></pre>
+<pre><code>Call:
+ckap(data = cbind(data1$Carotid.dehiscence, data2$Carotid.dehiscence), 
+    weight = &quot;unweighted&quot;, std.err = &quot;Cohen&quot;, conf.level = 0.95)
 
-        z = 1.1 
-  p-value = 0.271 </code></pre>
+       Estimate    StdErr   LowerCB UpperCB
+Const  0.071016  0.102703 -0.132770  0.2748
+
+Maximum kappa = 0.24
+Kappa/maximum kappa = 0.3
+Confidence level = 95%
+Observations = 2
+Sample size = 100</code></pre>
 </div>
 <div id="optic-nerve-dehiscence" class="section level3">
 <h3>Optic nerve dehiscence</h3>
-<pre><code> Cohen&#39;s Kappa for 2 Raters (Weights: unweighted)
+<pre><code> Percentage agreement (Tolerance=0)
 
  Subjects = 100 
    Raters = 2 
-    Kappa = 0.102 
+  %-agree = 64 </code></pre>
+<pre><code>Call:
+ckap(data = cbind(data1$Optic.nerve.dehiscence, data2$Optic.nerve.dehiscence), 
+    weight = &quot;unweighted&quot;, std.err = &quot;Cohen&quot;, conf.level = 0.95)
 
-        z = 1.93 
-  p-value = 0.0538 </code></pre>
+      Estimate   StdErr  LowerCB UpperCB
+Const  0.10224  0.11970 -0.13527  0.3398
+
+Maximum kappa = 0.15
+Kappa/maximum kappa = 0.67
+Confidence level = 95%
+Observations = 2
+Sample size = 100</code></pre>
 </div>
 <div id="sinus-septation-inserting-on-carotid-canal" class="section level3">
 <h3>Sinus septation inserting on carotid canal</h3>
-<pre><code> Cohen&#39;s Kappa for 2 Raters (Weights: unweighted)
+<pre><code> Percentage agreement (Tolerance=0)
 
  Subjects = 100 
    Raters = 2 
-    Kappa = 0.232 
+  %-agree = 64 </code></pre>
+<pre><code>Call:
+ckap(data = cbind(data1$Sinus.septation.inserting.on.carotid.canal, 
+    data2$Sinus.septation.inserting.on.carotid.canal), weight = &quot;unweighted&quot;, 
+    std.err = &quot;Cohen&quot;, conf.level = 0.95)
 
-        z = 2.79 
-  p-value = 0.00523 </code></pre>
+      Estimate   StdErr  LowerCB UpperCB
+Const 0.232409 0.102345 0.029334  0.4355
+
+Maximum kappa = 0.45
+Kappa/maximum kappa = 0.52
+Confidence level = 95%
+Observations = 2
+Sample size = 100</code></pre>
 </div>
 </div>
 <div id="ethmoid-artery" class="section level2">
 <h2>Ethmoid artery</h2>
 <div id="supraorbital-pneumatization" class="section level3">
 <h3>Supraorbital pneumatization</h3>
-<pre><code> Cohen&#39;s Kappa for 2 Raters (Weights: unweighted)
+<pre><code> Percentage agreement (Tolerance=0)
 
  Subjects = 100 
    Raters = 2 
-    Kappa = 0.355 
+  %-agree = 67 </code></pre>
+<pre><code>Call:
+ckap(data = cbind(data1$Supraortibal.pneumatization, data2$Supraortibal.pneumatization), 
+    weight = &quot;unweighted&quot;, std.err = &quot;Cohen&quot;, conf.level = 0.95)
 
-        z = 3.98 
-  p-value = 6.93e-05 </code></pre>
+      Estimate   StdErr  LowerCB UpperCB
+Const 0.355469 0.091838 0.173241  0.5377
+
+Maximum kappa = 0.55
+Kappa/maximum kappa = 0.65
+Confidence level = 95%
+Observations = 2
+Sample size = 100</code></pre>
 </div>
 </div>
 </div>
