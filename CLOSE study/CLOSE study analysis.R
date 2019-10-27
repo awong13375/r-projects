@@ -1,5 +1,7 @@
 library(plyr)
 library(irr)
+library(psych)
+library(rel)
 setwd("C:/Users/alexw/Google Drive/Desktop files/Dal Med/RIM")
 
 
@@ -81,7 +83,7 @@ data1$Orbital.dehiscence.into.ethmoid.sinus=factor(data1$Orbital.dehiscence.into
 data2$Intact.lamina=factor(data2$Intact.lamina, levels=c("0","1"))
 data2$Orbital.dehiscence.into.ethmoid.sinus=factor(data2$Orbital.dehiscence.into.ethmoid.sinus, levels=c("0","1"))
 
-data=rbind(data1, data2)
+data=rbind(data2, data1)
 
 version=c("Gold standard","MT")
 
@@ -181,31 +183,126 @@ rownames(table1)=c("n","M","M%","F","F%",
 
 # Kappa statistics --------------------------------------------------------
 
-table1stats=c()
+pctagree=c()
+kappacoef=c()
+kappaCI=c()
 
-table1stats=append(table1stats, kappa2(cbind(as.factor(data1$Keros.Classification..Type.I.III.), 
+pctagree=append(pctagree, agree(cbind(as.factor(data1$Keros.Classification..Type.I.III.), 
+                                as.factor(data2$Keros.Classification..Type.I.III.)))$value)
+pctagree=append(pctagree, agree(cbind(data1$Asymmetry..height.difference.1mm., 
+                                         data2$Asymmetry..height.difference.1mm.))$value)
+pctagree=append(pctagree, agree(cbind(data1$Bony.dehiscence, 
+                                         data2$Bony.dehiscence))$value)
+pctagree=append(pctagree, agree(cbind(data1$Intact.lamina, 
+                                         data2$Intact.lamina))$value)
+pctagree=append(pctagree, agree(cbind(data1$Orbital.dehiscence.into.ethmoid.sinus, 
+                                         data2$Orbital.dehiscence.into.ethmoid.sinus))$value)
+pctagree=append(pctagree, agree(cbind(data1$Ucinate.process.contacting.orbital.wall, 
+                                         data2$Ucinate.process.contacting.orbital.wall))$value)
+pctagree=append(pctagree, agree(cbind(data1$Presence, 
+                                         data2$Presence))$value)
+pctagree=append(pctagree, agree(cbind(data1$Carotid.dehiscence, 
+                                         data2$Carotid.dehiscence))$value)
+pctagree=append(pctagree, agree(cbind(data1$Optic.nerve.dehiscence, 
+                                         data2$Optic.nerve.dehiscence))$value)
+pctagree=append(pctagree, agree(cbind(data1$Sinus.septation.inserting.on.carotid.canal, 
+                                         data2$Sinus.septation.inserting.on.carotid.canal))$value)
+pctagree=append(pctagree, agree(cbind(data1$Supraortibal.pneumatization, 
+                                         data2$Supraortibal.pneumatization))$value)
+
+
+kappacoef=append(kappacoef, kappa2(cbind(as.factor(data1$Keros.Classification..Type.I.III.), 
                                              as.factor(data2$Keros.Classification..Type.I.III.)), "equal")$p.value)
-table1stats=append(table1stats, kappa2(cbind(data1$Asymmetry..height.difference.1mm., 
+kappacoef=append(kappacoef, kappa2(cbind(data1$Asymmetry..height.difference.1mm., 
                                              data2$Asymmetry..height.difference.1mm.), "unweighted")$p.value)
-table1stats=append(table1stats, kappa2(cbind(data1$Bony.dehiscence, 
+kappacoef=append(kappacoef, kappa2(cbind(data1$Bony.dehiscence, 
                                              data2$Bony.dehiscence), "unweighted")$p.value)
-table1stats=append(table1stats, kappa2(cbind(data1$Intact.lamina, 
+kappacoef=append(kappacoef, kappa2(cbind(data1$Intact.lamina, 
                                              data2$Intact.lamina), "unweighted")$p.value)
-table1stats=append(table1stats, kappa2(cbind(data1$Orbital.dehiscence.into.ethmoid.sinus, 
+kappacoef=append(kappacoef, kappa2(cbind(data1$Orbital.dehiscence.into.ethmoid.sinus, 
                                              data2$Orbital.dehiscence.into.ethmoid.sinus), "unweighted")$p.value)
-table1stats=append(table1stats, kappa2(cbind(data1$Ucinate.process.contacting.orbital.wall, 
+kappacoef=append(kappacoef, kappa2(cbind(data1$Ucinate.process.contacting.orbital.wall, 
                                              data2$Ucinate.process.contacting.orbital.wall), "unweighted")$p.value)
-table1stats=append(table1stats, kappa2(cbind(data1$Presence, 
+kappacoef=append(kappacoef, kappa2(cbind(data1$Presence, 
                                              data2$Presence), "unweighted")$p.value)
-table1stats=append(table1stats, kappa2(cbind(data1$Carotid.dehiscence, 
+kappacoef=append(kappacoef, kappa2(cbind(data1$Carotid.dehiscence, 
                                              data2$Carotid.dehiscence), "unweighted")$p.value)
-table1stats=append(table1stats, kappa2(cbind(data1$Optic.nerve.dehiscence, 
+kappacoef=append(kappacoef, kappa2(cbind(data1$Optic.nerve.dehiscence, 
                                              data2$Optic.nerve.dehiscence), "unweighted")$p.value)
-table1stats=append(table1stats, kappa2(cbind(data1$Sinus.septation.inserting.on.carotid.canal, 
+kappacoef=append(kappacoef, kappa2(cbind(data1$Sinus.septation.inserting.on.carotid.canal, 
                                              data2$Sinus.septation.inserting.on.carotid.canal), "unweighted")$p.value)
-table1stats=append(table1stats, kappa2(cbind(data1$Supraortibal.pneumatization, 
+kappacoef=append(kappacoef, kappa2(cbind(data1$Supraortibal.pneumatization, 
                                              data2$Supraortibal.pneumatization), "unweighted")$p.value)
+kappacoef=append(kappacoef, kappa2(cbind(as.factor(data1$Keros.Classification..Type.I.III.), 
+                                         as.factor(data2$Keros.Classification..Type.I.III.)), "equal")$p.value)
+kappacoef=append(kappacoef, kappa2(cbind(data1$Asymmetry..height.difference.1mm., 
+                                         data2$Asymmetry..height.difference.1mm.), "unweighted")$p.value)
+kappacoef=append(kappacoef, kappa2(cbind(data1$Bony.dehiscence, 
+                                         data2$Bony.dehiscence), "unweighted")$p.value)
+kappacoef=append(kappacoef, kappa2(cbind(data1$Intact.lamina, 
+                                         data2$Intact.lamina), "unweighted")$p.value)
+kappacoef=append(kappacoef, kappa2(cbind(data1$Orbital.dehiscence.into.ethmoid.sinus, 
+                                         data2$Orbital.dehiscence.into.ethmoid.sinus), "unweighted")$p.value)
+kappacoef=append(kappacoef, kappa2(cbind(data1$Ucinate.process.contacting.orbital.wall, 
+                                         data2$Ucinate.process.contacting.orbital.wall), "unweighted")$p.value)
+kappacoef=append(kappacoef, kappa2(cbind(data1$Presence, 
+                                         data2$Presence), "unweighted")$p.value)
+kappacoef=append(kappacoef, kappa2(cbind(data1$Carotid.dehiscence, 
+                                         data2$Carotid.dehiscence), "unweighted")$p.value)
+kappacoef=append(kappacoef, kappa2(cbind(data1$Optic.nerve.dehiscence, 
+                                         data2$Optic.nerve.dehiscence), "unweighted")$p.value)
+kappacoef=append(kappacoef, kappa2(cbind(data1$Sinus.septation.inserting.on.carotid.canal, 
+                                         data2$Sinus.septation.inserting.on.carotid.canal), "unweighted")$p.value)
+kappacoef=append(kappacoef, kappa2(cbind(data1$Supraortibal.pneumatization, 
+                                         data2$Supraortibal.pneumatization), "unweighted")$p.value)
 
-table1stats=as.data.frame(table1stats)
+
+kappaCI=append(kappaCI, cohen.kappa(cbind(as.factor(data1$Keros.Classification..Type.I.III.), 
+                                         as.factor(data2$Keros.Classification..Type.I.III.)), "equal")$p.value)
+kappaCI=append(kappaCI, kappa2(cbind(data1$Asymmetry..height.difference.1mm., 
+                                         data2$Asymmetry..height.difference.1mm.), "unweighted")$p.value)
+kappaCI=append(kappaCI, kappa2(cbind(data1$Bony.dehiscence, 
+                                         data2$Bony.dehiscence), "unweighted")$p.value)
+kappaCI=append(kappaCI, kappa2(cbind(data1$Intact.lamina, 
+                                         data2$Intact.lamina), "unweighted")$p.value)
+kappaCI=append(kappaCI, kappa2(cbind(data1$Orbital.dehiscence.into.ethmoid.sinus, 
+                                         data2$Orbital.dehiscence.into.ethmoid.sinus), "unweighted")$p.value)
+kappaCI=append(kappaCI, kappa2(cbind(data1$Ucinate.process.contacting.orbital.wall, 
+                                         data2$Ucinate.process.contacting.orbital.wall), "unweighted")$p.value)
+kappaCI=append(kappaCI, kappa2(cbind(data1$Presence, 
+                                         data2$Presence), "unweighted")$p.value)
+kappaCI=append(kappaCI, kappa2(cbind(data1$Carotid.dehiscence, 
+                                         data2$Carotid.dehiscence), "unweighted")$p.value)
+kappaCI=append(kappaCI, kappa2(cbind(data1$Optic.nerve.dehiscence, 
+                                         data2$Optic.nerve.dehiscence), "unweighted")$p.value)
+kappaCI=append(kappaCI, kappa2(cbind(data1$Sinus.septation.inserting.on.carotid.canal, 
+                                         data2$Sinus.septation.inserting.on.carotid.canal), "unweighted")$p.value)
+kappaCI=append(kappaCI, kappa2(cbind(data1$Supraortibal.pneumatization, 
+                                         data2$Supraortibal.pneumatization), "unweighted")$p.value)
+kappaCI=append(kappaCI, kappa2(cbind(as.factor(data1$Keros.Classification..Type.I.III.), 
+                                         as.factor(data2$Keros.Classification..Type.I.III.)), "equal")$p.value)
+kappaCI=append(kappaCI, kappa2(cbind(data1$Asymmetry..height.difference.1mm., 
+                                         data2$Asymmetry..height.difference.1mm.), "unweighted")$p.value)
+kappaCI=append(kappaCI, kappa2(cbind(data1$Bony.dehiscence, 
+                                         data2$Bony.dehiscence), "unweighted")$p.value)
+kappaCI=append(kappaCI, kappa2(cbind(data1$Intact.lamina, 
+                                         data2$Intact.lamina), "unweighted")$p.value)
+kappaCI=append(kappaCI, kappa2(cbind(data1$Orbital.dehiscence.into.ethmoid.sinus, 
+                                         data2$Orbital.dehiscence.into.ethmoid.sinus), "unweighted")$p.value)
+kappaCI=append(kappaCI, kappa2(cbind(data1$Ucinate.process.contacting.orbital.wall, 
+                                         data2$Ucinate.process.contacting.orbital.wall), "unweighted")$p.value)
+kappaCI=append(kappaCI, kappa2(cbind(data1$Presence, 
+                                         data2$Presence), "unweighted")$p.value)
+kappaCI=append(kappaCI, kappa2(cbind(data1$Carotid.dehiscence, 
+                                         data2$Carotid.dehiscence), "unweighted")$p.value)
+kappaCI=append(kappaCI, kappa2(cbind(data1$Optic.nerve.dehiscence, 
+                                         data2$Optic.nerve.dehiscence), "unweighted")$p.value)
+kappaCI=append(kappaCI, kappa2(cbind(data1$Sinus.septation.inserting.on.carotid.canal, 
+                                         data2$Sinus.septation.inserting.on.carotid.canal), "unweighted")$p.value)
+kappaCI=append(kappaCI, kappa2(cbind(data1$Supraortibal.pneumatization, 
+                                         data2$Supraortibal.pneumatization), "unweighted")$p.value)
+
+
+kappacoef=as.data.frame(kappacoef)
 rownames(table1stats)=c("keros","asym","bony dehisc","intact lamina","orbital dehisc","ucinate process",
                         "onodi","carotid dehisc","ON dehisc","sinus sept","supraorb pneum")

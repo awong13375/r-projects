@@ -26,6 +26,8 @@ opts_knit$set(width=75)
 ```{r echo=FALSE, eval=TRUE, warning=FALSE, message=FALSE, error=FALSE, results="hide"}
 library(plyr)
 library(irr)
+library(rel)
+library(psych)
 setwd("C:/Users/alexw/Google Drive/Desktop files/Dal Med/RIM")
 
 ```
@@ -143,50 +145,61 @@ table1
 ## Cribriform Plate
 ### Keros classification
 ```{r}
-kappa2(cbind(as.factor(data1$Keros.Classification..Type.I.III.), as.factor(data2$Keros.Classification..Type.I.III.)), "equal")
+agree(cbind(as.factor(data1$Keros.Classification..Type.I.III.), as.factor(data2$Keros.Classification..Type.I.III.)))
+ckap(data=cbind(as.factor(data1$Keros.Classification..Type.I.III.), as.factor(data2$Keros.Classification..Type.I.III.)), weight="linear",std.err = "Cohen", conf.level = 0.95)
 ```
 ### Asymmetry
 ```{r}
-kappa2(cbind(data1$Asymmetry..height.difference.1mm.,data2$Asymmetry..height.difference.1mm.), "unweighted")
+agree(cbind(data1$Asymmetry..height.difference.1mm.,data2$Asymmetry..height.difference.1mm.))
+ckap(data=cbind(data1$Asymmetry..height.difference.1mm.,data2$Asymmetry..height.difference.1mm.), weight="unweighted", std.err = "Cohen", conf.level = 0.95)
 ```
 ### Bony dehiscence
 ```{r}
-kappa2(cbind(data1$Bony.dehiscence,data2$Bony.dehiscence), "unweighted")
+agree(cbind(data1$Bony.dehiscence,data2$Bony.dehiscence))
+ckap(data=cbind(data1$Bony.dehiscence,data2$Bony.dehiscence), weight="unweighted", std.err = "Cohen", conf.level = 0.95)
 ```
 ## Lamina papyracea
 ### Intact lamina
 ```{r}
-kappa2(cbind(data1$Intact.lamina,data2$Intact.lamina), "unweighted")
+agree(cbind(data1$Intact.lamina,data2$Intact.lamina))
+ckap(data=cbind(data1$Intact.lamina,data2$Intact.lamina), weight="unweighted", std.err = "Cohen", conf.level = 0.95)
 ```
 ### Orbital dehiscence into ethmoid sinus
 ```{r}
-kappa2(cbind(data1$Orbital.dehiscence.into.ethmoid.sinus,data2$Orbital.dehiscence.into.ethmoid.sinus), "unweighted")
+agree(cbind(data1$Orbital.dehiscence.into.ethmoid.sinus,data2$Orbital.dehiscence.into.ethmoid.sinus))
+ckap(cbind(data1$Orbital.dehiscence.into.ethmoid.sinus,data2$Orbital.dehiscence.into.ethmoid.sinus), weight="unweighted", std.err = "Cohen", conf.level = 0.95)
 ```
 ### Ucinate process contacting orbital wall
 ```{r}
-kappa2(cbind(data1$Ucinate.process.contacting.orbital.wall,data2$Ucinate.process.contacting.orbital.wall), "unweighted")
+agree(cbind(data1$Ucinate.process.contacting.orbital.wall,data2$Ucinate.process.contacting.orbital.wall))
+ckap(cbind(data1$Ucinate.process.contacting.orbital.wall,data2$Ucinate.process.contacting.orbital.wall), weight="unweighted", std.err = "Cohen", conf.level = 0.95)
 ```
 ## Onodi cell presence
 
 ```{r}
-kappa2(cbind(data1$Presence,data2$Presence), "unweighted")
+agree(cbind(data1$Presence,data2$Presence))
+ckap(cbind(data1$Presence,data2$Presence), weight="unweighted", std.err = "Cohen", conf.level = 0.95)
 ```
 ## Sphenoid sinus
 ### Carotid artery dehiscence
 ```{r}
-kappa2(cbind(data1$Carotid.dehiscence,data2$Carotid.dehiscence), "unweighted")
+agree(cbind(data1$Carotid.dehiscence,data2$Carotid.dehiscence))
+ckap(cbind(data1$Carotid.dehiscence,data2$Carotid.dehiscence), weight="unweighted", std.err = "Cohen", conf.level = 0.95)
 ```
 ### Optic nerve dehiscence
 ```{r}
-kappa2(cbind(data1$Optic.nerve.dehiscence,data2$Optic.nerve.dehiscence), "unweighted")
+agree(cbind(data1$Optic.nerve.dehiscence,data2$Optic.nerve.dehiscence))
+ckap(cbind(data1$Optic.nerve.dehiscence,data2$Optic.nerve.dehiscence), weight="unweighted", std.err = "Cohen", conf.level = 0.95)
 ```
 ### Sinus septation inserting on carotid canal
 ```{r}
-kappa2(cbind(data1$Sinus.septation.inserting.on.carotid.canal,data2$Sinus.septation.inserting.on.carotid.canal), "unweighted")
+agree(cbind(data1$Sinus.septation.inserting.on.carotid.canal,data2$Sinus.septation.inserting.on.carotid.canal))
+ckap(cbind(data1$Sinus.septation.inserting.on.carotid.canal,data2$Sinus.septation.inserting.on.carotid.canal), weight="unweighted", std.err = "Cohen", conf.level = 0.95)
 ```
 ## Ethmoid artery
 ### Supraorbital pneumatization
 ```{r}
-kappa2(cbind(data1$Supraortibal.pneumatization,data2$Supraortibal.pneumatization), "unweighted")
+agree(cbind(data1$Supraortibal.pneumatization,data2$Supraortibal.pneumatization))
+ckap(cbind(data1$Supraortibal.pneumatization,data2$Supraortibal.pneumatization), weight="unweighted", std.err = "Cohen", conf.level = 0.95)
 
 ```
