@@ -127,6 +127,15 @@ spotlight_pt_char=merge(pt_char, combined, by="PID", all.y=TRUE)
 
 #write.csv(spotlight_pt_char, "SPOTLIGHT database merged.csv")
 
+# Dal Data Extraction from GS ---------------------------------------------
+
+dal_sheet <- as.data.frame(gs_read(for_gs, ws="DalV3"))
+dal_sheet[dal_sheet==""]<-NA
+
+keep=c("Dal_ID","Age","Gender", "Anticoagulation", "HTN", "Warfarin",
+       "Deep=1/Lobar=2/PF=3", "IVH", "Time of onset to CT (hrs)","Quantomo","S-ABC/2","DeepMedic"
+       )
+dal_sheet=dal_sheet[keep]
 
 # Table 1 -----------------------------------------------------------------
 predict=read.csv("PREDICTv6 merged database.csv")
