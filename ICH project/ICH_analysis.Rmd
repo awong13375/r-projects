@@ -547,7 +547,7 @@ Predict_QT_ABC2=(blandr.draw(subset(data, data$study=="Predict")$'ABC/2_SN',
                            y.plot.mode = "difference", plotProportionalBias = FALSE,
                            plotProportionalBias.se = TRUE, assume.differences.are.normal = TRUE) 
                + xlab("Mean ICH volume (mL)")
-               + ylab("Quantomo - ABC/2 (mL)")
+               + ylab("Ground Truth - ABC/2 (mL)")
                + theme(
                  panel.border = element_blank(),  
                  panel.grid.major = element_blank(),
@@ -574,7 +574,7 @@ Predict_QT_DM=(blandr.draw(subset(data, data$study=="Predict")$NewQuantomo,
                               y.plot.mode = "difference", plotProportionalBias = FALSE,
                               plotProportionalBias.se = TRUE, assume.differences.are.normal = TRUE) 
                   + xlab("Mean ICH volume (mL)")
-                  + ylab("Deep Medic - Quantomo (mL)")
+                  + ylab("Deep Medic - Ground Truth (mL)")
                   + theme(
                     panel.border = element_blank(),  
                     panel.grid.major = element_blank(),
@@ -602,7 +602,7 @@ Spotlight_QT_ABC2=(blandr.draw(subset(data, data$study=="Spotlight")$'ABC/2_SN',
                              y.plot.mode = "difference", plotProportionalBias = FALSE,
                              plotProportionalBias.se = TRUE, assume.differences.are.normal = TRUE) 
                  + xlab("Mean ICH volume (mL)")
-                 + ylab("Quantomo - ABC/2 (mL)")
+                 + ylab("Ground Truth - ABC/2 (mL)")
                  + theme(
                    panel.border = element_blank(),  
                    panel.grid.major = element_blank(),
@@ -629,7 +629,7 @@ Spotlight_QT_DM=(blandr.draw(subset(data, data$study=="Spotlight")$NewQuantomo,
                            y.plot.mode = "difference", plotProportionalBias = FALSE,
                            plotProportionalBias.se = TRUE, assume.differences.are.normal = TRUE) 
                + xlab("Mean ICH volume (mL)")
-               + ylab("Deep Medic - Quantomo (mL)")
+               + ylab("Deep Medic - Ground Truth (mL)")
                + theme(
                  panel.border = element_blank(),  
                  panel.grid.major = element_blank(),
@@ -657,7 +657,7 @@ Combined_QT_ABC2=(blandr.draw(data$'ABC/2_SN',
                             y.plot.mode = "difference", plotProportionalBias = FALSE,
                             plotProportionalBias.se = TRUE, assume.differences.are.normal = TRUE) 
                 + xlab("Mean ICH volume (mL)")
-                + ylab("Quantomo - ABC/2 (mL)")
+                + ylab("Ground Truth - ABC/2 (mL)")
                 + theme(
                   panel.border = element_blank(),  
                   panel.grid.major = element_blank(),
@@ -684,7 +684,7 @@ Combined_QT_DM=(blandr.draw(data$NewQuantomo,
                                y.plot.mode = "difference", plotProportionalBias = FALSE,
                                plotProportionalBias.se = TRUE, assume.differences.are.normal = TRUE) 
                    + xlab("Mean ICH volume (mL)")
-                   + ylab("Deep Medic - Quantomo (mL)")
+                   + ylab("Deep Medic - Ground Truth (mL)")
                    + theme(
                      panel.border = element_blank(),  
                      panel.grid.major = element_blank(),
@@ -798,7 +798,7 @@ cat("Proportion of patients with hematoma expansion by DM measure = ",length(lev
 
 ## Patients with hematoma expansion
 ```{r}
-expansion
+
 ```
 
 

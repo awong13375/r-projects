@@ -35,15 +35,15 @@ f.close()
 
 #Generate text file directly from file directory
 for r,d,f in os.walk(directory):
-    if r==r"C:\Users\alexw\Desktop\STOPIT Followup Cases\STOPIT_DCM_NII":
-        txt=open("stopit_dcm.txt","w+")
+    if r==r"C:\Users\alexw\Desktop\DAL ICH NIIs\DAL_ICH_DCM_NII":
+        txt=open("dal_dcm.txt","w+")
         for file in f:
             print(file)
             txt.write(file)
             txt.write("\n")
         txt.close()
-    if r==r"C:\Users\alexw\Desktop\STOPIT Followup Cases\STOPIT_MHD_NII":
-        txt=open("stopit_mhd.txt","w+")
+    if r==r"C:\Users\alexw\Desktop\DAL ICH NIIs\DAL_ICH_MHD_NII":
+        txt=open("dal_mhd.txt","w+")
         for file in f:
             txt.write(file)
             txt.write("\n")

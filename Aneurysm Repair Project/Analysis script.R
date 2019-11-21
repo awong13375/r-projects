@@ -125,18 +125,94 @@ data=subset(data, data$GOS.at.discharge!="NA")
 data=subset(data, data$GOS.at.6....3.months!="NA")
 data=subset(data, data$GOS.at.12....3.months!="NA")
 
+#### ANEURYSM LOCATION TABLE ####
+
+for(treattype in c("Coil","Clip")){
+  altab=c()
+  datatreat=subset(data, data$Treatment==treattype)
+  altab=append(altab, nrow(subset(datatreat, datatreat$A1.location=="Acomm")))
+  altab=append(altab, nrow(subset(datatreat, datatreat$A1.location=="Acomm"))/nrow(datatreat)*100)
+  altab=append(altab, nrow(subset(datatreat, datatreat$A1.location=="ACA")))
+  altab=append(altab, nrow(subset(datatreat, datatreat$A1.location=="ACA"))/nrow(datatreat)*100)
+  altab=append(altab, nrow(subset(datatreat, datatreat$A1.location=="ICA")))
+  altab=append(altab, nrow(subset(datatreat, datatreat$A1.location=="ICA"))/nrow(datatreat)*100)
+  altab=append(altab, nrow(subset(datatreat, datatreat$A1.location=="PC")))
+  altab=append(altab, nrow(subset(datatreat, datatreat$A1.location=="PC"))/nrow(datatreat)*100)
+  altab=append(altab, nrow(subset(datatreat, datatreat$A1.location=="MCA")))
+  altab=append(altab, nrow(subset(datatreat, datatreat$A1.location=="MCA"))/nrow(datatreat)*100)
+  altab=append(altab, nrow(subset(datatreat, datatreat$A1.location=="Pcomm")))
+  altab=append(altab, nrow(subset(datatreat, datatreat$A1.location=="Pcomm"))/nrow(datatreat)*100)
+  altab=append(altab, nrow(subset(datatreat, datatreat$A1.location=="PCA")))
+  altab=append(altab, nrow(subset(datatreat, datatreat$A1.location=="PCA"))/nrow(datatreat)*100)
+  altab=append(altab, nrow(subset(datatreat, datatreat$A1.location=="SCA")))
+  altab=append(altab, nrow(subset(datatreat, datatreat$A1.location=="SCA"))/nrow(datatreat)*100)
+  altab=append(altab, nrow(subset(datatreat, datatreat$A1.location=="BA")))
+  altab=append(altab, nrow(subset(datatreat, datatreat$A1.location=="BA"))/nrow(datatreat)*100)
+  altab=append(altab, nrow(subset(datatreat, datatreat$A1.location=="AICA")))
+  altab=append(altab, nrow(subset(datatreat, datatreat$A1.location=="AICA"))/nrow(datatreat)*100)
+  altab=append(altab, nrow(subset(datatreat, datatreat$A1.location=="VBJ")))
+  altab=append(altab, nrow(subset(datatreat, datatreat$A1.location=="VBJ"))/nrow(datatreat)*100)
+  altab=append(altab, nrow(subset(datatreat, datatreat$A1.location=="VA")))
+  altab=append(altab, nrow(subset(datatreat, datatreat$A1.location=="VA"))/nrow(datatreat)*100)
+  altab=append(altab, nrow(subset(datatreat, datatreat$A1.location=="PICA")))
+  altab=append(altab, nrow(subset(datatreat, datatreat$A1.location=="PICA"))/nrow(datatreat)*100)
+  
+  if (treattype=="Coil"){
+    result=as.data.frame(altab)
+  } else {
+    result=cbind(result, altab)
+  }
+  
+  if (treattype=="Clip"){
+    altab=c()
+    altab=append(altab, nrow(subset(data, data$A1.location=="Acomm")))
+    altab=append(altab, nrow(subset(data, data$A1.location=="Acomm"))/nrow(data)*100)
+    altab=append(altab, nrow(subset(data, data$A1.location=="ACA")))
+    altab=append(altab, nrow(subset(data, data$A1.location=="ACA"))/nrow(data)*100)
+    altab=append(altab, nrow(subset(data, data$A1.location=="ICA")))
+    altab=append(altab, nrow(subset(data, data$A1.location=="ICA"))/nrow(data)*100)
+    altab=append(altab, nrow(subset(data, data$A1.location=="PC")))
+    altab=append(altab, nrow(subset(data, data$A1.location=="PC"))/nrow(data)*100)
+    altab=append(altab, nrow(subset(data, data$A1.location=="MCA")))
+    altab=append(altab, nrow(subset(data, data$A1.location=="MCA"))/nrow(data)*100)
+    altab=append(altab, nrow(subset(data, data$A1.location=="Pcomm")))
+    altab=append(altab, nrow(subset(data, data$A1.location=="Pcomm"))/nrow(data)*100)
+    altab=append(altab, nrow(subset(data, data$A1.location=="PCA")))
+    altab=append(altab, nrow(subset(data, data$A1.location=="PCA"))/nrow(data)*100)
+    altab=append(altab, nrow(subset(data, data$A1.location=="SCA")))
+    altab=append(altab, nrow(subset(data, data$A1.location=="SCA"))/nrow(data)*100)
+    altab=append(altab, nrow(subset(data, data$A1.location=="BA")))
+    altab=append(altab, nrow(subset(data, data$A1.location=="BA"))/nrow(data)*100)
+    altab=append(altab, nrow(subset(data, data$A1.location=="AICA")))
+    altab=append(altab, nrow(subset(data, data$A1.location=="AICA"))/nrow(data)*100)
+    altab=append(altab, nrow(subset(data, data$A1.location=="VBJ")))
+    altab=append(altab, nrow(subset(data, data$A1.location=="VBJ"))/nrow(data)*100)
+    altab=append(altab, nrow(subset(data, data$A1.location=="VA")))
+    altab=append(altab, nrow(subset(data, data$A1.location=="VA"))/nrow(data)*100)
+    altab=append(altab, nrow(subset(data, data$A1.location=="PICA")))
+    altab=append(altab, nrow(subset(data, data$A1.location=="PICA"))/nrow(data)*100)
+    result=cbind(result, altab)
+  }
+  
+}
+colnames(result)=c("Coil","Clip","Total")
+rownames(result)=c("Acomm","1%","ACA","2%","ICA","3%","PC","4%","MCA","5%","Pcomm","6%","PCA","7%",
+                   "SCA","8%","BA","9%","AICA","10%","VBJ","11%","VA","12%","PICA","13%")
+#write.csv(result, "C:/Users/alexw/Google Drive/Desktop files/Dal Med/Aneurysm Repair Project/Data Analysis/Results/aneurysm location proportions.csv")
+####
+
 #Recategorize aneurysm location into anterior and posterior circulation
 data$A1.location=as.character(data$A1.location)
 data$A1.location[data$A1.location=="ACA" | 
                  data$A1.location=="Acomm"|
                  data$A1.location=="ICA"|
                  data$A1.location=="MCA"|
+                 data$A1.location=="Pcomm"|
                  data$A1.location=="PC"
                  ]="Anterior"
 data$A1.location[data$A1.location=="AICA" | 
                  data$A1.location=="BA"|
                  data$A1.location=="PCA"|
-                 data$A1.location=="Pcomm"|
                  data$A1.location=="PICA"|
                  data$A1.location=="SCA"|
                  data$A1.location=="VA"|
@@ -584,6 +660,13 @@ data$Age.at.admission0[data$Age.at.admission<50]=1
 data$Age.at.admission1[data$Age.at.admission>=50]=1
 data$Age.at.admission1 <- factor(data$Age.at.admission1, levels=c(0,1), ordered=FALSE)
 
+##Recategorize aneurysm location
+data$A1.location=as.character(data$A1.location)
+data$A1.location[data$A1.location=="Anterior"]=0
+data$A1.location[data$A1.location=="Posterior"]=1
+data$A1.location <- factor(data$A1.location, levels=c(0,1), ordered=FALSE)
+
+
 ##Set factor level order for HTN
 data$HTN <- factor(data$HTN, levels=c(0,1), ordered=FALSE)
 
@@ -614,6 +697,14 @@ ci <- confint(modelage)
 exp(coef(modelage))
 exp(rbind(OR = coef(modelage), ci))
 
+modelaloc <- polr(GOS.at.discharge ~ A1.location, data = data, Hess=TRUE)
+ctable <- coef(summary(modelaloc))
+p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
+ctable <- cbind(ctable, "p value" = p)
+ci <- confint(modelaloc)
+exp(coef(modelaloc))
+exp(rbind(OR = coef(modelaloc), ci))
+
 ###GOS at 6 months
 modeltreatment <- polr(GOS.at.6....3.months ~ Treatment, data = data, Hess=TRUE)
 ctable <- coef(summary(modeltreatment))
@@ -638,6 +729,15 @@ ctable <- cbind(ctable, "p value" = p)
 ci <- confint(modelage)
 exp(coef(modelage))
 exp(rbind(OR = coef(modelage), ci))
+
+modelaloc <- polr(GOS.at.6....3.months ~ A1.location, data = data, Hess=TRUE)
+ctable <- coef(summary(modelaloc))
+p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
+ctable <- cbind(ctable, "p value" = p)
+ci <- confint(modelaloc)
+exp(coef(modelaloc))
+exp(rbind(OR = coef(modelaloc), ci))
+
 
 ###GOS at 12 months
 modeltreatment <- polr(GOS.at.12....3.months ~ Treatment, data = data, Hess=TRUE)
@@ -664,11 +764,19 @@ ci <- confint(modelage)
 exp(coef(modelage))
 exp(rbind(OR = coef(modelage), ci))
 
+modelaloc <- polr(GOS.at.12....3.months ~ A1.location, data = data, Hess=TRUE)
+ctable <- coef(summary(modelaloc))
+p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
+ctable <- cbind(ctable, "p value" = p)
+ci <- confint(modelaloc)
+exp(coef(modelaloc))
+exp(rbind(OR = coef(modelaloc), ci))
+
 
 #Adjusted regression analysis
 
 ##GOS at discharge
-modeladjusted <- polr(GOS.at.discharge ~ Treatment + HTN + Age.at.admission1, data = data, Hess=TRUE)
+modeladjusted <- polr(GOS.at.discharge ~ Treatment + HTN + Age.at.admission1 + A1.location, data = data, Hess=TRUE)
 ctable <- coef(summary(modeladjusted))
 p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
 ctable <- cbind(ctable, "p value" = p)
@@ -678,7 +786,7 @@ exp(cbind(OR = coef(modeladjusted), ci))
 PseudoR2(modeladjusted, which="all")
 
 modeladjustedinteract <- polr(GOS.at.discharge ~ Treatment + HTN + Age.at.admission1 
-                              + HTN*Age.at.admission1, data = data, Hess=TRUE)
+                              + A1.location + HTN*Age.at.admission1, data = data, Hess=TRUE)
 ctable <- coef(summary(modeladjustedinteract))
 p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
 ctable <- cbind(ctable, "p value" = p)
@@ -702,7 +810,7 @@ pulkrob.chisq(modeladjusted, c("Treatment"))
 pulkrob.deviance(modeladjusted, c("Treatment"))
 
 ##GOS at 6 months
-modeladjusted <- polr(GOS.at.6....3.months ~ Treatment + HTN + Age.at.admission1, data = data, Hess=TRUE)
+modeladjusted <- polr(GOS.at.6....3.months ~ Treatment + HTN + Age.at.admission1 + A1.location, data = data, Hess=TRUE)
 ctable <- coef(summary(modeladjusted))
 p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
 ctable <- cbind(ctable, "p value" = p)
@@ -712,7 +820,7 @@ exp(cbind(OR = coef(modeladjusted), ci))
 PseudoR2(modeladjusted, which="all")
 
 modeladjustedinteract <- polr(GOS.at.6....3.months ~ Treatment + HTN + Age.at.admission1 
-                      + HTN*Age.at.admission1, data = data, Hess=TRUE)
+                      + A1.location + HTN*Age.at.admission1, data = data, Hess=TRUE)
 ctable <- coef(summary(modeladjustedinteract))
 p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
 ctable <- cbind(ctable, "p value" = p)
@@ -736,7 +844,7 @@ pulkrob.chisq(modeladjusted, c("Treatment"))
 pulkrob.deviance(modeladjusted, c("Treatment"))
 
 ##GOS at 12 months
-modeladjusted <- polr(GOS.at.12....3.months ~ Treatment + HTN + Age.at.admission1, data = data, Hess=TRUE)
+modeladjusted <- polr(GOS.at.12....3.months ~ Treatment + HTN + Age.at.admission1 + A1.location, data = data, Hess=TRUE)
 ctable <- coef(summary(modeladjusted))
 p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
 ctable <- cbind(ctable, "p value" = p)
@@ -747,7 +855,7 @@ PseudoR2(modeladjusted, which="all")
 
 
 modeladjustedinteract <- polr(GOS.at.12....3.months ~ Treatment + HTN + Age.at.admission1 
-                      + HTN*Age.at.admission1, data = data, Hess=TRUE)
+                      + A1.location + HTN*Age.at.admission1, data = data, Hess=TRUE)
 ctable <- coef(summary(modeladjustedinteract))
 p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
 ctable <- cbind(ctable, "p value" = p)
@@ -801,7 +909,7 @@ PseudoR2(modelcrude, which="all")
 ctable
 
 
-modeladjusted <- polr(GOS.at.discharge ~ Treatment + HTN + Age.at.admission1, data = data1, Hess=TRUE)
+modeladjusted <- polr(GOS.at.discharge ~ Treatment + HTN + Age.at.admission1 + A1.location, data = data1, Hess=TRUE)
 ctable <- coef(summary(modeladjusted))
 p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
 ctable <- cbind(ctable, "p value" = p)
@@ -825,7 +933,7 @@ PseudoR2(modelcrude, which="all")
 ctable
 
 
-modeladjusted <- polr(GOS.at.6....3.months ~ Treatment + HTN + Age.at.admission1, data = data1, Hess=TRUE)
+modeladjusted <- polr(GOS.at.6....3.months ~ Treatment + HTN + Age.at.admission1 + A1.location, data = data1, Hess=TRUE)
 ctable <- coef(summary(modeladjusted))
 p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
 ctable <- cbind(ctable, "p value" = p)
@@ -850,7 +958,7 @@ PseudoR2(modelcrude, which="all")
 ctable
 
 
-modeladjusted <- polr(GOS.at.12....3.months ~ Treatment + HTN + Age.at.admission1, data = data1, Hess=TRUE)
+modeladjusted <- polr(GOS.at.12....3.months ~ Treatment + HTN + Age.at.admission1 + A1.location, data = data1, Hess=TRUE)
 ctable <- coef(summary(modeladjusted))
 p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
 ctable <- cbind(ctable, "p value" = p)
@@ -875,7 +983,7 @@ PseudoR2(modelcrude, which="all")
 ctable
 
 
-modeladjusted <- polr(GOS.at.discharge ~ Treatment + HTN + Age.at.admission1, data = data2, Hess=TRUE)
+modeladjusted <- polr(GOS.at.discharge ~ Treatment + HTN + Age.at.admission1 + A1.location, data = data2, Hess=TRUE)
 ctable <- coef(summary(modeladjusted))
 p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
 ctable <- cbind(ctable, "p value" = p)
@@ -899,7 +1007,7 @@ PseudoR2(modelcrude, which="all")
 ctable
 
 
-modeladjusted <- polr(GOS.at.6....3.months ~ Treatment + HTN + Age.at.admission1, data = data2, Hess=TRUE)
+modeladjusted <- polr(GOS.at.6....3.months ~ Treatment + HTN + Age.at.admission1 + A1.location, data = data2, Hess=TRUE)
 ctable <- coef(summary(modeladjusted))
 p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
 ctable <- cbind(ctable, "p value" = p)
@@ -924,7 +1032,7 @@ PseudoR2(modelcrude, which="all")
 ctable
 
 
-modeladjusted <- polr(GOS.at.12....3.months ~ Treatment + HTN + Age.at.admission1, data = data2, Hess=TRUE)
+modeladjusted <- polr(GOS.at.12....3.months ~ Treatment + HTN + Age.at.admission1 + A1.location, data = data2, Hess=TRUE)
 ctable <- coef(summary(modeladjusted))
 p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
 ctable <- cbind(ctable, "p value" = p)
@@ -950,7 +1058,7 @@ PseudoR2(modelcrude, which="all")
 ctable
 
 
-modeladjusted <- polr(GOS.at.discharge ~ Treatment + HTN + Age.at.admission1, data = data3, Hess=TRUE)
+modeladjusted <- polr(GOS.at.discharge ~ Treatment + HTN + Age.at.admission1 + A1.location, data = data3, Hess=TRUE)
 ctable <- coef(summary(modeladjusted))
 p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
 ctable <- cbind(ctable, "p value" = p)
@@ -974,7 +1082,7 @@ PseudoR2(modelcrude, which="all")
 ctable
 
 
-modeladjusted <- polr(GOS.at.6....3.months ~ Treatment + HTN + Age.at.admission1, data = data3, Hess=TRUE)
+modeladjusted <- polr(GOS.at.6....3.months ~ Treatment + HTN + Age.at.admission1 + A1.location, data = data3, Hess=TRUE)
 ctable <- coef(summary(modeladjusted))
 p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
 ctable <- cbind(ctable, "p value" = p)
@@ -999,7 +1107,7 @@ PseudoR2(modelcrude, which="all")
 ctable
 
 
-modeladjusted <- polr(GOS.at.12....3.months ~ Treatment + HTN + Age.at.admission1, data = data3, Hess=TRUE)
+modeladjusted <- polr(GOS.at.12....3.months ~ Treatment + HTN + Age.at.admission1 + A1.location, data = data3, Hess=TRUE)
 ctable <- coef(summary(modeladjusted))
 p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
 ctable <- cbind(ctable, "p value" = p)
@@ -1066,7 +1174,7 @@ exp(cbind(OR = coef(modelpneum), confint(modelpneum)))
 
 #Adjusted models
 
-modelmort=glm(Mortality ~ Treatment + HTN + Age.at.admission1, data=data, family="binomial")
+modelmort=glm(Mortality ~ Treatment + HTN + Age.at.admission1 + A1.location, data=data, family="binomial")
 summary(modelmort)
 exp(coef(modelmort))
 exp(cbind(OR = coef(modelmort), confint(modelmort)))
@@ -1074,7 +1182,7 @@ logitgof(data$Mortality, fitted(modelmort))
 rocmort=roc(data$Mortality, predict(modelmort,type=c("response")), ci=TRUE, auc=TRUE)
 plot.roc(rocmort, print.auc=TRUE, xlim=c(1,0), xlab="1-Specificity", asp=NA)
 
-modelrebleed=glm(Rebleed ~ Treatment + HTN + Age.at.admission1, data=data, family="binomial")
+modelrebleed=glm(Rebleed ~ Treatment + HTN + Age.at.admission1 + A1.location, data=data, family="binomial")
 summary(modelrebleed)
 exp(coef(modelrebleed))
 exp(cbind(OR = coef(modelrebleed), confint(modelrebleed)))
@@ -1083,7 +1191,7 @@ rocrebleed=roc(data$Rebleed, predict(modelrebleed,type=c("response")), ci=TRUE, 
 plot.roc(rocrebleed, print.auc=TRUE, xlim=c(1,0), xlab="1-Specificity", asp=NA)
 
 
-modelvasospasm=glm(Vasospasm ~ Treatment + HTN + Age.at.admission1, data=data, family="binomial")
+modelvasospasm=glm(Vasospasm ~ Treatment + HTN + Age.at.admission1 + A1.location, data=data, family="binomial")
 summary(modelvasospasm)
 exp(coef(modelvasospasm))
 exp(cbind(OR = coef(modelvasospasm), confint(modelvasospasm)))
@@ -1092,7 +1200,7 @@ rocvasospasm=roc(data$Vasospasm, predict(modelvasospasm,type=c("response")), ci=
 plot.roc(rocvasospasm, print.auc=TRUE, xlim=c(1,0), xlab="1-Specificity", asp=NA)
 
 
-modelinfarct=glm(Infarct ~ Treatment + HTN + Age.at.admission1, data=data, family="binomial")
+modelinfarct=glm(Infarct ~ Treatment + HTN + Age.at.admission1 + A1.location, data=data, family="binomial")
 summary(modelinfarct)
 exp(coef(modelinfarct))
 exp(cbind(OR = coef(modelinfarct), confint(modelinfarct)))
@@ -1101,7 +1209,7 @@ rocinfarct=roc(data$Infarct, predict(modelinfarct,type=c("response")), ci=TRUE, 
 plot.roc(rocinfarct, print.auc=TRUE, xlim=c(1,0), xlab="1-Specificity", asp=NA)
 
 
-modelhydro=glm(Hydrocephalus ~ Treatment + HTN + Age.at.admission1, data=data, family="binomial")
+modelhydro=glm(Hydrocephalus ~ Treatment + HTN + Age.at.admission1 + A1.location, data=data, family="binomial")
 summary(modelhydro)
 exp(coef(modelhydro))
 exp(cbind(OR = coef(modelhydro), confint(modelhydro)))
@@ -1110,7 +1218,7 @@ rochydro=roc(data$Hydrocephalus, predict(modelhydro,type=c("response")), ci=TRUE
 plot.roc(rochydro, print.auc=TRUE, xlim=c(1,0), xlab="1-Specificity", asp=NA)
 
 
-modelseize=glm(Seizure ~ Treatment + HTN + Age.at.admission1, data=data, family="binomial")
+modelseize=glm(Seizure ~ Treatment + HTN + Age.at.admission1 + A1.location, data=data, family="binomial")
 summary(modelseize)
 exp(coef(modelseize))
 exp(cbind(OR = coef(modelseize), confint(modelseize)))
@@ -1118,8 +1226,8 @@ logitgof(data$Seizure, fitted(modelseize))
 rocseize=roc(data$Seizure, predict(modelseize,type=c("response")), ci=TRUE, auc=TRUE)
 plot.roc(rocseize, print.auc=TRUE, xlim=c(1,0), xlab="1-Specificity", asp=NA)
 
-
-modelinfect=glm(Infection ~ Treatment + HTN + Age.at.admission1, data=data, family="binomial")
+ 
+modelinfect=glm(Infection ~ Treatment + HTN + Age.at.admission1 + A1.location, data=data, family="binomial")
 summary(modelinfect)
 exp(coef(modelinfect))
 exp(cbind(OR = coef(modelinfect), confint(modelinfect)))
@@ -1128,7 +1236,7 @@ rocinfect=roc(data$Infection, predict(modelinfect,type=c("response")), ci=TRUE, 
 plot.roc(rocinfect, print.auc=TRUE, xlim=c(1,0), xlab="1-Specificity", asp=NA)
 
 
-modelpneum=glm(Pneumonia ~ Treatment + HTN + Age.at.admission1, data=data, family="binomial")
+modelpneum=glm(Pneumonia ~ Treatment + HTN + Age.at.admission1 + A1.location, data=data, family="binomial")
 summary(modelpneum)
 exp(coef(modelpneum))
 exp(cbind(OR = coef(modelpneum), confint(modelpneum)))
