@@ -130,18 +130,31 @@ spotlight_pt_char=merge(pt_char, combined, by="PID", all.y=TRUE)
 # Dal Data Extraction from GS ---------------------------------------------
 
 dal_sheet <- as.data.frame(gs_read(for_gs, ws="DalV3"))
-dal_sheet[dal_sheet==""]<-NA
 
-keep=c("Dal_ID","Age","Gender", "Anticoagulation", "HTN", "Warfarin",
-       "Deep=1/Lobar=2/PF=3", "IVH", "Time of onset to CT (hrs)","Quantomo","S-ABC/2","DeepMedic"
-       )
+dal_sheet$study=c("Dal")
+dal_sheet$ICH_lobar.base=c(0)
+dal_sheet$ICH_deep.base=c(0)
+dal_sheet$ICH_post.base=c(0)
+
+
+dal_sheet[dal_sheet$`Deep=1/Lobar=2/PF=3` == 2, "ICH_lobar.base"] <- 1
+dal_sheet[dal_sheet$`Deep=1/Lobar=2/PF=3` == 1, "ICH_deep.base"] <- 1
+dal_sheet[dal_sheet$`Deep=1/Lobar=2/PF=3` == 3, "ICH_post.base"] <- 1
+
+
+keep=c("Dal_ID","study","Age","Gender", "HTN", "DM2", "Anticoagulation",  "Warfarin",
+       "ICH_lobar.base","ICH_deep.base", "ICH_post.base", "IVH", "Time of onset to CT (hrs)")
+
 dal_sheet=dal_sheet[keep]
+colnames(dal_sheet)=c("PID","study","ageatevent","gender","hypertension","diabetes","on_antiplatelet_therapy","on_warfarin","ICH_lobar.base",
+       "ICH_deep.base","ICH_post.base","IVH.base","Time.from.STROKE_ONSET.to.INITIAL_CT_SCAN")
 
 # Table 1 -----------------------------------------------------------------
 predict=read.csv("PREDICTv6 merged database.csv")
 spotlight=read.csv("SPOTLIGHT database merged.csv")
 predict[predict==""]<-NA
 spotlight[spotlight==""]<-NA
+dal_sheet[dal_sheet==""]<-NA
 
 predict$study=c("Predict")
 spotlight$study=c("Spotlight")
@@ -153,10 +166,10 @@ spotlight$Time.from.STROKE_ONSET.to.INITIAL_CT_SCAN=as.factor(spotlight$Time.fro
 
 predict=predict[keep]
 spotlight=spotlight[keep]
-combined=rbind(predict, spotlight)
+combined=rbind(predict, spotlight, dal_sheet)
 combined$Time.from.STROKE_ONSET.to.INITIAL_CT_SCAN=as.numeric(as.character(combined$Time.from.STROKE_ONSET.to.INITIAL_CT_SCAN))
 
-studytype=c("Predict","Spotlight")
+studytype=c("Predict","Spotlight","Dal")
 
 for(studys in studytype){
   column=c()
@@ -241,7 +254,7 @@ for(studys in studytype){
     outcomes=cbind(outcomes, column)
   }
   
-  if (studys=="Spotlight"){
+  if (studys=="Dal"){
     column=c()
     datastudy=combined
     
@@ -322,7 +335,7 @@ for(studys in studytype){
   }
 }
 
-colnames(outcomes)=c("Predict","Spotlight","Combined")
+colnames(outcomes)=c("Predict","Spotlight","Dal","Combined")
 rownames(outcomes)=c("n","mean age","sd age",
                      "M","M%","F","F%","NA gender","NA gender%",
                      "Y HTN","Y HTN%","N HTN","N HTN%", "NA HTN","NA HTN%",
@@ -340,58 +353,67 @@ rownames(outcomes)=c("n","mean age","sd age",
 table1stats=c()
 predict=subset(combined, combined$study=="Predict")
 spotlight=subset(combined, combined$study=="Spotlight")
-table1stats=append(table1stats, t.test(ageatevent ~ study, data=combined, na.rm=TRUE)$p.value)
+dal=subset(combined, combined$study=="Dal")
+table1stats=append(table1stats, oneway.test(ageatevent ~ study, data=combined)$p.value)
 
 M=as.table(cbind(c(nrow(subset(predict, predict$gender=="M")),nrow(subset(predict, predict$gender=="F"))),
-                 c(nrow(subset(spotlight, spotlight$gender=="M")),nrow(subset(spotlight,spotlight$gender=="F")))
+                 c(nrow(subset(spotlight, spotlight$gender=="M")),nrow(subset(spotlight,spotlight$gender=="F"))),
+                 c(nrow(subset(dal, dal$gender=="M")),nrow(subset(dal,dal$gender=="F")))
 ))
 table1stats=append(table1stats,chisq.test(M)$p.value)
 
 M=as.table(cbind(c(nrow(subset(predict, predict$hypertension==1)),nrow(subset(predict, predict$hypertension==0))),
-                 c(nrow(subset(spotlight, spotlight$hypertension==1)),nrow(subset(spotlight,spotlight$hypertension==0)))
+                 c(nrow(subset(spotlight, spotlight$hypertension==1)),nrow(subset(spotlight,spotlight$hypertension==0))),
+                 c(nrow(subset(dal, dal$hypertension==1)),nrow(subset(dal,dal$hypertension==0)))
 ))
 table1stats=append(table1stats,chisq.test(M)$p.value)
 
 M=as.table(cbind(c(nrow(subset(predict, predict$diabetes==1)),nrow(subset(predict, predict$diabetes==0))),
-                 c(nrow(subset(spotlight, spotlight$diabetes==1)),nrow(subset(spotlight,spotlight$diabetes==0)))
+                 c(nrow(subset(spotlight, spotlight$diabetes==1)),nrow(subset(spotlight,spotlight$diabetes==0))),
+                 c(nrow(subset(dal, dal$diabetes==1)),nrow(subset(dal,dal$diabetes==0)))
 ))
 table1stats=append(table1stats,fisher.test(M)$p.value)
 
 M=as.table(cbind(c(nrow(subset(predict, predict$on_antiplatelet_therapy==1)),nrow(subset(predict, predict$on_antiplatelet_therapy==0))),
-                 c(nrow(subset(spotlight, spotlight$on_antiplatelet_therapy==1)),nrow(subset(spotlight,spotlight$on_antiplatelet_therapy==0)))
+                 c(nrow(subset(spotlight, spotlight$on_antiplatelet_therapy==1)),nrow(subset(spotlight,spotlight$on_antiplatelet_therapy==0))),
+                 c(nrow(subset(dal, dal$on_antiplatelet_therapy==1)),nrow(subset(dal,dal$on_antiplatelet_therapy==0)))
 ))
 table1stats=append(table1stats,fisher.test(M)$p.value)
 
 M=as.table(cbind(c(nrow(subset(predict, predict$on_warfarin==1)),nrow(subset(predict, predict$on_warfarin==0))),
-                 c(nrow(subset(spotlight, spotlight$on_warfarin==1)),nrow(subset(spotlight,spotlight$on_warfarin==0)))
+                 c(nrow(subset(spotlight, spotlight$on_warfarin==1)),nrow(subset(spotlight,spotlight$on_warfarin==0))),
+                 c(nrow(subset(dal, dal$on_warfarin==1)),nrow(subset(dal,dal$on_warfarin==0)))
 ))
 table1stats=append(table1stats,fisher.test(M)$p.value)
 
 M=as.table(cbind(c(nrow(subset(predict, predict$ICH_lobar.base==1)),nrow(subset(predict, predict$ICH_lobar.base==0))),
-                 c(nrow(subset(spotlight, spotlight$ICH_lobar.base==1)),nrow(subset(spotlight,spotlight$ICH_lobar.base==0)))
+                 c(nrow(subset(spotlight, spotlight$ICH_lobar.base==1)),nrow(subset(spotlight,spotlight$ICH_lobar.base==0))),
+                 c(nrow(subset(dal, dal$ICH_lobar.base==1)),nrow(subset(dal,dal$ICH_lobar.base==0)))
 ))
 table1stats=append(table1stats,chisq.test(M)$p.value)
 
 M=as.table(cbind(c(nrow(subset(predict, predict$ICH_deep.base==1)),nrow(subset(predict, predict$ICH_deep.base==0))),
-                 c(nrow(subset(spotlight, spotlight$ICH_deep.base==1)),nrow(subset(spotlight,spotlight$ICH_deep.base==0)))
+                 c(nrow(subset(spotlight, spotlight$ICH_deep.base==1)),nrow(subset(spotlight,spotlight$ICH_deep.base==0))),
+                 c(nrow(subset(dal, dal$ICH_deep.base==1)),nrow(subset(dal,dal$ICH_deep.base==0)))
 ))
 table1stats=append(table1stats,chisq.test(M)$p.value)
 
 M=as.table(cbind(c(nrow(subset(predict, predict$ICH_post.base==1)),nrow(subset(predict, predict$ICH_post.base==0))),
-                 c(nrow(subset(spotlight, spotlight$ICH_post.base==1)),nrow(subset(spotlight,spotlight$ICH_post.base==0)))
+                 c(nrow(subset(spotlight, spotlight$ICH_post.base==1)),nrow(subset(spotlight,spotlight$ICH_post.base==0))),
+                 c(nrow(subset(dal, dal$ICH_post.base==1)),nrow(subset(dal,dal$ICH_post.base==0)))
 ))
 table1stats=append(table1stats,fisher.test(M)$p.value)
 
 M=as.table(cbind(c(nrow(subset(predict, predict$IVH.base==1)),nrow(subset(predict, predict$IVH.base==0))),
-                 c(nrow(subset(spotlight, spotlight$IVH.base==1)),nrow(subset(spotlight,spotlight$IVH.base==0)))
+                 c(nrow(subset(spotlight, spotlight$IVH.base==1)),nrow(subset(spotlight,spotlight$IVH.base==0))),
+                 c(nrow(subset(dal, dal$IVH.base==1)),nrow(subset(dal,dal$IVH.base==0)))
 ))
 table1stats=append(table1stats,chisq.test(M)$p.value)
 
-table1stats=append(table1stats, t.test(Time.from.STROKE_ONSET.to.INITIAL_CT_SCAN ~ study, data=combined, na.rm=TRUE)$p.value)
-
+table1stats=append(table1stats, oneway.test(Time.from.STROKE_ONSET.to.INITIAL_CT_SCAN ~ study, data=combined)$p.value)
 
 table1stats=as.data.frame(table1stats)
-table1stats=cbind(table1stats, c("t-test","chisq","chisq","fisher","fisher","fisher","chisq","chisq","fisher","chisq","t-test"))
+table1stats=cbind(table1stats, c("anova","chisq","chisq","fisher","fisher","fisher","chisq","chisq","fisher","chisq","anova"))
 rownames(table1stats)=c("ageatevent","gender","hypertension","diabetes","on_antiplatelet_therapy","on_warfarin","ICH_lobar.base",
                         "ICH_deep.base","ICH_post.base","IVH.base","Time.from.STROKE_ONSET.to.INITIAL_CT_SCAN")
 colnames(table1stats)=c("p-value","stat test")
@@ -451,14 +473,27 @@ spotlight_sheet=cbind(spotlight_sheet, baseline)
 spotlightkeep=c("PID","study","baseline","S-Irregular","S-ABC/2","A-ABC/2","QT-Vol","DM-Volume")
 spotlight_sheet=spotlight_sheet[spotlightkeep]
 colnames(spotlight_sheet)=c("PID","study","baseline","Irregular_SN","ABC/2_SN","ABC/2_AW","NewQuantomo","DeepMedicVol")
-data=rbind(predict_sheet, spotlight_sheet)
+
+dal_sheet <- as.data.frame(gs_read(for_gs, ws="DalV3"))
+
+dal_sheet$study=c("Dal")
+dal_sheet$baseline=c(0)
+
+
+keep=c("Dal_ID","study", "baseline", "S-Irregular", "S-ABC/2", "A-ABC/2", "Quantomo", "DeepMedic")
+
+dal_sheet=dal_sheet[keep]
+colnames(dal_sheet)=c("PID","study","baseline","Irregular_SN","ABC/2_SN","ABC/2_AW","NewQuantomo","DeepMedicVol")
+
+
+data=rbind(predict_sheet, spotlight_sheet, dal_sheet)
 
 data$'ABC/2avg'=rowMeans(data[,5:6])
 data$'QT-ABC/2'=data$NewQuantomo-data$'ABC/2_SN'
 data$'DM-QT'=data$DeepMedicVol-data$NewQuantomo
 
 
-studytype=c("Predict","Spotlight")
+studytype=c("Predict","Spotlight","Dal")
 
 for(studys in studytype){
   column=c()
@@ -512,7 +547,7 @@ for(studys in studytype){
     table2=cbind(table2, column)
   }
   
-  if (studys=="Spotlight"){
+  if (studys=="Dal"){
     column=c()
     volumesstudy=data
     
@@ -562,7 +597,7 @@ for(studys in studytype){
   }
 }
 
-colnames(table2)=c("Predict","Spotlight","Combined")
+colnames(table2)=c("Predict","Spotlight","Dal","Combined")
 rownames(table2)=c("n","min ABC/2_SN","max ABC/2_SN","min ABC/2_AW","max ABC/2_AW","min QT","max QT","min DM","max DM","min QT-ABC/2_SN","max QT-ABC/2_SN",
                    "min DM-QT","max DM-QT","mean ABC/2_SN","sd ABC/2_SN","mean ABC/2_AW","sd ABC/2_AW","mean QT","sd QT","mean DM","sd DM","mean QT-ABC/2_SN",
                    "sd QT-ABC/2_SN","mean DM-QT","sd DM-QT","median ABC/2_SN","median ABC/2_AW","median QT","median DM","median QT-ABC/2_SN","median DM-QT",
@@ -588,6 +623,14 @@ icc(data.frame(subset(data, data$study=="Spotlight")$NewQuantomo,
                subset(data, data$study=="Spotlight")$DeepMedicVol),
     model="twoway",type="agreement")
 
+icc(data.frame(subset(data, data$study=="Dal")$'ABC/2_SN',
+               subset(data, data$study=="Dal")$NewQuantomo),
+    model="twoway",type="agreement")
+
+icc(data.frame(subset(data, data$study=="Dal")$NewQuantomo,
+               subset(data, data$study=="Dal")$DeepMedicVol),
+    model="twoway",type="agreement")
+
 
 icc(data.frame(data$'ABC/2_SN', data$NewQuantomo), model="twoway",type="agreement")
 icc(data.frame(data$NewQuantomo, data$DeepMedicVol), model="twoway",type="agreement")
@@ -606,7 +649,7 @@ Predict_QT_ABC2=(blandr.draw(subset(data, data$study=="Predict")$'ABC/2_SN',
                            y.plot.mode = "difference", plotProportionalBias = FALSE,
                            plotProportionalBias.se = TRUE, assume.differences.are.normal = TRUE) 
                + xlab("Mean ICH volume (mL)")
-               + ylab("Quantomo - ABC/2 (mL)")
+               + ylab("Ground Truth - ABC/2 (mL)")
                + theme(
                  panel.border = element_blank(),  
                  panel.grid.major = element_blank(),
@@ -629,7 +672,7 @@ Predict_QT_DM=(blandr.draw(subset(data, data$study=="Predict")$NewQuantomo,
                               y.plot.mode = "difference", plotProportionalBias = FALSE,
                               plotProportionalBias.se = TRUE, assume.differences.are.normal = TRUE) 
                   + xlab("Mean ICH volume (mL)")
-                  + ylab("Deep Medic - Quantomo (mL)")
+                  + ylab("DeepMedic - Ground Truth (mL)")
                   + theme(
                     panel.border = element_blank(),  
                     panel.grid.major = element_blank(),
@@ -652,7 +695,7 @@ Spotlight_QT_ABC2=(blandr.draw(subset(data, data$study=="Spotlight")$'ABC/2_SN',
                              y.plot.mode = "difference", plotProportionalBias = FALSE,
                              plotProportionalBias.se = TRUE, assume.differences.are.normal = TRUE) 
                  + xlab("Mean ICH volume (mL)")
-                 + ylab("Quantomo - ABC/2 (mL)")
+                 + ylab("Ground Truth - ABC/2 (mL)")
                  + theme(
                    panel.border = element_blank(),  
                    panel.grid.major = element_blank(),
@@ -675,7 +718,7 @@ Spotlight_QT_DM=(blandr.draw(subset(data, data$study=="Spotlight")$NewQuantomo,
                            y.plot.mode = "difference", plotProportionalBias = FALSE,
                            plotProportionalBias.se = TRUE, assume.differences.are.normal = TRUE) 
                + xlab("Mean ICH volume (mL)")
-               + ylab("Deep Medic - Quantomo (mL)")
+               + ylab("DeepMedic - Ground Truth (mL)")
                + theme(
                  panel.border = element_blank(),  
                  panel.grid.major = element_blank(),
@@ -689,6 +732,51 @@ Spotlight_QT_DM=(blandr.draw(subset(data, data$study=="Spotlight")$NewQuantomo,
                + labs(title = element_blank())
 )
 
+Dal_QT_ABC2=(blandr.draw(subset(data, data$study=="Dal")$'ABC/2_SN', 
+                               subset(data, data$study=="Dal")$NewQuantomo, 
+                               sig.level = 0.95, LoA.mode = 1, ciDisplay = FALSE,
+                               ciShading = FALSE,
+                               lowest_y_axis = ymin, highest_y_axis = ymax, point_size = 0.8,
+                               overlapping = FALSE, plotter = "ggplot", x.plot.mode = "means",
+                               y.plot.mode = "difference", plotProportionalBias = FALSE,
+                               plotProportionalBias.se = TRUE, assume.differences.are.normal = TRUE) 
+                   + xlab("Mean ICH volume (mL)")
+                   + ylab("Ground Truth - ABC/2 (mL)")
+                   + theme(
+                     panel.border = element_blank(),  
+                     panel.grid.major = element_blank(),
+                     panel.grid.minor = element_blank(),
+                     panel.background = element_blank(),
+                     axis.line = element_line(colour = "grey")
+                   )
+                   + expand_limits(x = 200, y = 0)
+                   + scale_x_continuous(expand = c(0, 1))
+                   + ylim(ymin, ymax)
+                   + labs(title = element_blank())
+)
+
+Dal_QT_DM=(blandr.draw(subset(data, data$study=="Dal")$NewQuantomo, 
+                             subset(data, data$study=="Dal")$DeepMedicVol, 
+                             sig.level = 0.95, LoA.mode = 1, annotate = FALSE, ciDisplay = FALSE,
+                             ciShading = FALSE, normalLow = FALSE, normalHigh = FALSE,
+                             lowest_y_axis = FALSE, highest_y_axis = FALSE, point_size = 0.8,
+                             overlapping = FALSE, plotter = "ggplot", x.plot.mode = "means",
+                             y.plot.mode = "difference", plotProportionalBias = FALSE,
+                             plotProportionalBias.se = TRUE, assume.differences.are.normal = TRUE) 
+                 + xlab("Mean ICH volume (mL)")
+                 + ylab("DeepMedic - Ground Truth (mL)")
+                 + theme(
+                   panel.border = element_blank(),  
+                   panel.grid.major = element_blank(),
+                   panel.grid.minor = element_blank(),
+                   panel.background = element_blank(),
+                   axis.line = element_line(colour = "grey")
+                 )
+                 + expand_limits(x = 200, y = 0)
+                 + scale_x_continuous(expand = c(0, 1))
+                 + ylim(ymin, ymax)
+                 + labs(title = element_blank())
+)
 
 
 Combined_QT_ABC2=(blandr.draw(data$'ABC/2_SN', 
@@ -700,7 +788,7 @@ Combined_QT_ABC2=(blandr.draw(data$'ABC/2_SN',
                             y.plot.mode = "difference", plotProportionalBias = FALSE,
                             plotProportionalBias.se = TRUE, assume.differences.are.normal = TRUE) 
                 + xlab("Mean ICH volume (mL)")
-                + ylab("Quantomo - ABC/2 (mL)")
+                + ylab("Ground Truth - ABC/2 (mL)")
                 + theme(
                   panel.border = element_blank(),  
                   panel.grid.major = element_blank(),
@@ -722,7 +810,7 @@ Combined_QT_DM=(blandr.draw(data$NewQuantomo,
                                y.plot.mode = "difference", plotProportionalBias = FALSE,
                                plotProportionalBias.se = TRUE, assume.differences.are.normal = TRUE) 
                    + xlab("Mean ICH volume (mL)")
-                   + ylab("Deep Medic - Quantomo (mL)")
+                   + ylab("DeepMedic - Ground Truth (mL)")
                    + theme(
                      panel.border = element_blank(),  
                      panel.grid.major = element_blank(),
