@@ -8,6 +8,7 @@ library(generalhoslem)
 library(DescTools)
 library(aod)
 library(pROC)
+library("verification")
 summary=summary(data)
 
 # Remove missing data -----------------------------------------------------
@@ -1181,6 +1182,8 @@ exp(cbind(OR = coef(modelmort), confint(modelmort)))
 logitgof(data$Mortality, fitted(modelmort))
 rocmort=roc(data$Mortality, predict(modelmort,type=c("response")), ci=TRUE, auc=TRUE)
 plot.roc(rocmort, print.auc=TRUE, xlim=c(1,0), xlab="1-Specificity", asp=NA)
+roc.area(data$Mortality, data$Treatment)
+
 
 modelrebleed=glm(Rebleed ~ Treatment + HTN + Age.at.admission1 + A1.location, data=data, family="binomial")
 summary(modelrebleed)
