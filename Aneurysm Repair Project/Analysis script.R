@@ -667,6 +667,10 @@ data$A1.location[data$A1.location=="Anterior"]=0
 data$A1.location[data$A1.location=="Posterior"]=1
 data$A1.location <- factor(data$A1.location, levels=c(0,1), ordered=FALSE)
 
+##Recategorize WFNS score
+data$WFNS[data$WFNS==1|data$WFNS==2|data$WFNS==3]=0
+data$WFNS[data$WFNS==4|data$WFNS==5]=1
+data$WFNS <- factor(data$WFNS, levels=c(0,1), ordered=FALSE)
 
 ##Set factor level order for HTN
 data$HTN <- factor(data$HTN, levels=c(0,1), ordered=FALSE)
@@ -777,7 +781,7 @@ exp(rbind(OR = coef(modelaloc), ci))
 #Adjusted regression analysis
 
 ##GOS at discharge
-modeladjusted <- polr(GOS.at.discharge ~ Treatment + HTN + Age.at.admission1 + A1.location, data = data, Hess=TRUE)
+modeladjusted <- polr(GOS.at.discharge ~ Treatment + HTN + Age.at.admission1 + A1.location + WFNS, data = data, Hess=TRUE)
 ctable <- coef(summary(modeladjusted))
 p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
 ctable <- cbind(ctable, "p value" = p)
@@ -787,7 +791,7 @@ exp(cbind(OR = coef(modeladjusted), ci))
 PseudoR2(modeladjusted, which="all")
 
 modeladjustedinteract <- polr(GOS.at.discharge ~ Treatment + HTN + Age.at.admission1 
-                              + A1.location + HTN*Age.at.admission1, data = data, Hess=TRUE)
+                              + A1.location + WFNS + HTN*Age.at.admission1, data = data, Hess=TRUE)
 ctable <- coef(summary(modeladjustedinteract))
 p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
 ctable <- cbind(ctable, "p value" = p)
@@ -811,7 +815,7 @@ pulkrob.chisq(modeladjusted, c("Treatment"))
 pulkrob.deviance(modeladjusted, c("Treatment"))
 
 ##GOS at 6 months
-modeladjusted <- polr(GOS.at.6....3.months ~ Treatment + HTN + Age.at.admission1 + A1.location, data = data, Hess=TRUE)
+modeladjusted <- polr(GOS.at.6....3.months ~ Treatment + HTN + Age.at.admission1 + A1.location + WFNS, data = data, Hess=TRUE)
 ctable <- coef(summary(modeladjusted))
 p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
 ctable <- cbind(ctable, "p value" = p)
@@ -821,7 +825,7 @@ exp(cbind(OR = coef(modeladjusted), ci))
 PseudoR2(modeladjusted, which="all")
 
 modeladjustedinteract <- polr(GOS.at.6....3.months ~ Treatment + HTN + Age.at.admission1 
-                      + A1.location + HTN*Age.at.admission1, data = data, Hess=TRUE)
+                      + A1.location + WFNS + HTN*Age.at.admission1, data = data, Hess=TRUE)
 ctable <- coef(summary(modeladjustedinteract))
 p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
 ctable <- cbind(ctable, "p value" = p)
@@ -1202,8 +1206,7 @@ logitgof(data$Vasospasm, fitted(modelvasospasm))
 rocvasospasm=roc(data$Vasospasm, predict(modelvasospasm,type=c("response")), ci=TRUE, auc=TRUE)
 plot.roc(rocvasospasm, print.auc=TRUE, xlim=c(1,0), xlab="1-Specificity", asp=NA)
 
-
-modelinfarct=glm(Infarct ~ Treatment + HTN + Age.at.admission1 + A1.location, data=data, family="binomial")
+modelinfarct=glm(Infarct ~ Treatment + HTN + Age.at.admission1 + A1.location + WFNS, data=data, family="binomial")
 summary(modelinfarct)
 exp(coef(modelinfarct))
 exp(cbind(OR = coef(modelinfarct), confint(modelinfarct)))
