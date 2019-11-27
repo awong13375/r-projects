@@ -450,7 +450,7 @@ for (i in X2){
 }
 predict_sheet=cbind(predict_sheet, baseline)
 
-predictkeep=c("PID","study","baseline","Irregular_SN","ABC/2_SN","ABC/2_AW","NewQuantomo","DeepMedicVol")
+predictkeep=c("PID","study","baseline","Irregular_SN","ABC/2_SN","ABC/2_AW","NewQuantomo","NewDM")
 
 predict_sheet=predict_sheet[predictkeep]
 
@@ -470,9 +470,9 @@ for (i in CASE){
 }
 spotlight_sheet=cbind(spotlight_sheet, baseline)
 
-spotlightkeep=c("PID","study","baseline","S-Irregular","S-ABC/2","A-ABC/2","QT-Vol","DM-Volume")
+spotlightkeep=c("PID","study","baseline","S-Irregular","S-ABC/2","A-ABC/2","QT-Vol","NewDM")
 spotlight_sheet=spotlight_sheet[spotlightkeep]
-colnames(spotlight_sheet)=c("PID","study","baseline","Irregular_SN","ABC/2_SN","ABC/2_AW","NewQuantomo","DeepMedicVol")
+colnames(spotlight_sheet)=c("PID","study","baseline","Irregular_SN","ABC/2_SN","ABC/2_AW","NewQuantomo","NewDM")
 
 dal_sheet <- as.data.frame(gs_read(for_gs, ws="DalV3"))
 
@@ -480,17 +480,17 @@ dal_sheet$study=c("Dal")
 dal_sheet$baseline=c(0)
 
 
-keep=c("Dal_ID","study", "baseline", "S-Irregular", "S-ABC/2", "A-ABC/2", "Quantomo", "DeepMedic")
+keep=c("Dal_ID","study", "baseline", "S-Irregular", "S-ABC/2", "A-ABC/2", "Quantomo", "NewDM")
 
 dal_sheet=dal_sheet[keep]
-colnames(dal_sheet)=c("PID","study","baseline","Irregular_SN","ABC/2_SN","ABC/2_AW","NewQuantomo","DeepMedicVol")
+colnames(dal_sheet)=c("PID","study","baseline","Irregular_SN","ABC/2_SN","ABC/2_AW","NewQuantomo","NewDM")
 
 
 data=rbind(predict_sheet, spotlight_sheet, dal_sheet)
 
 data$'ABC/2avg'=rowMeans(data[,5:6])
 data$'QT-ABC/2'=data$NewQuantomo-data$'ABC/2_SN'
-data$'DM-QT'=data$DeepMedicVol-data$NewQuantomo
+data$'DM-QT'=data$NewDM-data$NewQuantomo
 
 
 studytype=c("Predict","Spotlight","Dal")
@@ -504,7 +504,7 @@ for(studys in studytype){
   column=append(column, range(volumesstudy$'ABC/2_SN'))
   column=append(column, range(volumesstudy$'ABC/2_AW'))
   column=append(column, range(volumesstudy$NewQuantomo))
-  column=append(column, range(volumesstudy$DeepMedicVol))
+  column=append(column, range(volumesstudy$NewDM))
   column=append(column, range(volumesstudy$'QT-ABC/2'))
   column=append(column, range(volumesstudy$'DM-QT'))
   
@@ -514,8 +514,8 @@ for(studys in studytype){
   column=append(column, sd(volumesstudy$'ABC/2_AW'))
   column=append(column, mean(volumesstudy$NewQuantomo))
   column=append(column, sd(volumesstudy$NewQuantomo))
-  column=append(column, mean(volumesstudy$DeepMedicVol))
-  column=append(column, sd(volumesstudy$DeepMedicVol))
+  column=append(column, mean(volumesstudy$NewDM))
+  column=append(column, sd(volumesstudy$NewDM))
   column=append(column, mean(volumesstudy$'QT-ABC/2'))
   column=append(column, sd(volumesstudy$'QT-ABC/2'))
   column=append(column, mean(volumesstudy$'DM-QT'))
@@ -524,7 +524,7 @@ for(studys in studytype){
   column=append(column, median(volumesstudy$'ABC/2_SN'))
   column=append(column, median(volumesstudy$'ABC/2_AW'))
   column=append(column, median(volumesstudy$NewQuantomo))
-  column=append(column, median(volumesstudy$DeepMedicVol))
+  column=append(column, median(volumesstudy$NewDM))
   column=append(column, median(volumesstudy$'QT-ABC/2'))
   column=append(column, median(volumesstudy$'DM-QT'))
   
@@ -534,8 +534,8 @@ for(studys in studytype){
   column=append(column, quantile(volumesstudy$'ABC/2_AW', 3/4))
   column=append(column, quantile(volumesstudy$NewQuantomo, 1/4))
   column=append(column, quantile(volumesstudy$NewQuantomo, 3/4))
-  column=append(column, quantile(volumesstudy$DeepMedicVol, 1/4))
-  column=append(column, quantile(volumesstudy$DeepMedicVol, 3/4))
+  column=append(column, quantile(volumesstudy$NewDM, 1/4))
+  column=append(column, quantile(volumesstudy$NewDM, 3/4))
   column=append(column, quantile(volumesstudy$'QT-ABC/2', 1/4))
   column=append(column, quantile(volumesstudy$'QT-ABC/2', 3/4))
   column=append(column, quantile(volumesstudy$'DM-QT', 1/4))
@@ -556,7 +556,7 @@ for(studys in studytype){
     column=append(column, range(volumesstudy$'ABC/2_SN'))
     column=append(column, range(volumesstudy$'ABC/2_AW'))
     column=append(column, range(volumesstudy$NewQuantomo))
-    column=append(column, range(volumesstudy$DeepMedicVol))
+    column=append(column, range(volumesstudy$NewDM))
     column=append(column, range(volumesstudy$'QT-ABC/2'))
     column=append(column, range(volumesstudy$'DM-QT'))
     
@@ -566,8 +566,8 @@ for(studys in studytype){
     column=append(column, sd(volumesstudy$'ABC/2_AW'))
     column=append(column, mean(volumesstudy$NewQuantomo))
     column=append(column, sd(volumesstudy$NewQuantomo))
-    column=append(column, mean(volumesstudy$DeepMedicVol))
-    column=append(column, sd(volumesstudy$DeepMedicVol))
+    column=append(column, mean(volumesstudy$NewDM))
+    column=append(column, sd(volumesstudy$NewDM))
     column=append(column, mean(volumesstudy$'QT-ABC/2'))
     column=append(column, sd(volumesstudy$'QT-ABC/2'))
     column=append(column, mean(volumesstudy$'DM-QT'))
@@ -576,7 +576,7 @@ for(studys in studytype){
     column=append(column, median(volumesstudy$'ABC/2_SN'))
     column=append(column, median(volumesstudy$'ABC/2_AW'))
     column=append(column, median(volumesstudy$NewQuantomo))
-    column=append(column, median(volumesstudy$DeepMedicVol))
+    column=append(column, median(volumesstudy$NewDM))
     column=append(column, median(volumesstudy$'QT-ABC/2'))
     column=append(column, median(volumesstudy$'DM-QT'))
     
@@ -586,8 +586,8 @@ for(studys in studytype){
     column=append(column, quantile(volumesstudy$'ABC/2_AW', 3/4))
     column=append(column, quantile(volumesstudy$NewQuantomo, 1/4))
     column=append(column, quantile(volumesstudy$NewQuantomo, 3/4))
-    column=append(column, quantile(volumesstudy$DeepMedicVol, 1/4))
-    column=append(column, quantile(volumesstudy$DeepMedicVol, 3/4))
+    column=append(column, quantile(volumesstudy$NewDM, 1/4))
+    column=append(column, quantile(volumesstudy$NewDM, 3/4))
     column=append(column, quantile(volumesstudy$'QT-ABC/2', 1/4))
     column=append(column, quantile(volumesstudy$'QT-ABC/2', 3/4))
     column=append(column, quantile(volumesstudy$'DM-QT', 1/4))
@@ -612,7 +612,7 @@ icc(data.frame(subset(data, data$study=="Predict")$'ABC/2_SN',
     model="twoway",type="agreement")
 
 icc(data.frame(subset(data, data$study=="Predict")$NewQuantomo,
-               subset(data, data$study=="Predict")$DeepMedicVol),
+               subset(data, data$study=="Predict")$NewDM),
     model="twoway",type="agreement")
 
 icc(data.frame(subset(data, data$study=="Spotlight")$'ABC/2_SN',
@@ -620,7 +620,7 @@ icc(data.frame(subset(data, data$study=="Spotlight")$'ABC/2_SN',
     model="twoway",type="agreement")
 
 icc(data.frame(subset(data, data$study=="Spotlight")$NewQuantomo,
-               subset(data, data$study=="Spotlight")$DeepMedicVol),
+               subset(data, data$study=="Spotlight")$NewDM),
     model="twoway",type="agreement")
 
 icc(data.frame(subset(data, data$study=="Dal")$'ABC/2_SN',
@@ -628,17 +628,23 @@ icc(data.frame(subset(data, data$study=="Dal")$'ABC/2_SN',
     model="twoway",type="agreement")
 
 icc(data.frame(subset(data, data$study=="Dal")$NewQuantomo,
-               subset(data, data$study=="Dal")$DeepMedicVol),
+               subset(data, data$study=="Dal")$NewDM),
     model="twoway",type="agreement")
 
 
 icc(data.frame(data$'ABC/2_SN', data$NewQuantomo), model="twoway",type="agreement")
-icc(data.frame(data$NewQuantomo, data$DeepMedicVol), model="twoway",type="agreement")
+icc(data.frame(data$NewQuantomo, data$NewDM), model="twoway",type="agreement")
 
 
 # Bland Altman graphs -----------------------------------------------------
-ymin=-50
-ymax=100
+predictymin=-50
+predictymax=100
+spotlightymin=-50
+spotlightymax=50
+dalymin=-250
+dalymax=250
+cymin=-75
+cymax=200
 
 Predict_QT_ABC2=(blandr.draw(subset(data, data$study=="Predict")$'ABC/2_SN', 
                            subset(data, data$study=="Predict")$NewQuantomo, 
@@ -659,12 +665,12 @@ Predict_QT_ABC2=(blandr.draw(subset(data, data$study=="Predict")$'ABC/2_SN',
                )
                + expand_limits(x = 200, y = 0)
                + scale_x_continuous(expand = c(0, 1))
-               + ylim(ymin, ymax)
+               + ylim(predictymin, predictymax)
                + labs(title = element_blank())
 )
 
 Predict_QT_DM=(blandr.draw(subset(data, data$study=="Predict")$NewQuantomo, 
-                              subset(data, data$study=="Predict")$DeepMedicVol, 
+                              subset(data, data$study=="Predict")$NewDM, 
                               sig.level = 0.95, LoA.mode = 1, annotate = FALSE, ciDisplay = FALSE,
                               ciShading = FALSE, normalLow = FALSE, normalHigh = FALSE,
                               lowest_y_axis = FALSE, highest_y_axis = FALSE, point_size = 0.8,
@@ -682,7 +688,7 @@ Predict_QT_DM=(blandr.draw(subset(data, data$study=="Predict")$NewQuantomo,
                   )
                   + expand_limits(x = 200, y = 0)
                   + scale_x_continuous(expand = c(0, 1))
-                  + ylim(ymin, ymax)
+                  + ylim(predictymin, predictymax)
                   + labs(title = element_blank())
 )
 
@@ -705,12 +711,12 @@ Spotlight_QT_ABC2=(blandr.draw(subset(data, data$study=="Spotlight")$'ABC/2_SN',
                  )
                  + expand_limits(x = 200, y = 0)
                  + scale_x_continuous(expand = c(0, 1))
-                 + ylim(ymin, ymax)
+                 + ylim(spotlightymin, spotlightymax)
                  + labs(title = element_blank())
 )
 
 Spotlight_QT_DM=(blandr.draw(subset(data, data$study=="Spotlight")$NewQuantomo, 
-                           subset(data, data$study=="Spotlight")$DeepMedicVol, 
+                           subset(data, data$study=="Spotlight")$NewDM, 
                            sig.level = 0.95, LoA.mode = 1, annotate = FALSE, ciDisplay = FALSE,
                            ciShading = FALSE, normalLow = FALSE, normalHigh = FALSE,
                            lowest_y_axis = FALSE, highest_y_axis = FALSE, point_size = 0.8,
@@ -728,7 +734,7 @@ Spotlight_QT_DM=(blandr.draw(subset(data, data$study=="Spotlight")$NewQuantomo,
                )
                + expand_limits(x = 200, y = 0)
                + scale_x_continuous(expand = c(0, 1))
-               + ylim(ymin, ymax)
+               + ylim(spotlightymin, spotlightymax)
                + labs(title = element_blank())
 )
 
@@ -751,12 +757,12 @@ Dal_QT_ABC2=(blandr.draw(subset(data, data$study=="Dal")$'ABC/2_SN',
                    )
                    + expand_limits(x = 200, y = 0)
                    + scale_x_continuous(expand = c(0, 1))
-                   + ylim(ymin, ymax)
+                   + ylim(dalymin, dalymax)
                    + labs(title = element_blank())
 )
 
 Dal_QT_DM=(blandr.draw(subset(data, data$study=="Dal")$NewQuantomo, 
-                             subset(data, data$study=="Dal")$DeepMedicVol, 
+                             subset(data, data$study=="Dal")$NewDM, 
                              sig.level = 0.95, LoA.mode = 1, annotate = FALSE, ciDisplay = FALSE,
                              ciShading = FALSE, normalLow = FALSE, normalHigh = FALSE,
                              lowest_y_axis = FALSE, highest_y_axis = FALSE, point_size = 0.8,
@@ -774,7 +780,7 @@ Dal_QT_DM=(blandr.draw(subset(data, data$study=="Dal")$NewQuantomo,
                  )
                  + expand_limits(x = 200, y = 0)
                  + scale_x_continuous(expand = c(0, 1))
-                 + ylim(ymin, ymax)
+                 + ylim(dalymin, dalymax)
                  + labs(title = element_blank())
 )
 
@@ -798,11 +804,11 @@ Combined_QT_ABC2=(blandr.draw(data$'ABC/2_SN',
                 )
                 + expand_limits(x = 200, y = 0)
                 + scale_x_continuous(expand = c(0, 1))
-                + ylim(ymin, ymax)
+                + ylim(cymin, cymax)
                 + labs(title = element_blank())
 )
 Combined_QT_DM=(blandr.draw(data$NewQuantomo, 
-                            data$DeepMedicVol, 
+                            data$NewDM, 
                                sig.level = 0.95, LoA.mode = 1, annotate = FALSE, ciDisplay = FALSE,
                                ciShading = FALSE, normalLow = FALSE, normalHigh = FALSE,
                                lowest_y_axis = FALSE, highest_y_axis = FALSE, point_size = 0.8,
@@ -820,14 +826,23 @@ Combined_QT_DM=(blandr.draw(data$NewQuantomo,
                    )
                    + expand_limits(x = 200, y = 0)
                    + scale_x_continuous(expand = c(0, 1))
-                   + ylim(ymin, ymax)
+                   + ylim(cymin, cymax)
                    + labs(title = element_blank())
 )
 
 # Plot --------------------------------------------------------------------
-plot_grid(Predict_QT_ABC2, Predict_QT_DM, Spotlight_QT_ABC2, Spotlight_QT_DM, Combined_QT_ABC2, Combined_QT_DM,
-          labels = c("A","B","C","D","E","F"),
-          ncol = 2, nrow = 3)
+plot_grid(Predict_QT_ABC2, Predict_QT_DM, 
+          labels = c("A","B"),
+          ncol = 2, nrow = 1)
+plot_grid(Spotlight_QT_ABC2, Spotlight_QT_DM,
+          labels = c("A","B"),
+          ncol = 2, nrow = 1)
+plot_grid(Dal_QT_ABC2, Dal_QT_DM,
+          labels = c("A","B"),
+          ncol = 2, nrow = 1)
+plot_grid(Combined_QT_ABC2, Combined_QT_DM,
+          labels = c("A","B"),
+          ncol = 2, nrow = 1)
 
 
 # Hematoma expansion analysis -------------------------------------------------------
