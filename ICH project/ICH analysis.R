@@ -661,7 +661,9 @@ Predict_QT_ABC2=(blandr.draw(subset(data, data$study=="Predict")$'ABC/2_SN',
                  panel.grid.major = element_blank(),
                  panel.grid.minor = element_blank(),
                  panel.background = element_blank(),
-                 axis.line = element_line(colour = "grey")
+                 axis.line = element_line(colour = "black", size=1),
+                 axis.text=element_text(size=12),
+                 axis.title=element_text(size=12)
                )
                + expand_limits(x = 200, y = 0)
                + scale_x_continuous(expand = c(0, 1))
@@ -684,7 +686,9 @@ Predict_QT_DM=(blandr.draw(subset(data, data$study=="Predict")$NewQuantomo,
                     panel.grid.major = element_blank(),
                     panel.grid.minor = element_blank(),
                     panel.background = element_blank(),
-                    axis.line = element_line(colour = "grey")
+                    axis.line = element_line(colour = "black", size=1),
+                    axis.text=element_text(size=12),
+                    axis.title=element_text(size=12)
                   )
                   + expand_limits(x = 200, y = 0)
                   + scale_x_continuous(expand = c(0, 1))
@@ -707,7 +711,9 @@ Spotlight_QT_ABC2=(blandr.draw(subset(data, data$study=="Spotlight")$'ABC/2_SN',
                    panel.grid.major = element_blank(),
                    panel.grid.minor = element_blank(),
                    panel.background = element_blank(),
-                   axis.line = element_line(colour = "grey")
+                   axis.line = element_line(colour = "black", size=1),
+                   axis.text=element_text(size=12),
+                   axis.title=element_text(size=12)
                  )
                  + expand_limits(x = 200, y = 0)
                  + scale_x_continuous(expand = c(0, 1))
@@ -730,7 +736,9 @@ Spotlight_QT_DM=(blandr.draw(subset(data, data$study=="Spotlight")$NewQuantomo,
                  panel.grid.major = element_blank(),
                  panel.grid.minor = element_blank(),
                  panel.background = element_blank(),
-                 axis.line = element_line(colour = "grey")
+                 axis.line = element_line(colour = "black", size=1),
+                 axis.text=element_text(size=12),
+                 axis.title=element_text(size=12)
                )
                + expand_limits(x = 200, y = 0)
                + scale_x_continuous(expand = c(0, 1))
@@ -753,7 +761,9 @@ Dal_QT_ABC2=(blandr.draw(subset(data, data$study=="Dal")$'ABC/2_SN',
                      panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(),
                      panel.background = element_blank(),
-                     axis.line = element_line(colour = "grey")
+                     axis.line = element_line(colour = "black", size=1),
+                     axis.text=element_text(size=12),
+                     axis.title=element_text(size=12)
                    )
                    + expand_limits(x = 200, y = 0)
                    + scale_x_continuous(expand = c(0, 1))
@@ -776,7 +786,9 @@ Dal_QT_DM=(blandr.draw(subset(data, data$study=="Dal")$NewQuantomo,
                    panel.grid.major = element_blank(),
                    panel.grid.minor = element_blank(),
                    panel.background = element_blank(),
-                   axis.line = element_line(colour = "grey")
+                   axis.line = element_line(colour = "black", size=1),
+                   axis.text=element_text(size=12),
+                   axis.title=element_text(size=12)
                  )
                  + expand_limits(x = 200, y = 0)
                  + scale_x_continuous(expand = c(0, 1))
@@ -800,7 +812,9 @@ Combined_QT_ABC2=(blandr.draw(data$'ABC/2_SN',
                   panel.grid.major = element_blank(),
                   panel.grid.minor = element_blank(),
                   panel.background = element_blank(),
-                  axis.line = element_line(colour = "grey")
+                  axis.line = element_line(colour = "black", size=1),
+                  axis.text=element_text(size=12),
+                  axis.title=element_text(size=12)
                 )
                 + expand_limits(x = 200, y = 0)
                 + scale_x_continuous(expand = c(0, 1))
@@ -822,7 +836,9 @@ Combined_QT_DM=(blandr.draw(data$NewQuantomo,
                      panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(),
                      panel.background = element_blank(),
-                     axis.line = element_line(colour = "grey")
+                     axis.line = element_line(colour = "black", size=1),
+                     axis.text=element_text(size=12),
+                     axis.title=element_text(size=12)
                    )
                    + expand_limits(x = 200, y = 0)
                    + scale_x_continuous(expand = c(0, 1))
