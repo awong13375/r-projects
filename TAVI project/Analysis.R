@@ -54,6 +54,19 @@ for (era in eras){
   column=append(column, nrow(subset(subdata, subdata$rf_pulm==1))/nrow(subdata)*100)
   column=append(column, nrow(subset(subdata, is.na(subdata$rf_pulm))))
   
+  column=append(column, nrow(subset(subdata, subdata$prev_pci==1)))
+  column=append(column, nrow(subset(subdata, subdata$prev_pci==1))/nrow(subdata)*100)
+  column=append(column, nrow(subset(subdata, is.na(subdata$prev_pci))))
+  
+  column=append(column, nrow(subset(subdata, subdata$prev_cabg==1)))
+  column=append(column, nrow(subset(subdata, subdata$prev_cabg==1))/nrow(subdata)*100)
+  column=append(column, nrow(subset(subdata, is.na(subdata$prev_cabg))))
+  
+  column=append(column, nrow(subset(subdata, subdata$rf_nyha=="III"|subdata$rf_nyha=="IV")))
+  column=append(column, nrow(subset(subdata, subdata$rf_nyha=="III"|subdata$rf_nyha=="IV"))/nrow(subdata)*100)
+  column=append(column, nrow(subset(subdata, is.na(subdata$rf_nyha))))
+  
+  
   
   if (era==0){
     result=as.data.frame(column)
@@ -70,7 +83,10 @@ rownames(result)=c("n",
                    "# neuro","% neuro","# neuro NA",
                    "# carotid","% carotid","# carotid NA",
                    "# renal failure","% renal failure","# renal failure NA",
-                   "# pulm","% pulm","# pulm NA"
+                   "# pulm","% pulm","# pulm NA",
+                   "# pci","% pci","# pci NA",
+                   "# cabg","% cabg","# cabg NA",
+                   "# nyha3-4","% nyha3-4","# nyha NA"
                    
                    )
 
