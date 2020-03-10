@@ -4,6 +4,7 @@
 # LIBRARIES ----
 
 library(gmodels)
+library(ggplot2)
 
 data=read.csv("C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med2/TAVI Project/TAVI.csv")
 summary(data)
@@ -86,7 +87,7 @@ for (era in eras){
   column=append(column, median(subdata$rf_sts, na.rm=TRUE))
   column=append(column, IQR(subdata$rf_sts, na.rm=TRUE))
   column=append(column, nrow(subset(subdata, is.na(subdata$rf_sts))))
-  
+
   
   if (era==0){
     result=as.data.frame(column)
@@ -111,9 +112,11 @@ rownames(result)=c("n",
                    "# moca<26","% moca<26","# moca<26 NA",
                    "# katz<6","% katz<6","# katz<6 NA",
                    "median euro","IQR euro","# euro NA",
-                   "median sts","IQR sts","# sts NA"
-                   
+                   "median sts","IQR sts","# sts NA",
+                   "# nyha3-4","% nyha3-4","# nyha NA"
+
                    )
+
 colnames(result)=c("2010-2014","2015-2016","2017-2019")
 
 
@@ -222,56 +225,34 @@ colnames(table1stats)=c("p-value")
 
 #write.csv(table1stats, "C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med2/TAVI Project/table1stats.csv")
 
+# Plots ----
+## Euroscore ----
 
-# DATABASE
+eurolm <- lm(rf_euroscore_log ~ dt_tavi, data=data)
+summary(eurolm)
 
-tve <- tav[
-  c(
-    "id_tavi", "id_pprn", "dt_birth", "dt_tavi", "pt_age", "pt_sex", "pt_height", "pt_weight",
-    "rf_diabetes", "rf_pvd", "rf_cva", "rf_cva_type", "rf_dementia", "rf_tia", "rf_carotid",
-    "rf_renal_failure", "rf_pulm", "rf_nyha", "rf_lvef",
-    "prev_pci", "prev_cabg", "prev_a_bio_vs", "prev_afib_correct", "prev_pmicd", "prev_septal_rup", "prev_ventric_repr", "prev_valve_plas_m", "prev_valve_repl_m", "prev_valve_repr_m"
-    "prev_valve_plas_t", "prev_valve_repl_t", "prev_valve_repr_t", "prev_asd", 
-    "test_moca", "test_moca_blind", "rf_sts", "rf_euroscore_log", "test_dasi", "test_vas",
-    "test_katz"
-  )
-  ]
+ggplot(data, aes(dt_tavi, rf_euroscore_log)) +
+  geom_point() +
+  geom_smooth(method = "lm", se=FALSE, color="black")+
+  xlab("Year") +
+  ylab("Euroscore") + 
+  scale_x_date(date_breaks = "1 year", date_labels ="%Y")+
+  geom_vline(xintercept=as.Date("2015-01-01"))+
+  geom_vline(xintercept=as.Date("2017-01-01"))+
+  theme_classic()
 
-tve$dt_tavi_day <- as.numeric(tve$dt_tavi) - 14710
+## STS score ----
 
+stslm <- lm(rf_sts ~ dt_tavi, data=data)
+summary(stslm)
 
-# PLOTS
+ggplot(data, aes(dt_tavi, rf_sts)) +
+  geom_point() +
+  geom_smooth(method = "lm", se=FALSE, color="black")+
+  xlab("Year") +
+  ylab("STS score") + 
+  scale_x_date(date_breaks = "1 year", date_labels ="%Y")+
+  geom_vline(xintercept=as.Date("2015-01-01"))+
+  geom_vline(xintercept=as.Date("2017-01-01"))+
+  theme_classic()
 
-plot(
-  tve$dt_tavi_day, tve$rf_sts,
-  main = NULL,
-  ylab = "STS",
-  xlab = "Days"
-)
-abline(lm(tve$rf_sts ~ tve$dt_tavi_day))	# regression line
-abline(v = 265, col = "blue", lty = 2)	# 2011
-abline(v = 631, col = "blue", lty = 2)	# 2012
-abline(v = 996, col = "blue", lty = 2)	# 2013
-abline(v = 1361, col = "blue", lty = 2)	# 2014
-abline(v = 1726, col = "blue", lty = 2)	# 2015
-abline(v = 2092, col = "blue", lty = 2)	# 2016
-abline(v = 2457, col = "blue", lty = 2)	# 2017
-abline(v = 2822, col = "blue", lty = 2)	# 2018
-abline(v = 3187, col = "blue", lty = 2)	# 2019
-
-plot(
-  tve$dt_tavi_day, tve$rf_euroscore_log,
-  main = NULL,
-  ylab = "Log EuroSCORE",
-  xlab = "Days"
-)
-abline(lm(tve$rf_euroscore_log ~ tve$dt_tavi_day))	# regression line
-abline(v = 265, col = "blue", lty = 2)				# 2011
-abline(v = 631, col = "blue", lty = 2)				# 2012
-abline(v = 996, col = "blue", lty = 2)				# 2013
-abline(v = 1361, col = "blue", lty = 2)				# 2014
-abline(v = 1726, col = "blue", lty = 2)				# 2015
-abline(v = 2092, col = "blue", lty = 2)				# 2016
-abline(v = 2457, col = "blue", lty = 2)				# 2017
-abline(v = 2822, col = "blue", lty = 2)				# 2018
-abline(v = 3187, col = "blue", lty = 2)				# 2019
