@@ -71,15 +71,15 @@ for (era in eras){
   column=append(column, nrow(subset(subdata, is.na(subdata$prev_pci))))
   
   column=append(column, nrow(subset(subdata, subdata$prev_cabg==1|subdata$prev_a_bio_vs==1|subdata$prev_septal_rup==1|subdata$prev_ventric_repr==1|
-                                    subdata$prev_valve_plas_m==1|subdata$prev_valve_repl_m==1|subdata$prev_valve_repr_m==1|subdata$prev_valve_plas_t==1|
-                                    subdata$prev_valve_repl_t==1|subdata$prev_valve_repr_t==1|subdata$prev_asd==1)))
+                                      subdata$prev_valve_plas_m==1|subdata$prev_valve_repl_m==1|subdata$prev_valve_repr_m==1|subdata$prev_valve_plas_t==1|
+                                      subdata$prev_valve_repl_t==1|subdata$prev_valve_repr_t==1|subdata$prev_asd==1)))
   column=append(column, nrow(subset(subdata, subdata$prev_cabg==1|subdata$prev_a_bio_vs==1|subdata$prev_septal_rup==1|subdata$prev_ventric_repr==1|
-                                    subdata$prev_valve_plas_m==1|subdata$prev_valve_repl_m==1|subdata$prev_valve_repr_m==1|subdata$prev_valve_plas_t==1|
-                                    subdata$prev_valve_repl_t==1|subdata$prev_valve_repr_t==1|subdata$prev_asd==1))/nrow(subdata)*100)
+                                      subdata$prev_valve_plas_m==1|subdata$prev_valve_repl_m==1|subdata$prev_valve_repr_m==1|subdata$prev_valve_plas_t==1|
+                                      subdata$prev_valve_repl_t==1|subdata$prev_valve_repr_t==1|subdata$prev_asd==1))/nrow(subdata)*100)
   column=append(column, nrow(subset(subdata, is.na(subdata$prev_cabg==1)&is.na(subdata$prev_a_bio_vs==1)&is.na(subdata$prev_septal_rup==1)&
-                                    is.na(subdata$prev_ventric_repr==1)&is.na(subdata$prev_valve_plas_m==1)&is.na(subdata$prev_valve_repl_m==1)&
-                                    is.na(subdata$prev_valve_repr_m==1)&is.na(subdata$prev_valve_plas_t==1)&is.na(subdata$prev_valve_repl_t==1)&
-                                    is.na(subdata$prev_valve_repr_t==1)&is.na(subdata$prev_asd==1))))
+                                      is.na(subdata$prev_ventric_repr==1)&is.na(subdata$prev_valve_plas_m==1)&is.na(subdata$prev_valve_repl_m==1)&
+                                      is.na(subdata$prev_valve_repr_m==1)&is.na(subdata$prev_valve_plas_t==1)&is.na(subdata$prev_valve_repl_t==1)&
+                                      is.na(subdata$prev_valve_repr_t==1)&is.na(subdata$prev_asd==1))))
   
   column=append(column, nrow(subset(subdata, subdata$prev_cabg==1)))
   column=append(column, nrow(subset(subdata, subdata$prev_cabg==1))/nrow(subdata)*100)
@@ -92,6 +92,10 @@ for (era in eras){
   column=append(column, median(subdata$rf_lvef, na.rm=TRUE))
   column=append(column, IQR(subdata$rf_lvef, na.rm=TRUE))
   column=append(column, nrow(subset(subdata, is.na(subdata$rf_lvef))))
+  
+  column=append(column, mean(subdata$echo_a_grad_mean, na.rm=TRUE))
+  column=append(column, sd(subdata$echo_a_grad_mean, na.rm=TRUE))
+  column=append(column, nrow(subset(subdata, is.na(subdata$echo_a_grad_mean))))
   
   column=append(column, nrow(subset(subdata, subdata$test_moca<26)))
   column=append(column, nrow(subset(subdata, subdata$test_moca<26))/nrow(subdata)*100)
@@ -108,11 +112,6 @@ for (era in eras){
   column=append(column, median(subdata$rf_sts, na.rm=TRUE))
   column=append(column, IQR(subdata$rf_sts, na.rm=TRUE))
   column=append(column, nrow(subset(subdata, is.na(subdata$rf_sts))))
-<<<<<<< HEAD:TAVI project/TAVI Analysis.R
-  
-=======
-
->>>>>>> d9a71169548f78abc23ff2fcec116479d9e4d733:TAVI project/Analysis.R
   
 
   
@@ -139,12 +138,11 @@ rownames(result)=c("n",
                    "# cabg","% cabg","# cabg NA",
                    "# nyha3-4","% nyha3-4","# nyha NA",
                    "median LVEF","IQR LVEF","# LVEF NA",
+                   "mean MVG","sd MVG","# MVG NA",
                    "# moca<26","% moca<26","# moca<26 NA",
                    "# katz<6","% katz<6","# katz<6 NA",
                    "median euro","IQR euro","# euro NA",
-                   "median sts","IQR sts","# sts NA",
-                   "# nyha3-4","% nyha3-4","# nyha NA"
-
+                   "median sts","IQR sts","# sts NA"
                    )
 
 colnames(result)=c("2010-2014","2015-2016","2017-2019")
@@ -177,6 +175,14 @@ M=as.table(cbind(c(nrow(subset(era1, era1$rf_diabetes==0)),nrow(subset(era1, era
 ))
 table1stats=append(table1stats,chisq.test(M)$p.value)
 
+
+M=as.table(cbind(c(nrow(subset(era1, era1$rf_pvd==0)),nrow(subset(era1, era1$rf_pvd==1))),
+                 c(nrow(subset(era2, era2$rf_pvd==0)),nrow(subset(era2, era2$rf_pvd==1))),
+                 c(nrow(subset(era3, era3$rf_pvd==0)),nrow(subset(era3, era3$rf_pvd==1)))
+))
+table1stats=append(table1stats,chisq.test(M)$p.value)
+
+
 M=as.table(cbind(c(nrow(subset(era1, era1$rf_cva==1|era1$rf_dementia==1|era1$rf_tia==1)),nrow(subset(era1, era1$rf_cva==0|era1$rf_dementia==0|era1$rf_tia==0))),
                  c(nrow(subset(era2, era2$rf_cva==1|era2$rf_dementia==1|era2$rf_tia==1)),nrow(subset(era2, era2$rf_cva==0|era2$rf_dementia==0|era2$rf_tia==0))),
                  c(nrow(subset(era3, era3$rf_cva==1|era3$rf_dementia==1|era3$rf_tia==1)),nrow(subset(era3, era3$rf_cva==0|era3$rf_dementia==0|era3$rf_tia==0)))
@@ -205,9 +211,39 @@ M=as.table(cbind(c(nrow(subset(era1, era1$rf_pulm==0)),nrow(subset(era1, era1$rf
 table1stats=append(table1stats,chisq.test(M)$p.value)
 
 
+M=as.table(cbind(c(nrow(subset(era1, era1$prev_cabg==0 & era1$prev_cabg==0)),nrow(subset(era1, era1$prev_cabg==1 | era1$prev_cabg==1))),
+                 c(nrow(subset(era2, era2$prev_cabg==0 & era2$prev_cabg==0)),nrow(subset(era2, era2$prev_cabg==1 | era2$prev_cabg==1))),
+                 c(nrow(subset(era3, era3$prev_cabg==0 & era3$prev_cabg==0)),nrow(subset(era3, era3$prev_cabg==1 | era3$prev_cabg==1)))
+))
+table1stats=append(table1stats,chisq.test(M)$p.value)
+
+
 M=as.table(cbind(c(nrow(subset(era1, era1$prev_pci==0)),nrow(subset(era1, era1$prev_pci==1))),
                  c(nrow(subset(era2, era2$prev_pci==0)),nrow(subset(era2, era2$prev_pci==1))),
                  c(nrow(subset(era3, era3$prev_pci==0)),nrow(subset(era3, era3$prev_pci==1)))
+))
+table1stats=append(table1stats,chisq.test(M)$p.value)
+
+
+
+M=as.table(cbind(c(nrow(subset(era1, era1$prev_cabg==0 & era1$prev_a_bio_vs==0 & era1$prev_septal_rup==0 & era1$prev_ventric_repr==0 & 
+                               era1$prev_valve_plas_m==0 & era1$prev_valve_repl_m==0 & era1$prev_valve_repr_m==0 & era1$prev_valve_plas_t==0 & 
+                               era1$prev_valve_repl_t==0 & era1$prev_valve_repr_t==0 & era1$prev_asd==0)),
+                   nrow(subset(era1, era1$prev_cabg==1|era1$prev_a_bio_vs==1|era1$prev_septal_rup==1|era1$prev_ventric_repr==1|
+                               era1$prev_valve_plas_m==1|era1$prev_valve_repl_m==1|era1$prev_valve_repr_m==1|era1$prev_valve_plas_t==1|
+                               era1$prev_valve_repl_t==1|era1$prev_valve_repr_t==1|era1$prev_asd==1))),
+                 c(nrow(subset(era2, era2$prev_cabg==0 & era2$prev_a_bio_vs==0 & era2$prev_septal_rup==0 & era2$prev_ventric_repr==0 & 
+                               era2$prev_valve_plas_m==0 & era2$prev_valve_repl_m==0 & era2$prev_valve_repr_m==0 & era2$prev_valve_plas_t==0 & 
+                               era2$prev_valve_repl_t==0 & era2$prev_valve_repr_t==0 & era2$prev_asd==0)),
+                   nrow(subset(era2, era2$prev_cabg==1|era2$prev_a_bio_vs==1|era2$prev_septal_rup==1|era2$prev_ventric_repr==1|
+                               era2$prev_valve_plas_m==1|era2$prev_valve_repl_m==1|era2$prev_valve_repr_m==1|era2$prev_valve_plas_t==1|
+                               era2$prev_valve_repl_t==1|era2$prev_valve_repr_t==1|era2$prev_asd==1))),
+                 c(nrow(subset(era3, era3$prev_cabg==0 & era3$prev_a_bio_vs==0 & era3$prev_septal_rup==0 & era3$prev_ventric_repr==0 & 
+                                 era3$prev_valve_plas_m==0 & era3$prev_valve_repl_m==0 & era3$prev_valve_repr_m==0 & era3$prev_valve_plas_t==0 & 
+                                 era3$prev_valve_repl_t==0 & era3$prev_valve_repr_t==0 & era3$prev_asd==0)),
+                   nrow(subset(era3, era3$prev_cabg==1|era3$prev_a_bio_vs==1|era3$prev_septal_rup==1|era3$prev_ventric_repr==1|
+                                 era3$prev_valve_plas_m==1|era3$prev_valve_repl_m==1|era3$prev_valve_repr_m==1|era3$prev_valve_plas_t==1|
+                                 era3$prev_valve_repl_t==1|era3$prev_valve_repr_t==1|era3$prev_asd==1)))
 ))
 table1stats=append(table1stats,chisq.test(M)$p.value)
 
@@ -228,6 +264,7 @@ table1stats=append(table1stats,chisq.test(M)$p.value)
 
 table1stats=append(table1stats, oneway.test(rf_lvef ~ tavi_era, data=data)$p.value)
 
+table1stats=append(table1stats, oneway.test(echo_a_grad_mean ~ tavi_era, data=data)$p.value)
 
 M=as.table(cbind(c(nrow(subset(era1, era1$test_moca<26)),nrow(subset(era1, era1$test_moca>=26))),
                  c(nrow(subset(era2, era2$test_moca<26)),nrow(subset(era2, era2$test_moca>=26))),
@@ -250,7 +287,7 @@ table1stats=append(table1stats, oneway.test(rf_sts ~ tavi_era, data=data)$p.valu
 
 
 table1stats=as.data.frame(table1stats)
-rownames(table1stats)=c("age","gender","DM","neuro","carotid","renal","pulm","pci","cabg","nyha","lvef","moca","katz","euro","sts")
+rownames(table1stats)=c("age","gender","DM","pvd","neuro","carotid","renal","pulm","coronary","pci","heart sx","cabg","nyha","lvef","mvg","moca","katz","euro","sts")
 colnames(table1stats)=c("p-value")
 
 #write.csv(table1stats, "C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med2/TAVI Project/table1stats.csv")
@@ -267,8 +304,8 @@ ggplot(data, aes(dt_tavi, rf_euroscore_log)) +
   xlab("Year") +
   ylab("Euroscore") + 
   scale_x_date(date_breaks = "1 year", date_labels ="%Y")+
-  geom_vline(xintercept=as.Date("2015-01-01"))+
-  geom_vline(xintercept=as.Date("2017-01-01"))+
+  geom_vline(xintercept=as.Date("2015-01-01"), linetype="dotted")+
+  geom_vline(xintercept=as.Date("2017-01-01"), linetype="dotted")+
   theme_classic()
 
 ## STS score ----
@@ -282,7 +319,7 @@ ggplot(data, aes(dt_tavi, rf_sts)) +
   xlab("Year") +
   ylab("STS score") + 
   scale_x_date(date_breaks = "1 year", date_labels ="%Y")+
-  geom_vline(xintercept=as.Date("2015-01-01"))+
-  geom_vline(xintercept=as.Date("2017-01-01"))+
+  geom_vline(xintercept=as.Date("2015-01-01"), linetype="dotted")+
+  geom_vline(xintercept=as.Date("2017-01-01"), linetype="dotted")+
   theme_classic()
 
