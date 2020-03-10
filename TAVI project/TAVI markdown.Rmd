@@ -1,0 +1,93 @@
+---
+title: "TAVI analysis"
+date: "`r Sys.Date()`"
+output:
+  rmdformats::material:
+    highlight: kate
+---
+
+
+```{r knitr_init, echo=FALSE, cache=FALSE}
+library(knitr)
+library(rmdformats)
+
+## Global options
+options(max.print="99999")
+opts_chunk$set(echo=FALSE,
+	             cache=TRUE,
+               prompt=FALSE,
+               tidy=TRUE,
+               comment=NA,
+               message=FALSE,
+               warning=FALSE)
+opts_knit$set(width=75)
+```
+
+```{r echo=FALSE, eval=TRUE, warning=FALSE, message=FALSE, error=FALSE, results="hide"}
+# LIBRARIES ----
+
+library(gmodels)
+library(ggplot2)
+
+data=read.csv("C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med2/TAVI Project/TAVI.csv")
+summary(data)
+data$dt_tavi <- as.Date(as.character(data$dt_tavi),"%d/%m/%Y")
+
+# Data cleaning/recategorize ----
+
+## Subset data into 3 eras by TAVI date
+data$tavi_era=c(0)
+data$tavi_era[data$dt_tavi>=as.Date("2017-01-01")]=2
+data$tavi_era[data$dt_tavi<as.Date("2017-01-01")&data$dt_tavi>=as.Date("2015-01-01")]=1
+data$tavi_era[data$dt_tavi<as.Date("2015-01-01")]=0
+data$tavi_era[is.na(data$dt_tavi)]=NA
+
+```
+
+# Regression models
+## Euroscore
+```{r}
+eurolm <- lm(rf_euroscore_log ~ dt_tavi, data=data)
+summary(eurolm)
+```
+## STS Score
+```{r}
+stslm <- lm(rf_sts ~ dt_tavi, data=data)
+summary(stslm)
+```
+
+# Scatter plots
+## Euroscore
+```{r}
+ggplot(data, aes(dt_tavi, rf_euroscore_log)) +
+  geom_point() +
+  geom_smooth(method = "lm", se=FALSE, color="black")+
+  xlab("Year") +
+  ylab("Euroscore") + 
+  scale_x_date(date_breaks = "1 year", date_labels ="%Y")+
+  geom_vline(xintercept=as.Date("2015-01-01"))+
+  geom_vline(xintercept=as.Date("2017-01-01"))+
+  theme_classic()
+
+```
+
+## STS score
+```{r}
+ggplot(data, aes(dt_tavi, rf_sts)) +
+  geom_point() +
+  geom_smooth(method = "lm", se=FALSE, color="black")+
+  xlab("Year") +
+  ylab("STS score") + 
+  scale_x_date(date_breaks = "1 year", date_labels ="%Y")+
+  geom_vline(xintercept=as.Date("2015-01-01"))+
+  geom_vline(xintercept=as.Date("2017-01-01"))+
+  theme_classic()
+
+```
+
+
+
+
+
+
+
