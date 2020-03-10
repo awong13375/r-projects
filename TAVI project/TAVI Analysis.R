@@ -71,15 +71,15 @@ for (era in eras){
   column=append(column, nrow(subset(subdata, is.na(subdata$prev_pci))))
   
   column=append(column, nrow(subset(subdata, subdata$prev_cabg==1|subdata$prev_a_bio_vs==1|subdata$prev_septal_rup==1|subdata$prev_ventric_repr==1|
-                                    subdata$prev_valve_plas_m==1|subdata$prev_valve_repl_m==1|subdata$prev_valve_repr_m==1|subdata$prev_valve_plas_t==1|
-                                    subdata$prev_valve_repl_t==1|subdata$prev_valve_repr_t==1|subdata$prev_asd==1)))
+                                      subdata$prev_valve_plas_m==1|subdata$prev_valve_repl_m==1|subdata$prev_valve_repr_m==1|subdata$prev_valve_plas_t==1|
+                                      subdata$prev_valve_repl_t==1|subdata$prev_valve_repr_t==1|subdata$prev_asd==1)))
   column=append(column, nrow(subset(subdata, subdata$prev_cabg==1|subdata$prev_a_bio_vs==1|subdata$prev_septal_rup==1|subdata$prev_ventric_repr==1|
-                                    subdata$prev_valve_plas_m==1|subdata$prev_valve_repl_m==1|subdata$prev_valve_repr_m==1|subdata$prev_valve_plas_t==1|
-                                    subdata$prev_valve_repl_t==1|subdata$prev_valve_repr_t==1|subdata$prev_asd==1))/nrow(subdata)*100)
+                                      subdata$prev_valve_plas_m==1|subdata$prev_valve_repl_m==1|subdata$prev_valve_repr_m==1|subdata$prev_valve_plas_t==1|
+                                      subdata$prev_valve_repl_t==1|subdata$prev_valve_repr_t==1|subdata$prev_asd==1))/nrow(subdata)*100)
   column=append(column, nrow(subset(subdata, is.na(subdata$prev_cabg==1)&is.na(subdata$prev_a_bio_vs==1)&is.na(subdata$prev_septal_rup==1)&
-                                    is.na(subdata$prev_ventric_repr==1)&is.na(subdata$prev_valve_plas_m==1)&is.na(subdata$prev_valve_repl_m==1)&
-                                    is.na(subdata$prev_valve_repr_m==1)&is.na(subdata$prev_valve_plas_t==1)&is.na(subdata$prev_valve_repl_t==1)&
-                                    is.na(subdata$prev_valve_repr_t==1)&is.na(subdata$prev_asd==1))))
+                                      is.na(subdata$prev_ventric_repr==1)&is.na(subdata$prev_valve_plas_m==1)&is.na(subdata$prev_valve_repl_m==1)&
+                                      is.na(subdata$prev_valve_repr_m==1)&is.na(subdata$prev_valve_plas_t==1)&is.na(subdata$prev_valve_repl_t==1)&
+                                      is.na(subdata$prev_valve_repr_t==1)&is.na(subdata$prev_asd==1))))
   
   column=append(column, nrow(subset(subdata, subdata$prev_cabg==1)))
   column=append(column, nrow(subset(subdata, subdata$prev_cabg==1))/nrow(subdata)*100)
@@ -92,6 +92,10 @@ for (era in eras){
   column=append(column, median(subdata$rf_lvef, na.rm=TRUE))
   column=append(column, IQR(subdata$rf_lvef, na.rm=TRUE))
   column=append(column, nrow(subset(subdata, is.na(subdata$rf_lvef))))
+  
+  column=append(column, mean(subdata$echo_a_grad_mean, na.rm=TRUE))
+  column=append(column, sd(subdata$echo_a_grad_mean, na.rm=TRUE))
+  column=append(column, nrow(subset(subdata, is.na(subdata$echo_a_grad_mean))))
   
   column=append(column, nrow(subset(subdata, subdata$test_moca<26)))
   column=append(column, nrow(subset(subdata, subdata$test_moca<26))/nrow(subdata)*100)
@@ -108,11 +112,6 @@ for (era in eras){
   column=append(column, median(subdata$rf_sts, na.rm=TRUE))
   column=append(column, IQR(subdata$rf_sts, na.rm=TRUE))
   column=append(column, nrow(subset(subdata, is.na(subdata$rf_sts))))
-<<<<<<< HEAD:TAVI project/TAVI Analysis.R
-  
-=======
-
->>>>>>> d9a71169548f78abc23ff2fcec116479d9e4d733:TAVI project/Analysis.R
   
 
   
@@ -139,12 +138,11 @@ rownames(result)=c("n",
                    "# cabg","% cabg","# cabg NA",
                    "# nyha3-4","% nyha3-4","# nyha NA",
                    "median LVEF","IQR LVEF","# LVEF NA",
+                   "mean MVG","sd MVG","# MVG NA",
                    "# moca<26","% moca<26","# moca<26 NA",
                    "# katz<6","% katz<6","# katz<6 NA",
                    "median euro","IQR euro","# euro NA",
-                   "median sts","IQR sts","# sts NA",
-                   "# nyha3-4","% nyha3-4","# nyha NA"
-
+                   "median sts","IQR sts","# sts NA"
                    )
 
 colnames(result)=c("2010-2014","2015-2016","2017-2019")
