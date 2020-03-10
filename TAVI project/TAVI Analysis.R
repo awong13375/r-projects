@@ -108,7 +108,11 @@ for (era in eras){
   column=append(column, median(subdata$rf_sts, na.rm=TRUE))
   column=append(column, IQR(subdata$rf_sts, na.rm=TRUE))
   column=append(column, nrow(subset(subdata, is.na(subdata$rf_sts))))
+<<<<<<< HEAD:TAVI project/TAVI Analysis.R
   
+=======
+
+>>>>>>> d9a71169548f78abc23ff2fcec116479d9e4d733:TAVI project/Analysis.R
   
 
   
