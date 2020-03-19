@@ -114,7 +114,14 @@ for (era in eras){
   column=append(column, IQR(subdata$rf_sts, na.rm=TRUE))
   column=append(column, nrow(subset(subdata, is.na(subdata$rf_sts))))
   
-
+  column=append(column, nrow(subset(subdata, subdata$ind_risk_frail==1)))
+  column=append(column, nrow(subset(subdata, subdata$ind_risk_frail==1))/nrow(subdata)*100)
+  column=append(column, nrow(subset(subdata, subdata$ind_comorbid==1)))
+  column=append(column, nrow(subset(subdata, subdata$ind_comorbid==1))/nrow(subdata)*100)
+  column=append(column, nrow(subset(subdata, subdata$ind_surg_tech==1)))
+  column=append(column, nrow(subset(subdata, subdata$ind_surg_tech==1))/nrow(subdata)*100)
+  column=append(column, nrow(subset(subdata, is.na(subdata$ind_risk_frail)&is.na(subdata$ind_comorbid)&
+                                    is.na(subdata$ind_surg_tech))))
   
   if (era==0){
     result=as.data.frame(column)
@@ -143,7 +150,10 @@ rownames(result)=c("n",
                    "# moca<26","% moca<26","# moca<26 NA",
                    "# katz<6","% katz<6","# katz<6 NA",
                    "median euro","IQR euro","# euro NA",
-                   "median sts","IQR sts","# sts NA"
+                   "median sts","IQR sts","# sts NA",
+                   "# ind frail","% ind frail",
+                   "# ind commorb","% ind commorb",
+                   "# ind surg","% surg tech","# ind NA"
                    )
 
 colnames(result)=c("2010-2014","2015-2016","2017-2019")
@@ -286,9 +296,17 @@ table1stats=append(table1stats, oneway.test(rf_euroscore_log ~ tavi_era, data=da
 table1stats=append(table1stats, oneway.test(rf_sts ~ tavi_era, data=data)$p.value)
 
 
+M=as.table(cbind(c(nrow(subset(era1, era1$ind_risk_frail==1)),nrow(subset(era1, era1$ind_comorbid==1)),nrow(subset(era1, era1$ind_surg_tech==1))),
+                 c(nrow(subset(era2, era2$ind_risk_frail==1)),nrow(subset(era2, era2$ind_comorbid==1)),nrow(subset(era2, era2$ind_surg_tech==1))),
+                 c(nrow(subset(era3, era3$ind_risk_frail==1)),nrow(subset(era3, era3$ind_comorbid==1)),nrow(subset(era3, era3$ind_surg_tech==1)))
+))
+table1stats=append(table1stats,chisq.test(M)$p.value)
+
+
 
 table1stats=as.data.frame(table1stats)
-rownames(table1stats)=c("age","gender","DM","pvd","neuro","carotid","renal","pulm","coronary","pci","heart sx","cabg","nyha","lvef","mvg","moca","katz","euro","sts")
+rownames(table1stats)=c("age","gender","DM","pvd","neuro","carotid","renal","pulm","coronary","pci","heart sx",
+                        "cabg","nyha","lvef","mvg","moca","katz","euro","sts","reason TAVR")
 colnames(table1stats)=c("p-value")
 
 #write.csv(table1stats, "C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med2/TAVI Project/table1stats.csv")
