@@ -87,6 +87,33 @@ ggplot(data, aes(dt_tavi, rf_sts)) +
 
 ```
 
+# Box plots
+```{r echo=FALSE, eval=TRUE, warning=FALSE, message=FALSE, error=FALSE, results="hide"}
+data$tavi_era[data$tavi_era==0]="2010-2014"
+data$tavi_era[data$tavi_era==1]="2015-2016"
+data$tavi_era[data$tavi_era==2]="2017-2019"
+
+data$tavi_era=as.factor(data$tavi_era)
+```
+## Euroscore
+```{r}
+ggplot(data, aes(tavi_era, rf_euroscore_log)) +
+  geom_boxplot() +
+  xlab("Year") +
+  ylab("Euroscore") + 
+  theme_classic()
+
+```
+
+## STS score
+```{r}
+ggplot(data, aes(tavi_era, rf_sts)) +
+  geom_boxplot() +
+  xlab("Year") +
+  ylab("STS Score") + 
+  theme_classic()
+
+```
 
 
 

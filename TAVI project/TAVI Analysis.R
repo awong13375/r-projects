@@ -5,6 +5,7 @@
 
 library(gmodels)
 library(ggplot2)
+library(ggpubr)
 
 data=read.csv("C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med2/TAVI Project/TAVI.csv")
 additional_data=read.csv("C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med2/TAVI Project/TAVI Additional Data.csv")
@@ -292,7 +293,7 @@ colnames(table1stats)=c("p-value")
 
 #write.csv(table1stats, "C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med2/TAVI Project/table1stats.csv")
 
-# Plots ----
+# Scater Plots ----
 ## Euroscore ----
 
 eurolm <- lm(rf_euroscore_log ~ dt_tavi, data=data)
@@ -321,5 +322,27 @@ ggplot(data, aes(dt_tavi, rf_sts)) +
   scale_x_date(date_breaks = "1 year", date_labels ="%Y")+
   geom_vline(xintercept=as.Date("2015-01-01"), linetype="dotted")+
   geom_vline(xintercept=as.Date("2017-01-01"), linetype="dotted")+
+  theme_classic()
+
+# Box Plots ----
+data$tavi_era[data$tavi_era==0]="2010-2014"
+data$tavi_era[data$tavi_era==1]="2015-2016"
+data$tavi_era[data$tavi_era==2]="2017-2019"
+
+data$tavi_era=as.factor(data$tavi_era)
+## Euroscore ----
+
+ggplot(data, aes(tavi_era, rf_euroscore_log)) +
+  geom_boxplot() +
+  xlab("Year") +
+  ylab("Euroscore") + 
+  theme_classic()
+
+## STS Score ----
+
+ggplot(data, aes(tavi_era, rf_sts)) +
+  geom_boxplot() +
+  xlab("Year") +
+  ylab("STS Score") + 
   theme_classic()
 
