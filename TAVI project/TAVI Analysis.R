@@ -6,12 +6,18 @@
 library(gmodels)
 library(ggplot2)
 library(ggpubr)
+library(epitools)
 
 data=read.csv("C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med2/TAVI Project/TAVI.csv")
 additional_data=read.csv("C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med2/TAVI Project/TAVI Additional Data.csv")
+additional_outcome_data=read.csv("C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med2/TAVI Project/supplementary outcome data.csv")
 data=merge(data, additional_data, by="id_tavi")
+data=merge(data, additional_outcome_data, by.x="id_tavi", by.y="ï..id_tavi")
 summary(data)
 data$dt_tavi <- as.Date(as.character(data$dt_tavi),"%d/%m/%Y")
+data$dt_dc_primary <- as.Date(as.character(data$dt_dc_primary),"%Y-%m-%d")
+data$exit_dt <- as.Date(as.character(data$exit_dt),"%Y-%m-%d")
+
 
 # Data cleaning/recategorize ----
 
@@ -21,6 +27,19 @@ data$tavi_era[data$dt_tavi>=as.Date("2017-01-01")]=2
 data$tavi_era[data$dt_tavi<as.Date("2017-01-01")&data$dt_tavi>=as.Date("2015-01-01")]=1
 data$tavi_era[data$dt_tavi<as.Date("2015-01-01")]=0
 data$tavi_era[is.na(data$dt_tavi)]=NA
+
+##Calculate in hospital mortality
+data$in_hosp_mort=c(0)
+data$in_hosp_mort[data$dt_dc_primary==data$exit_dt]=1
+data$in_hosp_mort[is.na(data$exit_mort)]=NA
+
+## Calculate # days after discharge mortality
+data$mort_d=difftime(data$exit_dt ,data$dt_dc_primary , units = c("days"))
+data$mort_d[data$mort_d<0|data$exit_mort==0]=NA
+
+## Calculate length of stay
+data$los=difftime(data$dt_dc_primary, data$dt_tavi, units=c("days"))
+data$los[data$los<0]=NA
 
 # Table 1 values ----
 eras=c(0, 1, 2)
@@ -36,39 +55,39 @@ for (era in eras){
   column=append(column, nrow(subset(subdata, is.na(subdata$pt_age))))
   
   column=append(column, nrow(subset(subdata, subdata$pt_sex=="F")))
-  column=append(column, nrow(subset(subdata, subdata$pt_sex=="F"))/nrow(subdata)*100)
+  column=append(column, nrow(subset(subdata, subdata$pt_sex=="F"))/nrow(subset(subdata, !is.na(subdata$pt_sex)))*100)
   column=append(column, nrow(subset(subdata, is.na(subdata$pt_sex))))
   
   column=append(column, nrow(subset(subdata, subdata$rf_diabetes==1)))
-  column=append(column, nrow(subset(subdata, subdata$rf_diabetes==1))/nrow(subdata)*100)
+  column=append(column, nrow(subset(subdata, subdata$rf_diabetes==1))/nrow(subset(subdata, !is.na(subdata$rf_diabetes)))*100)
   column=append(column, nrow(subset(subdata, is.na(subdata$rf_diabetes))))
   
   column=append(column, nrow(subset(subdata, subdata$rf_pvd==1)))
-  column=append(column, nrow(subset(subdata, subdata$rf_pvd==1))/nrow(subdata)*100)
+  column=append(column, nrow(subset(subdata, subdata$rf_pvd==1))/nrow(subset(subdata, !is.na(subdata$rf_pvd)))*100)
   column=append(column, nrow(subset(subdata, is.na(subdata$rf_pvd))))
   
   column=append(column, nrow(subset(subdata, subdata$rf_cva==1|subdata$rf_dementia==1|subdata$rf_tia==1)))
-  column=append(column, nrow(subset(subdata, subdata$rf_cva==1|subdata$rf_dementia==1|subdata$rf_tia==1))/nrow(subdata)*100)
+  column=append(column, nrow(subset(subdata, subdata$rf_cva==1|subdata$rf_dementia==1|subdata$rf_tia==1))/nrow(subset(subdata, !(is.na(subdata$rf_cva)&is.na(subdata$rf_dementia)&is.na(subdata$rf_tia))))*100)
   column=append(column, nrow(subset(subdata, is.na(subdata$rf_cva)&is.na(subdata$rf_dementia)&is.na(subdata$rf_tia))))
   
   column=append(column, nrow(subset(subdata, subdata$rf_carotid==1)))
-  column=append(column, nrow(subset(subdata, subdata$rf_carotid==1))/nrow(subdata)*100)
+  column=append(column, nrow(subset(subdata, subdata$rf_carotid==1))/nrow(subset(subdata, !is.na(subdata$rf_carotid)))*100)
   column=append(column, nrow(subset(subdata, is.na(subdata$rf_carotid))))
   
   column=append(column, nrow(subset(subdata, subdata$rf_renal_failure==1)))
-  column=append(column, nrow(subset(subdata, subdata$rf_renal_failure==1))/nrow(subdata)*100)
+  column=append(column, nrow(subset(subdata, subdata$rf_renal_failure==1))/nrow(subset(subdata, !is.na(subdata$rf_renal_failure)))*100)
   column=append(column, nrow(subset(subdata, is.na(subdata$rf_renal_failure))))
   
   column=append(column, nrow(subset(subdata, subdata$rf_pulm==1)))
-  column=append(column, nrow(subset(subdata, subdata$rf_pulm==1))/nrow(subdata)*100)
+  column=append(column, nrow(subset(subdata, subdata$rf_pulm==1))/nrow(subset(subdata, !is.na(subdata$rf_pulm)))*100)
   column=append(column, nrow(subset(subdata, is.na(subdata$rf_pulm))))
   
   column=append(column, nrow(subset(subdata, subdata$prev_cabg==1|subdata$prev_pci==1)))
-  column=append(column, nrow(subset(subdata, subdata$prev_cabg==1|subdata$prev_pci==1))/nrow(subdata)*100)
+  column=append(column, nrow(subset(subdata, subdata$prev_cabg==1|subdata$prev_pci==1))/nrow(subset(subdata, !(is.na(subdata$prev_cabg)&is.na(subdata$prev_pci))))*100)
   column=append(column, nrow(subset(subdata, is.na(subdata$prev_cabg)&is.na(subdata$prev_pci))))
   
   column=append(column, nrow(subset(subdata, subdata$prev_pci==1)))
-  column=append(column, nrow(subset(subdata, subdata$prev_pci==1))/nrow(subdata)*100)
+  column=append(column, nrow(subset(subdata, subdata$prev_pci==1))/nrow(subset(subdata, !is.na(subdata$prev_pci)))*100)
   column=append(column, nrow(subset(subdata, is.na(subdata$prev_pci))))
   
   column=append(column, nrow(subset(subdata, subdata$prev_cabg==1|subdata$prev_a_bio_vs==1|subdata$prev_septal_rup==1|subdata$prev_ventric_repr==1|
@@ -76,18 +95,21 @@ for (era in eras){
                                       subdata$prev_valve_repl_t==1|subdata$prev_valve_repr_t==1|subdata$prev_asd==1)))
   column=append(column, nrow(subset(subdata, subdata$prev_cabg==1|subdata$prev_a_bio_vs==1|subdata$prev_septal_rup==1|subdata$prev_ventric_repr==1|
                                       subdata$prev_valve_plas_m==1|subdata$prev_valve_repl_m==1|subdata$prev_valve_repr_m==1|subdata$prev_valve_plas_t==1|
-                                      subdata$prev_valve_repl_t==1|subdata$prev_valve_repr_t==1|subdata$prev_asd==1))/nrow(subdata)*100)
+                                      subdata$prev_valve_repl_t==1|subdata$prev_valve_repr_t==1|subdata$prev_asd==1))/nrow(subset(subdata, !(is.na(subdata$prev_cabg==1)&is.na(subdata$prev_a_bio_vs==1)&is.na(subdata$prev_septal_rup==1)&
+                                                                                                                                             is.na(subdata$prev_ventric_repr==1)&is.na(subdata$prev_valve_plas_m==1)&is.na(subdata$prev_valve_repl_m==1)&
+                                                                                                                                             is.na(subdata$prev_valve_repr_m==1)&is.na(subdata$prev_valve_plas_t==1)&is.na(subdata$prev_valve_repl_t==1)&
+                                                                                                                                             is.na(subdata$prev_valve_repr_t==1)&is.na(subdata$prev_asd==1))))*100)
   column=append(column, nrow(subset(subdata, is.na(subdata$prev_cabg==1)&is.na(subdata$prev_a_bio_vs==1)&is.na(subdata$prev_septal_rup==1)&
                                       is.na(subdata$prev_ventric_repr==1)&is.na(subdata$prev_valve_plas_m==1)&is.na(subdata$prev_valve_repl_m==1)&
                                       is.na(subdata$prev_valve_repr_m==1)&is.na(subdata$prev_valve_plas_t==1)&is.na(subdata$prev_valve_repl_t==1)&
                                       is.na(subdata$prev_valve_repr_t==1)&is.na(subdata$prev_asd==1))))
   
   column=append(column, nrow(subset(subdata, subdata$prev_cabg==1)))
-  column=append(column, nrow(subset(subdata, subdata$prev_cabg==1))/nrow(subdata)*100)
+  column=append(column, nrow(subset(subdata, subdata$prev_cabg==1))/nrow(subset(subdata, !is.na(subdata$prev_cabg)))*100)
   column=append(column, nrow(subset(subdata, is.na(subdata$prev_cabg))))
   
   column=append(column, nrow(subset(subdata, subdata$rf_nyha=="III"|subdata$rf_nyha=="IV")))
-  column=append(column, nrow(subset(subdata, subdata$rf_nyha=="III"|subdata$rf_nyha=="IV"))/nrow(subdata)*100)
+  column=append(column, nrow(subset(subdata, subdata$rf_nyha=="III"|subdata$rf_nyha=="IV"))/nrow(subset(subdata, !is.na(subdata$rf_nyha)))*100)
   column=append(column, nrow(subset(subdata, is.na(subdata$rf_nyha))))
   
   column=append(column, median(subdata$rf_lvef, na.rm=TRUE))
@@ -99,11 +121,11 @@ for (era in eras){
   column=append(column, nrow(subset(subdata, is.na(subdata$echo_a_grad_mean))))
   
   column=append(column, nrow(subset(subdata, subdata$test_moca<26)))
-  column=append(column, nrow(subset(subdata, subdata$test_moca<26))/nrow(subdata)*100)
+  column=append(column, nrow(subset(subdata, subdata$test_moca<26))/nrow(subset(subdata, !is.na(subdata$test_moca)))*100)
   column=append(column, nrow(subset(subdata, is.na(subdata$test_moca))))
   
   column=append(column, nrow(subset(subdata, subdata$test_katz<6)))
-  column=append(column, nrow(subset(subdata, subdata$test_katz<6))/nrow(subdata)*100)
+  column=append(column, nrow(subset(subdata, subdata$test_katz<6))/nrow(subset(subdata, !is.na(subdata$test_katz)))*100)
   column=append(column, nrow(subset(subdata, is.na(subdata$test_katz))))
   
   column=append(column, median(subdata$rf_euroscore_log, na.rm=TRUE))
@@ -115,13 +137,35 @@ for (era in eras){
   column=append(column, nrow(subset(subdata, is.na(subdata$rf_sts))))
   
   column=append(column, nrow(subset(subdata, subdata$ind_risk_frail==1)))
-  column=append(column, nrow(subset(subdata, subdata$ind_risk_frail==1))/nrow(subdata)*100)
+  column=append(column, nrow(subset(subdata, subdata$ind_risk_frail==1))/nrow(subset(subdata, !(is.na(subdata$ind_risk_frail)&is.na(subdata$ind_comorbid)&
+                                                                                                is.na(subdata$ind_surg_tech))))*100)
   column=append(column, nrow(subset(subdata, subdata$ind_comorbid==1)))
-  column=append(column, nrow(subset(subdata, subdata$ind_comorbid==1))/nrow(subdata)*100)
+  column=append(column, nrow(subset(subdata, subdata$ind_comorbid==1))/nrow(subset(subdata, !(is.na(subdata$ind_risk_frail)&is.na(subdata$ind_comorbid)&
+                                                                                              is.na(subdata$ind_surg_tech))))*100)
   column=append(column, nrow(subset(subdata, subdata$ind_surg_tech==1)))
-  column=append(column, nrow(subset(subdata, subdata$ind_surg_tech==1))/nrow(subdata)*100)
+  column=append(column, nrow(subset(subdata, subdata$ind_surg_tech==1))/nrow(subset(subdata, !(is.na(subdata$ind_risk_frail)&is.na(subdata$ind_comorbid)&
+                                                                                                 is.na(subdata$ind_surg_tech))))*100)
   column=append(column, nrow(subset(subdata, is.na(subdata$ind_risk_frail)&is.na(subdata$ind_comorbid)&
                                     is.na(subdata$ind_surg_tech))))
+  
+  column=append(column,as.numeric(pois.exact(nrow(subset(subdata, subdata$in_hosp_mort==1)),nrow(subset(subdata, !is.na(subdata$in_hosp_mort))))[3])*1000)
+  column=append(column,as.numeric(pois.exact(nrow(subset(subdata, subdata$in_hosp_mort==1)),nrow(subset(subdata, !is.na(subdata$in_hosp_mort))))[4])*1000)
+  column=append(column,as.numeric(pois.exact(nrow(subset(subdata, subdata$in_hosp_mort==1)),nrow(subset(subdata, !is.na(subdata$in_hosp_mort))))[5])*1000)
+  column=append(column, nrow(subset(subdata, is.na(subdata$in_hosp_mort))))
+  
+  column=append(column,as.numeric(pois.exact(nrow(subset(subdata, subdata$mort_d<=30)),nrow(subset(subdata, !is.na(subdata$exit_mort))))[3])*1000)
+  column=append(column,as.numeric(pois.exact(nrow(subset(subdata, subdata$mort_d<=30)),nrow(subset(subdata, !is.na(subdata$exit_mort))))[4])*1000)
+  column=append(column,as.numeric(pois.exact(nrow(subset(subdata, subdata$mort_d<=30)),nrow(subset(subdata, !is.na(subdata$exit_mort))))[5])*1000)
+  column=append(column, nrow(subset(subdata, is.na(subdata$exit_mort))))
+  
+  column=append(column,as.numeric(pois.exact(nrow(subset(subdata, subdata$los<=1)),nrow(subset(subdata, !is.na(subdata$los))))[3])*1000)
+  column=append(column,as.numeric(pois.exact(nrow(subset(subdata, subdata$los<=1)),nrow(subset(subdata, !is.na(subdata$los))))[4])*1000)
+  column=append(column,as.numeric(pois.exact(nrow(subset(subdata, subdata$los<=1)),nrow(subset(subdata, !is.na(subdata$los))))[5])*1000)
+  column=append(column, nrow(subset(subdata, is.na(subdata$los))))
+  
+  column=append(column, median(as.numeric(subdata$los), na.rm=TRUE))
+  column=append(column, IQR(as.numeric(subdata$los), na.rm=TRUE))
+  column=append(column, nrow(subset(subdata, is.na(subdata$los))))
   
   if (era==0){
     result=as.data.frame(column)
@@ -153,7 +197,11 @@ rownames(result)=c("n",
                    "median sts","IQR sts","# sts NA",
                    "# ind frail","% ind frail",
                    "# ind commorb","% ind commorb",
-                   "# ind surg","% surg tech","# ind NA"
+                   "# ind surg","% surg tech","# ind NA",
+                   "in hosp mort rate","in hosp mort lower CI","in hosp mort upper CI","# in hosp mort NA",
+                   "30d mort rate","30d mort rate lower CI","30d mort rate upper CI","# mort rate NA",
+                   "dc by day 1 rate","dc by day 1 lower CI","dc by day 1 upper CI","# dc by day 1 NA",
+                   "median los","IQR los","# los NA"
                    )
 
 colnames(result)=c("2010-2014","2015-2016","2017-2019")
@@ -348,6 +396,7 @@ data$tavi_era[data$tavi_era==1]="2015-2016"
 data$tavi_era[data$tavi_era==2]="2017-2019"
 
 data$tavi_era=as.factor(data$tavi_era)
+
 ## Euroscore ----
 
 ggplot(data, aes(tavi_era, rf_euroscore_log)) +
