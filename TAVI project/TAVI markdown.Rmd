@@ -28,12 +28,20 @@ opts_knit$set(width=75)
 
 library(gmodels)
 library(ggplot2)
+library(ggpubr)
+library(epitools)
+library(survival)
+library(survminer)
 
 data=read.csv("C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med2/TAVI Project/TAVI.csv")
 additional_data=read.csv("C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med2/TAVI Project/TAVI Additional Data.csv")
+additional_outcome_data=read.csv("C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med2/TAVI Project/supplementary outcome data.csv")
 data=merge(data, additional_data, by="id_tavi")
+data=merge(data, additional_outcome_data, by.x="id_tavi", by.y="ï..id_tavi")
 summary(data)
 data$dt_tavi <- as.Date(as.character(data$dt_tavi),"%d/%m/%Y")
+data$dt_dc_primary <- as.Date(as.character(data$dt_dc_primary),"%Y-%m-%d")
+data$exit_dt <- as.Date(as.character(data$exit_dt),"%Y-%m-%d")
 
 # Data cleaning/recategorize ----
 
@@ -43,6 +51,19 @@ data$tavi_era[data$dt_tavi>=as.Date("2017-01-01")]=2
 data$tavi_era[data$dt_tavi<as.Date("2017-01-01")&data$dt_tavi>=as.Date("2015-01-01")]=1
 data$tavi_era[data$dt_tavi<as.Date("2015-01-01")]=0
 data$tavi_era[is.na(data$dt_tavi)]=NA
+
+##Calculate in hospital mortality
+data$in_hosp_mort=c(0)
+data$in_hosp_mort[data$dt_dc_primary==data$exit_dt]=1
+data$in_hosp_mort[is.na(data$exit_mort)]=NA
+
+## Calculate # days after discharge mortality
+data$mort_d=difftime(data$exit_dt ,data$dt_dc_primary , units = c("days"))
+data$mort_d[data$mort_d<0|data$exit_mort==0]=NA
+
+## Calculate length of stay
+data$los=difftime(data$dt_dc_primary, data$dt_tavi, units=c("days"))
+data$los[data$los<0]=NA
 
 ```
 
@@ -67,8 +88,10 @@ ggplot(data, aes(dt_tavi, rf_euroscore_log)) +
   xlab("Year") +
   ylab("Euroscore") + 
   scale_x_date(date_breaks = "1 year", date_labels ="%Y")+
-  geom_vline(xintercept=as.Date("2015-01-01"), linetype="dotted")+
-  geom_vline(xintercept=as.Date("2017-01-01"), linetype="dotted")+
+  geom_vline(xintercept=as.Date("2010-01-01"), linetype="dotted")+
+  geom_vline(xintercept=as.Date("2011-01-01"), linetype="dotted")+
+  geom_vline(xintercept=as.Date("2016-01-01"), linetype="dotted")+
+  geom_vline(xintercept=as.Date("2019-01-01"), linetype="dotted")+
   theme_classic()
 
 ```
@@ -81,8 +104,10 @@ ggplot(data, aes(dt_tavi, rf_sts)) +
   xlab("Year") +
   ylab("STS score") + 
   scale_x_date(date_breaks = "1 year", date_labels ="%Y")+
-  geom_vline(xintercept=as.Date("2015-01-01"), linetype="dotted")+
-  geom_vline(xintercept=as.Date("2017-01-01"), linetype="dotted")+
+  geom_vline(xintercept=as.Date("2010-01-01"), linetype="dotted")+
+  geom_vline(xintercept=as.Date("2011-01-01"), linetype="dotted")+
+  geom_vline(xintercept=as.Date("2016-01-01"), linetype="dotted")+
+  geom_vline(xintercept=as.Date("2019-01-01"), linetype="dotted")+
   theme_classic()
 
 ```
@@ -116,7 +141,57 @@ ggplot(data, aes(tavi_era, rf_sts)) +
 ```
 
 
+# Survival analysis
+```{r echo=FALSE, eval=TRUE, warning=FALSE, message=FALSE, error=FALSE, results="hide"}
+data=read.csv("C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med2/TAVI Project/TAVI.csv")
+additional_data=read.csv("C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med2/TAVI Project/TAVI Additional Data.csv")
+additional_outcome_data=read.csv("C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med2/TAVI Project/supplementary outcome data.csv")
+data=merge(data, additional_data, by="id_tavi")
+data=merge(data, additional_outcome_data, by.x="id_tavi", by.y="ï..id_tavi")
+summary(data)
+data$dt_tavi <- as.Date(as.character(data$dt_tavi),"%d/%m/%Y")
+data$dt_dc_primary <- as.Date(as.character(data$dt_dc_primary),"%Y-%m-%d")
+data$exit_dt <- as.Date(as.character(data$exit_dt),"%Y-%m-%d")
 
+# Data cleaning/recategorize ----
 
+## Subset data into 3 eras by TAVI date
+data$tavi_era=c(0)
+data$tavi_era[data$dt_tavi>=as.Date("2017-01-01")]=2
+data$tavi_era[data$dt_tavi<as.Date("2017-01-01")&data$dt_tavi>=as.Date("2015-01-01")]=1
+data$tavi_era[data$dt_tavi<as.Date("2015-01-01")]=0
+data$tavi_era[is.na(data$dt_tavi)]=NA
 
+##Calculate in hospital mortality
+data$in_hosp_mort=c(0)
+data$in_hosp_mort[data$dt_dc_primary==data$exit_dt]=1
+data$in_hosp_mort[is.na(data$exit_mort)]=NA
 
+## Calculate # days after discharge mortality
+data$mort_d=difftime(data$exit_dt ,data$dt_dc_primary , units = c("days"))
+data$mort_d[data$mort_d<0]=NA
+data$mort_d[data$exit_mort==0&is.na(data$mort_d)]=0
+```
+
+```{r}
+km=survfit(Surv(mort_d, exit_mort)~tavi_era, data=data)
+km
+```
+
+# Survival curve
+```{r}
+ggsurvplot(km, 
+                   data=data,
+                   size = 1,                 # change line size
+                   conf.int = TRUE,          # Add confidence interval
+                   pval = TRUE,              # Add p-value
+                   risk.table = TRUE,        # Add risk table
+                   risk.table.col = "strata",# Risk table color by groups
+                   legend.labs = 
+                     c("2010-2014", "2015-2016", "2017-2019"),    # Change legend labels
+                   risk.table.height = 0.25, # Useful to change when you have multiple groups
+                   ggtheme = theme_classic(),      # Change ggplot2 theme
+                   xlab= "Time in days"
+                   )
+
+```

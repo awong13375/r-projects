@@ -3,3 +3,8 @@ knitr
 rmdformats
 gmodels
 ggplot2
+magrittr
+ggpubr
+epitools
+survival
+survminer

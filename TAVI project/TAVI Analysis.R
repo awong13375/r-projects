@@ -7,12 +7,14 @@ library(gmodels)
 library(ggplot2)
 library(ggpubr)
 library(epitools)
+library(survival)
+library(survminer)
 
 data=read.csv("C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med2/TAVI Project/TAVI.csv")
 additional_data=read.csv("C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med2/TAVI Project/TAVI Additional Data.csv")
 additional_outcome_data=read.csv("C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med2/TAVI Project/supplementary outcome data.csv")
 data=merge(data, additional_data, by="id_tavi")
-data=merge(data, additional_outcome_data, by.x="id_tavi", by.y="Ã¯..id_tavi")
+data=merge(data, additional_outcome_data, by.x="id_tavi", by.y="ï..id_tavi")
 summary(data)
 data$dt_tavi <- as.Date(as.character(data$dt_tavi),"%d/%m/%Y")
 data$dt_dc_primary <- as.Date(as.character(data$dt_dc_primary),"%Y-%m-%d")
@@ -130,10 +132,14 @@ for (era in eras){
   
   column=append(column, median(subdata$rf_euroscore_log, na.rm=TRUE))
   column=append(column, IQR(subdata$rf_euroscore_log, na.rm=TRUE))
+  column=append(column, as.numeric(quantile(subdata$rf_euroscore_log, na.rm=TRUE))[2])
+  column=append(column, as.numeric(quantile(subdata$rf_euroscore_log, na.rm=TRUE))[4])
   column=append(column, nrow(subset(subdata, is.na(subdata$rf_euroscore_log))))
   
   column=append(column, median(subdata$rf_sts, na.rm=TRUE))
   column=append(column, IQR(subdata$rf_sts, na.rm=TRUE))
+  column=append(column, as.numeric(quantile(subdata$rf_sts, na.rm=TRUE))[2])
+  column=append(column, as.numeric(quantile(subdata$rf_sts, na.rm=TRUE))[4])
   column=append(column, nrow(subset(subdata, is.na(subdata$rf_sts))))
   
   column=append(column, nrow(subset(subdata, subdata$ind_risk_frail==1)))
@@ -193,8 +199,8 @@ rownames(result)=c("n",
                    "mean MVG","sd MVG","# MVG NA",
                    "# moca<26","% moca<26","# moca<26 NA",
                    "# katz<6","% katz<6","# katz<6 NA",
-                   "median euro","IQR euro","# euro NA",
-                   "median sts","IQR sts","# sts NA",
+                   "median euro","IQR euro","Q1 euro","Q3 euro","# euro NA",
+                   "median sts","IQR sts","Q1 sts","Q3 sts","# sts NA",
                    "# ind frail","% ind frail",
                    "# ind commorb","% ind commorb",
                    "# ind surg","% surg tech","# ind NA",
@@ -372,8 +378,10 @@ ggplot(data, aes(dt_tavi, rf_euroscore_log)) +
   xlab("Year") +
   ylab("Euroscore") + 
   scale_x_date(date_breaks = "1 year", date_labels ="%Y")+
-  geom_vline(xintercept=as.Date("2015-01-01"), linetype="dotted")+
-  geom_vline(xintercept=as.Date("2017-01-01"), linetype="dotted")+
+  geom_vline(xintercept=as.Date("2010-01-01"), linetype="dotted")+
+  geom_vline(xintercept=as.Date("2011-01-01"), linetype="dotted")+
+  geom_vline(xintercept=as.Date("2016-01-01"), linetype="dotted")+
+  geom_vline(xintercept=as.Date("2019-01-01"), linetype="dotted")+
   theme_classic()
 
 ## STS score ----
@@ -387,8 +395,10 @@ ggplot(data, aes(dt_tavi, rf_sts)) +
   xlab("Year") +
   ylab("STS score") + 
   scale_x_date(date_breaks = "1 year", date_labels ="%Y")+
-  geom_vline(xintercept=as.Date("2015-01-01"), linetype="dotted")+
-  geom_vline(xintercept=as.Date("2017-01-01"), linetype="dotted")+
+  geom_vline(xintercept=as.Date("2010-01-01"), linetype="dotted")+
+  geom_vline(xintercept=as.Date("2011-01-01"), linetype="dotted")+
+  geom_vline(xintercept=as.Date("2016-01-01"), linetype="dotted")+
+  geom_vline(xintercept=as.Date("2019-01-01"), linetype="dotted")+
   theme_classic()
 
 # Box Plots ----
@@ -413,4 +423,23 @@ ggplot(data, aes(tavi_era, rf_sts)) +
   xlab("Year") +
   ylab("STS Score") + 
   theme_classic()
+
+## Survival curves ----
+data$mort_d=difftime(data$exit_dt ,data$dt_dc_primary , units = c("days"))
+data$mort_d[data$mort_d<0]=NA
+data$mort_d[data$exit_mort==0&is.na(data$mort_d)]=0
+km=survfit(Surv(mort_d, exit_mort)~tavi_era, data=data)
+km_plot=ggsurvplot(km, 
+                   data=data,
+                   size = 1,                 # change line size
+                   conf.int = TRUE,          # Add confidence interval
+                   pval = TRUE,              # Add p-value
+                   risk.table = TRUE,        # Add risk table
+                   risk.table.col = "strata",# Risk table color by groups
+                   legend.labs = 
+                     c("2010-2014", "2015-2016", "2017-2019"),    # Change legend labels
+                   risk.table.height = 0.25, # Useful to change when you have multiple groups
+                   ggtheme = theme_classic(),      # Change ggplot2 theme
+                   xlab= "Time in days"
+                   )
 
