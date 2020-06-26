@@ -64,6 +64,28 @@ dcm_list=SL_SI_dcm_files[,c("PID","study")]
 missing_dcm=subset(dcm_list, !(dcm_list$PID %in% fulldb$PID))
 missing_pid_list=as.factor(as.character(missing_dcm$PID))
 
+# Identify IVH cases ----
+
+ivhdb=readxl::read_xlsx("D:/Google Drive/Desktop files/Dal Med/ICH/Archive/GraebCombined_withmRS (Recovered).xlsx", sheet="IVH")
+ivhdb=as.data.frame(ivhdb)
+ivh_list=as.character(ivhdb$Subject)
+SL_SI_dcm_files$IVH=c(99)
+
+SL_SI_dcm_files$IVH[SL_SI_dcm_files$PID %in% ivh_list]=1
+SL_SI_dcm_files$IVH[!(SL_SI_dcm_files$PID %in% ivh_list)]=0
+#write.csv(SL_SI_dcm_files, "D:/Google Drive/Desktop files/Dal Med/ICH/SL_SI_dcm_files_ivh.csv")
+
+SL_SI_dcm_files_IVH=subset(SL_SI_dcm_files, SL_SI_dcm_files$IVH==1)
+print(as.factor(as.character(SL_SI_dcm_files_IVH$PID)))
+
+
+
+
+
+
+
+
+
 
 
 
