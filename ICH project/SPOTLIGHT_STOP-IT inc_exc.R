@@ -33,19 +33,16 @@ dcm_add_files=transpose(as.data.frame(read.csv("D:/ICH Files/STOP-IT/dcm_add_fil
 dcm_previous_files=transpose(as.data.frame(read.csv("D:/ICH Files/STOP-IT/dcm_previous_files.csv", fileEncoding="UTF-8-BOM", header=FALSE)))
 
 SI_dcm_combined_files=rbind(dcm_add_files, dcm_previous_files)
-SI_dcm_combined_files$id_1=substr(SI_dcm_combined_files$V1, 1, 2)
-SI_dcm_combined_files$id_1=str_pad(SI_dcm_combined_files$id_1, 3, pad="0")
+SI_dcm_combined_files$id_1=as.numeric(substr(SI_dcm_combined_files$V1, 1, 2))+10
 
 SI_dcm_combined_files$id_2=substr(SI_dcm_combined_files$V1, 4, 5)
-
 SI_dcm_combined_files$id_3=substr(SI_dcm_combined_files$V1, 7, 9)
-SI_dcm_combined_files$id_3=substr(SI_dcm_combined_files$id_3, 2, 3)
 
 SI_dcm_combined_files$time=c(99)
 SI_dcm_combined_files$time[grepl("Base",SI_dcm_combined_files$V1)]=0
 SI_dcm_combined_files$time[grepl("Follow",SI_dcm_combined_files$V1)]=1
 
-SI_dcm_combined_files$PID=paste(SI_dcm_combined_files$id_2, SI_dcm_combined_files$id_1, SI_dcm_combined_files$id_3, sep="")
+SI_dcm_combined_files$PID=paste(SI_dcm_combined_files$id_2, SI_dcm_combined_files$id_3, SI_dcm_combined_files$id_1, sep="")
 SI_dcm_combined_files$study=c("STOP-IT")
 SI_dcm_combined_files=SI_dcm_combined_files[keep_cols]
 

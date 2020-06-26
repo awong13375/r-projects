@@ -67,25 +67,25 @@ substr(dcm_combined_ivh$`Abbrev filename`, 7, 7)="-"
 
 # Access Gdrive ----
 #gs4_auth()
-for_gs <- read_sheet("1c44iNPzrDiZ0DzBb1eAggm3VBd5ImMEnsFcWgzcZWC0", sheet="Copy of PREDICT V6 TOTAL")
+for_gs <- read_sheet("1c44iNPzrDiZ0DzBb1eAggm3VBd5ImMEnsFcWgzcZWC0", sheet="PREDICT V7 TOTAL")
 for_gs=as.data.frame(for_gs)
 dcm_list=for_gs$PID
 
 # Included/Excluded studies ----
-fulldb$inc_exc=c(99)
-fulldb$inc_exc[!((fulldb$PID %in% primary_anal$PID) | (fulldb$PID %in% enrolled$PID)) & !(fulldb$PID %in% dcm_list)]=0
-fulldb$inc_exc[((fulldb$PID %in% primary_anal$PID) | (fulldb$PID %in% enrolled$PID)) & fulldb$PID %in% dcm_list]=1
-fulldb$inc_exc[((fulldb$PID %in% primary_anal$PID) | (fulldb$PID %in% enrolled$PID)) & !(fulldb$PID %in% dcm_list)]=2
-fulldb$inc_exc[!((fulldb$PID %in% primary_anal$PID) | (fulldb$PID %in% enrolled$PID)) & fulldb$PID %in% dcm_list]=3
+enrolled$inc_exc=c(99)
+enrolled$inc_exc[!(enrolled$PID %in% primary_anal$PID) & !(enrolled$PID %in% dcm_list)]=0
+enrolled$inc_exc[(enrolled$PID %in% primary_anal$PID) & enrolled$PID %in% dcm_list]=1
+enrolled$inc_exc[(enrolled$PID %in% primary_anal$PID) & !(enrolled$PID %in% dcm_list)]=2
+enrolled$inc_exc[!(enrolled$PID %in% primary_anal$PID) & enrolled$PID %in% dcm_list]=3
 
-inc_exc_0=subset(fulldb, fulldb$inc_exc==0)
-inc_exc_1=subset(fulldb, fulldb$inc_exc==1)
-inc_exc_2=subset(fulldb, fulldb$inc_exc==2)
-inc_exc_3=subset(fulldb, fulldb$inc_exc==3)
+inc_exc_0=subset(enrolled, enrolled$inc_exc==0)
+inc_exc_1=subset(enrolled, enrolled$inc_exc==1)
+inc_exc_2=subset(enrolled, enrolled$inc_exc==2)
+inc_exc_3=subset(enrolled, enrolled$inc_exc==3)
 
 # Patients not in PREDICT demographics xls at all, but included in our study
 dcm_list=as.data.frame(dcm_list)
-missing_dcm=subset(dcm_list, !(dcm_list %in% fulldb$PID))
+missing_dcm=subset(dcm_list, !(dcm_list %in% enrolled$PID))
 
 # Patients with IVH in our study
 ivh_dcm=subset(for_gs, for_gs$`IVH Present`==1)
