@@ -48,6 +48,7 @@ SI_dcm_combined_files=SI_dcm_combined_files[keep_cols]
 
 # SPOTLIGHT STOP IT Merge
 SL_SI_dcm_files=rbind(SL_dcm_combined_files, SI_dcm_combined_files)
+SL_SI_dcm_files$PID=as.character(SL_SI_dcm_files$PID)
 #write.csv(SL_SI_dcm_files, "D:/Google Drive/Desktop files/Dal Med/ICH/SL_SI_dcm_files.csv")
 
 # Included/Excluded Studies ----
