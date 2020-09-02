@@ -7,8 +7,8 @@ import SimpleITK as sitk
 import time
 
 
-dcmpath = r"D:\Virtual Machine\Shared Folder\STOPIT_DCM"
-dcmoutputpath = r"D:\Virtual Machine\Shared Folder\STOPIT_DCM"
+dcmpath = r"D:\SPOTLIGHT"
+dcmoutputpath = r"D:\SPOTLIGHT"
 
 reader = sitk.ImageSeriesReader()
 reader2 = sitk.ImageFileReader()
