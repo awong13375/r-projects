@@ -9,9 +9,10 @@ library(data.table)
 library(stringr)
 library(tidyverse)
 library(chron)
+library(DescTools)
 # Data Consolidation ----
 # PREDICT
-predict_enrolled=readxl::read_xls("D:/Google Drive/Desktop files/Dal Med/ICH/PREDICTprimaryV3_TH.xls", sheet="enrolled")
+predict_enrolled=readxl::read_xls("C:/Users/alexw/Google Drive/Desktop files/Dal Med/ICH/PREDICTprimaryV3_TH.xls", sheet="enrolled")
 predict_enrolled=as.data.frame(predict_enrolled)
 
 predict_enrolled$patient_site=str_pad(predict_enrolled$patient_site, 2, pad="0")
@@ -29,7 +30,7 @@ predict_enrolled$bl_fu[predict_enrolled$PID %in% for_gs$PID] = 1
 
 # SPOTLIGHT/STOP-IT
 
-SL_SI_enrolled=readxl::read_xlsx("D:/Google Drive/Desktop files/Dal Med/ICH/Archive/GraebCombined_withmRS (Recovered).xlsx", sheet="ALL")
+SL_SI_enrolled=readxl::read_xlsx("C:/Users/alexw/Google Drive/Desktop files/Dal Med/ICH/Archive/GraebCombined_withmRS (Recovered).xlsx", sheet="ALL")
 SL_SI_enrolled=as.data.frame(SL_SI_enrolled)
 colnames(SL_SI_enrolled)[colnames(SL_SI_enrolled) == "Subject"]="PID"
 for_gs <- read_sheet("1c44iNPzrDiZ0DzBb1eAggm3VBd5ImMEnsFcWgzcZWC0", sheet="SPOTLIGHT/STOP-IT")
@@ -193,7 +194,7 @@ rownames(result)=c("n",
 
 colnames(result)=c("PREDICT","SPOTLIGHT/STOP-IT")
 
-#write.csv(result, "D:/Google Drive/Desktop files/Dal Med/ICH/IVH table 1.csv")
+#write.csv(result, "C:/Users/alexw/Google Drive/Desktop files/Dal Med/ICH/IVH table 1.csv")
 
 
 # Table 1 stats ----
@@ -266,4 +267,330 @@ test_types=as.data.frame(c("t-test","chisq","chisq","chisq","chisq","fisher","fi
 colnames(test_types)=c("test type")
 table1stats=cbind(table1stats, test_types)
 
-#write.csv(table1stats, "D:/Google Drive/Desktop files/Dal Med/ICH/IVH table 1 stats.csv")
+#write.csv(table1stats, "C:/Users/alexw/Google Drive/Desktop files/Dal Med/ICH/IVH table 1 stats.csv")
+
+
+# Table 2 ----
+predict_gs <- read_sheet("1c44iNPzrDiZ0DzBb1eAggm3VBd5ImMEnsFcWgzcZWC0", sheet="PREDICT V7 TOTAL")
+predict_gs=as.data.frame(predict_gs)
+predict_gs=subset(predict_gs, predict_gs$`IVH Present`==1)
+predict_gs$IVHS_manual_diff=predict_gs$`IVHS Estimated Volume (mL)` - predict_gs$`Manual Segmentation IVH Volume (mL)`
+
+sl_si_gs <- read_sheet("1c44iNPzrDiZ0DzBb1eAggm3VBd5ImMEnsFcWgzcZWC0", sheet="SPOTLIGHT/STOP-IT")
+sl_si_gs=as.data.frame(sl_si_gs)
+sl_si_gs=subset(sl_si_gs, sl_si_gs$`IVH Present`==1)
+sl_si_gs$IVHS_manual_diff=sl_si_gs$`IVHS Estimated Volume (mL)` - sl_si_gs$`Manual Segmentation IVH Volume (mL)`
+
+
+#PREDICT
+predict_tab_2=c()
+
+predict_tab_2=append(predict_tab_2, nrow(predict_gs))
+
+#IVHS estimated volume 
+predict_tab_2=append(predict_tab_2, median(predict_gs$`IVHS Estimated Volume (mL)`))
+predict_tab_2=append(predict_tab_2, as.numeric(quantile(predict_gs$`IVHS Estimated Volume (mL)`, na.rm=TRUE))[2])
+predict_tab_2=append(predict_tab_2, as.numeric(quantile(predict_gs$`IVHS Estimated Volume (mL)`, na.rm=TRUE))[4])
+
+#CNN estimated volume
+
+#Manual segmentation volume
+predict_tab_2=append(predict_tab_2, median(predict_gs$`Manual Segmentation IVH Volume (mL)`))
+predict_tab_2=append(predict_tab_2, as.numeric(quantile(predict_gs$`Manual Segmentation IVH Volume (mL)`, na.rm=TRUE))[2])
+predict_tab_2=append(predict_tab_2, as.numeric(quantile(predict_gs$`Manual Segmentation IVH Volume (mL)`, na.rm=TRUE))[4])
+
+#IVHS score
+predict_tab_2=append(predict_tab_2, median(predict_gs$IVHS_Reader1))
+predict_tab_2=append(predict_tab_2, as.numeric(quantile(predict_gs$`IVHS Estimated Volume (mL)`, na.rm=TRUE))[2])
+predict_tab_2=append(predict_tab_2, as.numeric(quantile(predict_gs$`IVHS Estimated Volume (mL)`, na.rm=TRUE))[4])
+
+#oGS score
+predict_tab_2=append(predict_tab_2, median(predict_gs$`oGS_Reader1 (12)`))
+predict_tab_2=append(predict_tab_2, as.numeric(quantile(predict_gs$`oGS_Reader1 (12)`, na.rm=TRUE))[2])
+predict_tab_2=append(predict_tab_2, as.numeric(quantile(predict_gs$`oGS_Reader1 (12)`, na.rm=TRUE))[4])
+
+#mGS score
+predict_tab_2=append(predict_tab_2, median(predict_gs$`mGS_Reader1 (32)`))
+predict_tab_2=append(predict_tab_2, as.numeric(quantile(predict_gs$`mGS_Reader1 (32)`, na.rm=TRUE))[2])
+predict_tab_2=append(predict_tab_2, as.numeric(quantile(predict_gs$`mGS_Reader1 (32)`, na.rm=TRUE))[4])
+
+#IVHS manual segmentation diff
+predict_tab_2=append(predict_tab_2, median(predict_gs$IVHS_manual_diff))
+predict_tab_2=append(predict_tab_2, as.numeric(quantile(predict_gs$IVHS_manual_diff, na.rm=TRUE))[2])
+predict_tab_2=append(predict_tab_2, as.numeric(quantile(predict_gs$IVHS_manual_diff, na.rm=TRUE))[4])
+
+#CNN manual segmentation diff
+
+
+#SPOTLIGHT
+sl_si_tab_2=c()
+
+sl_si_tab_2=append(sl_si_tab_2, nrow(sl_si_gs))
+
+#IVHS estimated volume 
+sl_si_tab_2=append(sl_si_tab_2, median(sl_si_gs$`IVHS Estimated Volume (mL)`))
+sl_si_tab_2=append(sl_si_tab_2, as.numeric(quantile(sl_si_gs$`IVHS Estimated Volume (mL)`, na.rm=TRUE))[2])
+sl_si_tab_2=append(sl_si_tab_2, as.numeric(quantile(sl_si_gs$`IVHS Estimated Volume (mL)`, na.rm=TRUE))[4])
+
+#CNN estimated volume
+
+#Manual segmentation volume
+sl_si_tab_2=append(sl_si_tab_2, median(sl_si_gs$`Manual Segmentation IVH Volume (mL)`))
+sl_si_tab_2=append(sl_si_tab_2, as.numeric(quantile(sl_si_gs$`Manual Segmentation IVH Volume (mL)`, na.rm=TRUE))[2])
+sl_si_tab_2=append(sl_si_tab_2, as.numeric(quantile(sl_si_gs$`Manual Segmentation IVH Volume (mL)`, na.rm=TRUE))[4])
+
+#IVHS score
+sl_si_tab_2=append(sl_si_tab_2, median(sl_si_gs$IVHS_Reader1))
+sl_si_tab_2=append(sl_si_tab_2, as.numeric(quantile(sl_si_gs$`IVHS Estimated Volume (mL)`, na.rm=TRUE))[2])
+sl_si_tab_2=append(sl_si_tab_2, as.numeric(quantile(sl_si_gs$`IVHS Estimated Volume (mL)`, na.rm=TRUE))[4])
+
+#oGS score
+sl_si_tab_2=append(sl_si_tab_2, median(sl_si_gs$`oGS_Reader1 (12)`))
+sl_si_tab_2=append(sl_si_tab_2, as.numeric(quantile(sl_si_gs$`oGS_Reader1 (12)`, na.rm=TRUE))[2])
+sl_si_tab_2=append(sl_si_tab_2, as.numeric(quantile(sl_si_gs$`oGS_Reader1 (12)`, na.rm=TRUE))[4])
+
+#mGS score
+sl_si_tab_2=append(sl_si_tab_2, median(sl_si_gs$`mGS_Reader1 (32)`))
+sl_si_tab_2=append(sl_si_tab_2, as.numeric(quantile(sl_si_gs$`mGS_Reader1 (32)`, na.rm=TRUE))[2])
+sl_si_tab_2=append(sl_si_tab_2, as.numeric(quantile(sl_si_gs$`mGS_Reader1 (32)`, na.rm=TRUE))[4])
+
+#IVHS manual segmentation diff
+sl_si_tab_2=append(sl_si_tab_2, median(sl_si_gs$IVHS_manual_diff))
+sl_si_tab_2=append(sl_si_tab_2, as.numeric(quantile(sl_si_gs$IVHS_manual_diff, na.rm=TRUE))[2])
+sl_si_tab_2=append(sl_si_tab_2, as.numeric(quantile(sl_si_gs$IVHS_manual_diff, na.rm=TRUE))[4])
+
+#CNN manual segmentation diff
+
+predict_tab_2=as.data.frame(predict_tab_2)
+sl_si_tab_2=as.data.frame(sl_si_tab_2)
+tab_2=cbind(predict_tab_2, sl_si_tab_2)
+rownames(tab_2)=c("n","IVHS est vol","IVHS vol Q2","IVHS vol Q3",
+                  "Manual vol","manual Q2","manual Q3",
+                  "IVHS score","IVHS score Q2","IVHS score Q3",
+                  "oGS score","oGS Q2","oGS Q3",
+                  "mGS score","mGS Q2","mGS Q3",
+                  "IVHS manual diff","IVHS man diff Q2","IVHS man diff Q3")
+colnames(tab_2)=c("PREDICT","SPOTLIGHT/STOP-IT")
+#write.csv(tab_2, "C:/Users/alexw/Google Drive/Desktop files/Dal Med/ICH/IVH Table 2.csv")
+
+
+# Table 2 stats ----
+
+#Data consolidation
+keeps=c("Study","IVHS Estimated Volume (mL)","Manual Segmentation IVH Volume (mL)","IVHS_Reader1","oGS_Reader1 (12)","mGS_Reader1 (32)","IVHS_manual_diff")
+predict_gs_stats=predict_gs[,keeps]
+sl_si_gs_stats=sl_si_gs[,keeps]
+sl_si_gs_stats$Study[sl_si_gs_stats$Study=="STOP-IT" | sl_si_gs_stats$Study=="SPOTLIGHT"]="SPOTLIGHT/STOP-IT"
+data_stats=rbind(predict_gs_stats, sl_si_gs_stats)
+results_stats=c()
+results_stats=append(results_stats, kruskal.test(`IVHS Estimated Volume (mL)` ~ Study, data=data_stats)$p.value)
+results_stats=append(results_stats, kruskal.test(`Manual Segmentation IVH Volume (mL)` ~ Study, data=data_stats)$p.value)
+results_stats=append(results_stats, kruskal.test(IVHS_Reader1 ~ Study, data=data_stats)$p.value)
+results_stats=append(results_stats, kruskal.test(`oGS_Reader1 (12)` ~ Study, data=data_stats)$p.value)
+results_stats=append(results_stats, kruskal.test(`mGS_Reader1 (32)` ~ Study, data=data_stats)$p.value)
+results_stats=append(results_stats, kruskal.test(IVHS_manual_diff ~ Study, data=data_stats)$p.value)
+
+results_stats=as.data.frame(results_stats)
+colnames(results_stats)=c("p-value")
+rownames(results_stats)=c("IVHS est vol","Man seg vol","ivhs score","ogs","mgs","ivhs man diff")
+
+#write.csv(results_stats, "C:/Users/alexw/Google Drive/Desktop files/Dal Med/ICH/IVH Table 2 stats.csv")
+
+# Table 3 ----
+# ICC Calculations
+
+#PREDICT
+
+#IVHS vs manual segmentation
+icc(data.frame(predict_gs$`IVHS Estimated Volume (mL)`,
+               predict_gs$`Manual Segmentation IVH Volume (mL)`),
+               model="twoway",type="agreement")
+
+#SPOTLIGHT
+icc(data.frame(sl_si_gs$`IVHS Estimated Volume (mL)`,
+               sl_si_gs$`Manual Segmentation IVH Volume (mL)`),
+               model="twoway",type="agreement")
+
+# Table 4 ----
+#Table 5 ----
+#Pearson R correlations 
+
+#PREDICT
+#IVHS score
+cor.test(subset(data_stats, data_stats$Study=="PREDICT")$IVHS_Reader1, 
+         subset(data_stats, data_stats$Study=="PREDICT")$`Manual Segmentation IVH Volume (mL)`
+         , method = "pearson")
+FisherZ(cor.test(subset(data_stats, data_stats$Study=="PREDICT")$IVHS_Reader1, 
+                 subset(data_stats, data_stats$Study=="PREDICT")$`Manual Segmentation IVH Volume (mL)`
+                 , method = "pearson")$estimate)
+FisherZ(cor.test(subset(data_stats, data_stats$Study=="PREDICT")$IVHS_Reader1, 
+               subset(data_stats, data_stats$Study=="PREDICT")$`Manual Segmentation IVH Volume (mL)`
+               , method = "pearson")$conf.int[1])
+FisherZ(cor.test(subset(data_stats, data_stats$Study=="PREDICT")$IVHS_Reader1, 
+                 subset(data_stats, data_stats$Study=="PREDICT")$`Manual Segmentation IVH Volume (mL)`
+                 , method = "pearson")$conf.int[2])
+
+
+#oGS
+cor.test(subset(data_stats, data_stats$Study=="PREDICT")$`oGS_Reader1 (12)`, 
+         subset(data_stats, data_stats$Study=="PREDICT")$`Manual Segmentation IVH Volume (mL)`
+         , method = "pearson")
+FisherZ(cor.test(subset(data_stats, data_stats$Study=="PREDICT")$`oGS_Reader1 (12)`, 
+                 subset(data_stats, data_stats$Study=="PREDICT")$`Manual Segmentation IVH Volume (mL)`
+                 , method = "pearson")$estimate)
+FisherZ(cor.test(subset(data_stats, data_stats$Study=="PREDICT")$`oGS_Reader1 (12)`, 
+                 subset(data_stats, data_stats$Study=="PREDICT")$`Manual Segmentation IVH Volume (mL)`
+                 , method = "pearson")$conf.int[1])
+FisherZ(cor.test(subset(data_stats, data_stats$Study=="PREDICT")$`oGS_Reader1 (12)`, 
+                 subset(data_stats, data_stats$Study=="PREDICT")$`Manual Segmentation IVH Volume (mL)`
+                 , method = "pearson")$conf.int[2])
+
+#mGS
+cor.test(subset(data_stats, data_stats$Study=="PREDICT")$`mGS_Reader1 (32)`, 
+         subset(data_stats, data_stats$Study=="PREDICT")$`Manual Segmentation IVH Volume (mL)`
+         , method = "pearson")
+FisherZ(cor.test(subset(data_stats, data_stats$Study=="PREDICT")$`mGS_Reader1 (32)`, 
+                 subset(data_stats, data_stats$Study=="PREDICT")$`Manual Segmentation IVH Volume (mL)`
+                 , method = "pearson")$estimate)
+FisherZ(cor.test(subset(data_stats, data_stats$Study=="PREDICT")$`mGS_Reader1 (32)`, 
+                 subset(data_stats, data_stats$Study=="PREDICT")$`Manual Segmentation IVH Volume (mL)`
+                 , method = "pearson")$conf.int[1])
+FisherZ(cor.test(subset(data_stats, data_stats$Study=="PREDICT")$`mGS_Reader1 (32)`, 
+                 subset(data_stats, data_stats$Study=="PREDICT")$`Manual Segmentation IVH Volume (mL)`
+                 , method = "pearson")$conf.int[2])
+
+
+#SPOTLIGHT
+#IVHS score
+cor.test(subset(data_stats, data_stats$Study=="SPOTLIGHT/STOP-IT")$IVHS_Reader1, 
+         subset(data_stats, data_stats$Study=="SPOTLIGHT/STOP-IT")$`Manual Segmentation IVH Volume (mL)`
+         , method = "pearson")
+FisherZ(cor.test(subset(data_stats, data_stats$Study=="SPOTLIGHT/STOP-IT")$IVHS_Reader1, 
+                 subset(data_stats, data_stats$Study=="SPOTLIGHT/STOP-IT")$`Manual Segmentation IVH Volume (mL)`
+                 , method = "pearson")$estimate)
+FisherZ(cor.test(subset(data_stats, data_stats$Study=="SPOTLIGHT/STOP-IT")$IVHS_Reader1, 
+                 subset(data_stats, data_stats$Study=="SPOTLIGHT/STOP-IT")$`Manual Segmentation IVH Volume (mL)`
+                 , method = "pearson")$conf.int[1])
+FisherZ(cor.test(subset(data_stats, data_stats$Study=="SPOTLIGHT/STOP-IT")$IVHS_Reader1, 
+                 subset(data_stats, data_stats$Study=="SPOTLIGHT/STOP-IT")$`Manual Segmentation IVH Volume (mL)`
+                 , method = "pearson")$conf.int[2])
+
+
+#oGS
+cor.test(subset(data_stats, data_stats$Study=="SPOTLIGHT/STOP-IT")$`oGS_Reader1 (12)`, 
+         subset(data_stats, data_stats$Study=="SPOTLIGHT/STOP-IT")$`Manual Segmentation IVH Volume (mL)`
+         , method = "pearson")
+FisherZ(cor.test(subset(data_stats, data_stats$Study=="SPOTLIGHT/STOP-IT")$`oGS_Reader1 (12)`, 
+                 subset(data_stats, data_stats$Study=="SPOTLIGHT/STOP-IT")$`Manual Segmentation IVH Volume (mL)`
+                 , method = "pearson")$estimate)
+FisherZ(cor.test(subset(data_stats, data_stats$Study=="SPOTLIGHT/STOP-IT")$`oGS_Reader1 (12)`, 
+                 subset(data_stats, data_stats$Study=="SPOTLIGHT/STOP-IT")$`Manual Segmentation IVH Volume (mL)`
+                 , method = "pearson")$conf.int[1])
+FisherZ(cor.test(subset(data_stats, data_stats$Study=="SPOTLIGHT/STOP-IT")$`oGS_Reader1 (12)`, 
+                 subset(data_stats, data_stats$Study=="SPOTLIGHT/STOP-IT")$`Manual Segmentation IVH Volume (mL)`
+                 , method = "pearson")$conf.int[2])
+
+#mGS
+cor.test(subset(data_stats, data_stats$Study=="SPOTLIGHT/STOP-IT")$`mGS_Reader1 (32)`, 
+         subset(data_stats, data_stats$Study=="SPOTLIGHT/STOP-IT")$`Manual Segmentation IVH Volume (mL)`
+         , method = "pearson")
+FisherZ(cor.test(subset(data_stats, data_stats$Study=="SPOTLIGHT/STOP-IT")$`mGS_Reader1 (32)`, 
+                 subset(data_stats, data_stats$Study=="SPOTLIGHT/STOP-IT")$`Manual Segmentation IVH Volume (mL)`
+                 , method = "pearson")$estimate)
+FisherZ(cor.test(subset(data_stats, data_stats$Study=="SPOTLIGHT/STOP-IT")$`mGS_Reader1 (32)`, 
+                 subset(data_stats, data_stats$Study=="SPOTLIGHT/STOP-IT")$`Manual Segmentation IVH Volume (mL)`
+                 , method = "pearson")$conf.int[1])
+FisherZ(cor.test(subset(data_stats, data_stats$Study=="SPOTLIGHT/STOP-IT")$`mGS_Reader1 (32)`, 
+                 subset(data_stats, data_stats$Study=="SPOTLIGHT/STOP-IT")$`Manual Segmentation IVH Volume (mL)`
+                 , method = "pearson")$conf.int[2])
+
+
+# Bland Altman Plots ----
+#PREDICT
+#IVHS estimate vs manual segmentation
+IVHS_est_man_seg_PREDICT=(blandr.draw(subset(data_stats, data_stats$Study=="PREDICT")$`IVHS Estimated Volume (mL)`, 
+                     subset(data_stats, data_stats$Study=="PREDICT")$`Manual Segmentation IVH Volume (mL)`, 
+                     sig.level = 0.95, LoA.mode = 1, ciDisplay = FALSE,
+                     ciShading = FALSE,
+                     lowest_y_axis = ymin, highest_y_axis = ymax, point_size = 0.8,
+                     overlapping = FALSE, plotter = "ggplot", x.plot.mode = "means",
+                     y.plot.mode = "difference", plotProportionalBias = FALSE,
+                     plotProportionalBias.se = TRUE, assume.differences.are.normal = TRUE) 
+                 + xlab("Mean IVH volume (mL)")
+                 + ylab("IVHS Estimated Volume - Manual Segmentation Volume (mL)")
+                 + theme(
+                   panel.border = element_blank(),  
+                   panel.grid.major = element_blank(),
+                   panel.grid.minor = element_blank(),
+                   panel.background = element_blank(),
+                   axis.line = element_line(colour = "black", size=1),
+                   axis.text=element_text(size=12),
+                   axis.title=element_text(size=12)
+                 )
+                 + expand_limits(x = 85, y = 0)
+                 + scale_x_continuous(expand = c(0, 1))
+                 
+                 + labs(title = element_blank())
+)
+
+#CNN vs manual segmentation
+
+#SPOTLIGHT
+#IVHS estimate vs manual segmentation
+IVHS_est_man_seg_SPOTLIGHT_STOPIT=(blandr.draw(subset(data_stats, data_stats$Study=="SPOTLIGHT/STOP-IT")$`IVHS Estimated Volume (mL)`, 
+                              subset(data_stats, data_stats$Study=="SPOTLIGHT/STOP-IT")$`Manual Segmentation IVH Volume (mL)`, 
+                              sig.level = 0.95, LoA.mode = 1, ciDisplay = FALSE,
+                              ciShading = FALSE,
+                              lowest_y_axis = ymin, highest_y_axis = ymax, point_size = 0.8,
+                              overlapping = FALSE, plotter = "ggplot", x.plot.mode = "means",
+                              y.plot.mode = "difference", plotProportionalBias = FALSE,
+                              plotProportionalBias.se = TRUE, assume.differences.are.normal = TRUE) 
+                  + xlab("Mean IVH volume (mL)")
+                  + ylab("IVHS Estimated Volume - Manual Segmentation Volume (mL)")
+                  + theme(
+                    panel.border = element_blank(),  
+                    panel.grid.major = element_blank(),
+                    panel.grid.minor = element_blank(),
+                    panel.background = element_blank(),
+                    axis.line = element_line(colour = "black", size=1),
+                    axis.text=element_text(size=12),
+                    axis.title=element_text(size=12)
+                  )
+                  + expand_limits(x = 60, y = 0)
+                  + scale_x_continuous(expand = c(0, 1))
+                  
+                  + labs(title = element_blank())
+)
+
+#CNN vs manual segmentation
+
+
+# Linear Regression ----
+#PREDICT
+#IVHS estimate vs manual segmentation
+data_stats$IVHS_man_seg_avg=(data_stats$`IVHS Estimated Volume (mL)`+data_stats$`Manual Segmentation IVH Volume (mL)`)/2
+
+lml=lm(IVHS_manual_diff ~ IVHS_man_seg_avg, data=subset(data_stats, data_stats$Study=="PREDICT"))
+summary(lml)
+
+#CNN vs manual segmentation
+
+
+
+#SPOTLIGHT
+#IVHS estimate vs manual segmentation
+data_stats$IVHS_man_seg_avg=(data_stats$`IVHS Estimated Volume (mL)`+data_stats$`Manual Segmentation IVH Volume (mL)`)/2
+
+lml=lm(IVHS_manual_diff ~ IVHS_man_seg_avg, data=subset(data_stats, data_stats$Study=="SPOTLIGHT/STOP-IT"))
+summary(lml)
+
+#CNN vs manual segmentation
+
+
+# Hematoma expansion analysis ----
+
+
+
+
+
+
