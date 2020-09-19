@@ -10,6 +10,8 @@ library(stringr)
 library(tidyverse)
 library(chron)
 library(DescTools)
+library(caret)
+library(pROC)
 # Data Consolidation ----
 # PREDICT
 predict_enrolled=readxl::read_xls("C:/Users/alexw/Google Drive/Desktop files/Dal Med/ICH/PREDICTprimaryV3_TH.xls", sheet="enrolled")
@@ -412,6 +414,8 @@ icc(data.frame(sl_si_gs$`IVHS Estimated Volume (mL)`,
                model="twoway",type="agreement")
 
 # Table 4 ----
+
+
 #Table 5 ----
 #Pearson R correlations 
 
@@ -589,7 +593,196 @@ summary(lml)
 
 # Hematoma expansion analysis ----
 
+#Filter out studies without followup scans
+#PREDICT
+predict_gs_expansion <- predict_gs
+for (study in levels(as.factor(predict_gs$PID))){
+  if (nrow(subset(predict_gs, predict_gs$PID==study))<2){
+    predict_gs_expansion=subset(predict_gs_expansion, predict_gs_expansion$PID!=study)
+  }
+}
 
+#SPOTLIGHT/STOP-IT
+sl_si_gs_expansion <- sl_si_gs
+for (study in levels(as.factor(sl_si_gs$PID))){
+  if (nrow(subset(sl_si_gs, sl_si_gs$PID==study))<2){
+    sl_si_gs_expansion=subset(sl_si_gs_expansion, sl_si_gs_expansion$PID!=study)
+  }
+}
+
+#Expansion analysis
+#PREDICT
+n=0
+for (study in levels(as.factor(predict_gs_expansion$PID))){
+  subtab_study=subset(predict_gs_expansion, predict_gs_expansion$PID==study)
+  row=c()
+  row=append(row, study)
+  
+  #Manual segmentation
+  if ((subtab_study[2,"Manual Segmentation IVH Volume (mL)"]-subtab_study[1,"Manual Segmentation IVH Volume (mL)"])>=1 |
+      ((subtab_study[2,"Manual Segmentation IVH Volume (mL)"]-subtab_study[1,"Manual Segmentation IVH Volume (mL)"])/subtab_study[1,"Manual Segmentation IVH Volume (mL)"])>=0.33){
+    row=append(row, 1)
+  } else {
+    row=append(row, 0)
+  }
+  
+  #IVHS est vol
+  if ((subtab_study[2,"IVHS Estimated Volume (mL)"]-subtab_study[1,"IVHS Estimated Volume (mL)"])>=1 |
+      ((subtab_study[2,"IVHS Estimated Volume (mL)"]-subtab_study[1,"IVHS Estimated Volume (mL)"])/subtab_study[1,"IVHS Estimated Volume (mL)"]>=0.33)){
+    row=append(row, 1)
+  } else {
+    row=append(row, 0)
+  }
+  
+  #oGS
+  if ((subtab_study[2,"oGS_Reader1 (12)"]-subtab_study[1,"oGS_Reader1 (12)"])>0){
+    row=append(row, 1)
+  } else {
+    row=append(row, 0)
+  }
+  
+  #mGS
+  if ((subtab_study[2,"mGS_Reader1 (32)"]-subtab_study[1,"mGS_Reader1 (32)"])>0){
+    row=append(row, 1)
+  } else {
+    row=append(row, 0)
+  }
+  row=as.numeric(row)
+  if (n==0){
+    expansion_predict=rbind(row)
+    colnames(expansion_predict)=c("study","Manual_segmentation","IVHS","oGS","mGS")
+  } else {
+    expansion_predict=rbind(expansion_predict, row)
+  }
+  n=n+1
+}
+expansion_predict=as.data.frame(expansion_predict)
+
+#IVHS
+conf_matrix_predict_IVHS=table(expansion_predict$IVHS, expansion_predict$Manual_segmentation)
+sensitivity(conf_matrix_predict_IVHS)
+specificity(conf_matrix_predict_IVHS)
+
+logit<- glm(Manual_segmentation ~ IVHS, family=binomial,data=expansion_predict)
+predicted_prob<-predict(logit,type="response")
+roccurve <- roc(expansion_predict$Manual_segmentation, predicted_prob)
+auc(roccurve)
+ci.auc(roccurve)
+
+#oGS
+conf_matrix_predict_oGS=table(expansion_predict$oGS, expansion_predict$Manual_segmentation)
+sensitivity(conf_matrix_predict_oGS)
+specificity(conf_matrix_predict_oGS)
+
+logit<- glm(Manual_segmentation ~ oGS, family=binomial,data=expansion_predict)
+predicted_prob<-predict(logit,type="response")
+roccurve <- roc(expansion_predict$Manual_segmentation, predicted_prob)
+auc(roccurve)
+ci.auc(roccurve)
+
+#mGS
+conf_matrix_predict_mGS=table(expansion_predict$mGS, expansion_predict$Manual_segmentation)
+sensitivity(conf_matrix_predict_mGS)
+specificity(conf_matrix_predict_mGS)
+
+logit<- glm(Manual_segmentation ~ mGS, family=binomial,data=expansion_predict)
+predicted_prob<-predict(logit,type="response")
+roccurve <- roc(expansion_predict$Manual_segmentation, predicted_prob)
+auc(roccurve)
+ci.auc(roccurve)
+
+#CNN
+
+#SPOTLIGHt/STOP-IT
+n=0
+for (study in levels(as.factor(sl_si_gs_expansion$PID))){
+  subtab_study=subset(sl_si_gs_expansion, sl_si_gs_expansion$PID==study)
+  
+  if (nrow(subtab_study)<=2){
+    i_range=c(2)
+  } else if (nrow(subtab_study>2)){
+    i_range=c(2:nrow(subtab_study))
+  }
+  
+  for (i in i_range){
+    row=c()
+    row=append(row, study)
+    
+    #Manual segmentation
+    if ((subtab_study[i,"Manual Segmentation IVH Volume (mL)"]-subtab_study[1,"Manual Segmentation IVH Volume (mL)"])>=1 |
+        ((subtab_study[i,"Manual Segmentation IVH Volume (mL)"]-subtab_study[1,"Manual Segmentation IVH Volume (mL)"])/subtab_study[1,"Manual Segmentation IVH Volume (mL)"])>=0.33){
+      row=append(row, 1)
+    } else {
+      row=append(row, 0)
+    }
+    
+    #IVHS est vol
+    if ((subtab_study[i,"IVHS Estimated Volume (mL)"]-subtab_study[1,"IVHS Estimated Volume (mL)"])>=1 |
+        ((subtab_study[i,"IVHS Estimated Volume (mL)"]-subtab_study[1,"IVHS Estimated Volume (mL)"])/subtab_study[1,"IVHS Estimated Volume (mL)"])>=0.33){
+      row=append(row, 1)
+    } else {
+      row=append(row, 0)
+    }
+    
+    #oGS
+    if (subtab_study[i,"oGS_Reader1 (12)"]-subtab_study[1,"oGS_Reader1 (12)"]>0){
+      row=append(row, 1)
+    } else {
+      row=append(row, 0)
+    }
+    
+    #mGS
+    if (subtab_study[i,"mGS_Reader1 (32)"]-subtab_study[1,"mGS_Reader1 (32)"]>0){
+      row=append(row, 1)
+    } else {
+      row=append(row, 0)
+    }
+    
+    row=as.numeric(row)
+    
+    if (n==0){
+      expansion_sl_si=rbind(row)
+      colnames(expansion_sl_si)=c("study","Manual_segmentation","IVHS","oGS","mGS")
+    } else {
+      expansion_sl_si=rbind(expansion_sl_si, row)
+    }
+    n=n+1
+  }
+}
+expansion_sl_si=as.data.frame(expansion_sl_si)
+
+#IVHS
+conf_matrix_sl_si_IVHS=table(expansion_sl_si$IVHS, expansion_sl_si$Manual_segmentation)
+sensitivity(conf_matrix_sl_si_IVHS)
+specificity(conf_matrix_sl_si_IVHS)
+
+logit<- glm(Manual_segmentation ~ IVHS, family=binomial,data=expansion_sl_si)
+predicted_prob<-predict(logit,type="response")
+roccurve <- roc(expansion_sl_si$Manual_segmentation, predicted_prob)
+auc(roccurve)
+ci.auc(roccurve)
+
+#oGS
+conf_matrix_sl_si_oGS=table(expansion_sl_si$oGS, expansion_sl_si$Manual_segmentation)
+sensitivity(conf_matrix_sl_si_oGS)
+specificity(conf_matrix_sl_si_oGS)
+
+logit<- glm(Manual_segmentation ~ oGS, family=binomial,data=expansion_sl_si)
+predicted_prob<-predict(logit,type="response")
+roccurve <- roc(expansion_sl_si$Manual_segmentation, predicted_prob)
+auc(roccurve)
+ci.auc(roccurve)
+
+#mGS
+conf_matrix_sl_si_mGS=table(expansion_sl_si$mGS, expansion_sl_si$Manual_segmentation)
+sensitivity(conf_matrix_sl_si_mGS)
+specificity(conf_matrix_sl_si_mGS)
+
+logit<- glm(Manual_segmentation ~ mGS, family=binomial,data=expansion_sl_si)
+predicted_prob<-predict(logit,type="response")
+roccurve <- roc(expansion_sl_si$Manual_segmentation, predicted_prob)
+auc(roccurve)
+ci.auc(roccurve)
 
 
 
