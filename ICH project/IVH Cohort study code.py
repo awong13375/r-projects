@@ -80,6 +80,7 @@ def compute_nii_label_volume(nii_filepath):
 
   return volumes
 
+#Compute volumes from manual segmentations
 filepath=r"D:\ICH Files\SPOTLIGHT\SPOTLIGHT\ROI_NII"
 volumes=[]
 for r, d, f in os.walk(filepath):
@@ -96,3 +97,18 @@ with open("volumes.csv", "w", newline="") as f:
     writer = csv.writer(f)
     writer.writerows(volumes)
 
+#Sort DCM folders to DCM IVH folder
+filepath=r"D:\ICH Files\PREDICT\DCMs\PREDICT"
+f= open("PREDICT dcms.txt","r")
+lines = f.read().split('\n')
+for r, d, f in os.walk(filepath):
+    for file in lines:
+        if file[0:13] == 
+    #if len(f)>0:
+    #    for file in f:
+    #        copyfile(r + "\\" + file, r"D:\ICH Files\SPOTLIGHT\SPOTLIGHT\DCM_NII" + "\\" + file)
+    print(r)
+    print("-------")
+    print(d)
+    print("*******")
+    print(f)
