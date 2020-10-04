@@ -277,14 +277,16 @@ predict_gs <- read_sheet("1c44iNPzrDiZ0DzBb1eAggm3VBd5ImMEnsFcWgzcZWC0", sheet="
 predict_gs=as.data.frame(predict_gs)
 predict_gs=subset(predict_gs, predict_gs$`IVH Present`==1)
 predict_gs$IVHS_manual_diff=predict_gs$`IVHS Estimated Volume (mL)` - predict_gs$`Manual Segmentation IVH Volume (mL)`
+predict_gs$CNN_manual_diff=predict_gs$`CNN Segmentation IVH Volume (mL)` - predict_gs$`Manual Segmentation IVH Volume (mL)`
 
 sl_si_gs <- read_sheet("1c44iNPzrDiZ0DzBb1eAggm3VBd5ImMEnsFcWgzcZWC0", sheet="SPOTLIGHT/STOP-IT")
 sl_si_gs=as.data.frame(sl_si_gs)
 sl_si_gs=subset(sl_si_gs, sl_si_gs$`IVH Present`==1)
 sl_si_gs$IVHS_manual_diff=sl_si_gs$`IVHS Estimated Volume (mL)` - sl_si_gs$`Manual Segmentation IVH Volume (mL)`
+sl_si_gs$CNN_manual_diff=sl_si_gs$`CNN Segmentation IVH Volume (mL)` - sl_si_gs$`Manual Segmentation IVH Volume (mL)`
 
-keep_cols=c("Study","PID","study_time","Manual Segmentation ICH Volume (mL)","Manual Segmentation IVH Volume (mL)","IVHS_Reader1","IVHS Estimated Volume (mL)",
-            "oGS_Reader1 (12)","mGS_Reader1 (32)","dice_ich","dice_ivh","IVHS_manual_diff","train_category")
+keep_cols=c("Study","PID","study_time","Manual Segmentation ICH Volume (mL)","Manual Segmentation IVH Volume (mL)","CNN Segmentation ICH Volume (mL)","CNN Segmentation IVH Volume (mL)"
+            ,"IVHS_Reader1","IVHS Estimated Volume (mL)","oGS_Reader1 (12)","mGS_Reader1 (32)","dice_ich","dice_ivh","IVHS_manual_diff", "CNN_manual_diff","train_category")
 predict_gs=predict_gs[keep_cols]
 sl_si_gs=sl_si_gs[keep_cols]
 
@@ -303,6 +305,9 @@ training_tab_2=append(training_tab_2, as.numeric(quantile(training_gs$`IVHS Esti
 training_tab_2=append(training_tab_2, as.numeric(quantile(training_gs$`IVHS Estimated Volume (mL)`, na.rm=TRUE))[4])
 
 #CNN estimated volume
+training_tab_2=append(training_tab_2, median(training_gs$`CNN Segmentation IVH Volume (mL)`))
+training_tab_2=append(training_tab_2, as.numeric(quantile(training_gs$`CNN Segmentation IVH Volume (mL)`, na.rm=TRUE))[2])
+training_tab_2=append(training_tab_2, as.numeric(quantile(training_gs$`CNN Segmentation IVH Volume (mL)`, na.rm=TRUE))[4])
 
 #Manual segmentation volume
 training_tab_2=append(training_tab_2, median(training_gs$`Manual Segmentation IVH Volume (mL)`))
@@ -330,7 +335,9 @@ training_tab_2=append(training_tab_2, as.numeric(quantile(training_gs$IVHS_manua
 training_tab_2=append(training_tab_2, as.numeric(quantile(training_gs$IVHS_manual_diff, na.rm=TRUE))[4])
 
 #CNN manual segmentation diff
-
+training_tab_2=append(training_tab_2, median(training_gs$CNN_manual_diff))
+training_tab_2=append(training_tab_2, as.numeric(quantile(training_gs$CNN_manual_diff, na.rm=TRUE))[2])
+training_tab_2=append(training_tab_2, as.numeric(quantile(training_gs$CNN_manual_diff, na.rm=TRUE))[4])
 
 #VALIDATION
 validation_tab_2=c()
@@ -343,6 +350,9 @@ validation_tab_2=append(validation_tab_2, as.numeric(quantile(validation_gs$`IVH
 validation_tab_2=append(validation_tab_2, as.numeric(quantile(validation_gs$`IVHS Estimated Volume (mL)`, na.rm=TRUE))[4])
 
 #CNN estimated volume
+validation_tab_2=append(validation_tab_2, median(validation_gs$`CNN Segmentation IVH Volume (mL)`))
+validation_tab_2=append(validation_tab_2, as.numeric(quantile(validation_gs$`CNN Segmentation IVH Volume (mL)`, na.rm=TRUE))[2])
+validation_tab_2=append(validation_tab_2, as.numeric(quantile(validation_gs$`CNN Segmentation IVH Volume (mL)`, na.rm=TRUE))[4])
 
 #Manual segmentation volume
 validation_tab_2=append(validation_tab_2, median(validation_gs$`Manual Segmentation IVH Volume (mL)`))
@@ -370,16 +380,22 @@ validation_tab_2=append(validation_tab_2, as.numeric(quantile(validation_gs$IVHS
 validation_tab_2=append(validation_tab_2, as.numeric(quantile(validation_gs$IVHS_manual_diff, na.rm=TRUE))[4])
 
 #CNN manual segmentation diff
+validation_tab_2=append(validation_tab_2, median(validation_gs$CNN_manual_diff))
+validation_tab_2=append(validation_tab_2, as.numeric(quantile(validation_gs$CNN_manual_diff, na.rm=TRUE))[2])
+validation_tab_2=append(validation_tab_2, as.numeric(quantile(validation_gs$CNN_manual_diff, na.rm=TRUE))[4])
+
 
 training_tab_2=as.data.frame(training_tab_2)
 validation_tab_2=as.data.frame(validation_tab_2)
 tab_2=cbind(training_tab_2, validation_tab_2)
 rownames(tab_2)=c("n","IVHS est vol","IVHS vol Q2","IVHS vol Q3",
+                  "CNN vol","CNN Q2","CNN Q3",
                   "Manual vol","manual Q2","manual Q3",
                   "IVHS score","IVHS score Q2","IVHS score Q3",
                   "oGS score","oGS Q2","oGS Q3",
                   "mGS score","mGS Q2","mGS Q3",
-                  "IVHS manual diff","IVHS man diff Q2","IVHS man diff Q3")
+                  "IVHS manual diff","IVHS man diff Q2","IVHS man diff Q3",
+                  "CNN manual diff","CNN man diff Q2","CNN man diff Q3")
 colnames(tab_2)=c("Training","Validation")
 #write.csv(tab_2, "C:/Users/alexw/Google Drive/Desktop files/Dal Med/ICH/IVH Table 2.csv")
 
@@ -390,15 +406,17 @@ colnames(tab_2)=c("Training","Validation")
 data_stats=rbind(training_gs, validation_gs)
 results_stats=c()
 results_stats=append(results_stats, kruskal.test(`IVHS Estimated Volume (mL)` ~ train_category, data=data_stats)$p.value)
+results_stats=append(results_stats, kruskal.test(`CNN Segmentation IVH Volume (mL)` ~ train_category, data=data_stats)$p.value)
 results_stats=append(results_stats, kruskal.test(`Manual Segmentation IVH Volume (mL)` ~ train_category, data=data_stats)$p.value)
 results_stats=append(results_stats, kruskal.test(IVHS_Reader1 ~ train_category, data=data_stats)$p.value)
 results_stats=append(results_stats, kruskal.test(`oGS_Reader1 (12)` ~ train_category, data=data_stats)$p.value)
 results_stats=append(results_stats, kruskal.test(`mGS_Reader1 (32)` ~ train_category, data=data_stats)$p.value)
 results_stats=append(results_stats, kruskal.test(IVHS_manual_diff ~ train_category, data=data_stats)$p.value)
+results_stats=append(results_stats, kruskal.test(CNN_manual_diff ~ train_category, data=data_stats)$p.value)
 
 results_stats=as.data.frame(results_stats)
 colnames(results_stats)=c("p-value")
-rownames(results_stats)=c("IVHS est vol","Man seg vol","ivhs score","ogs","mgs","ivhs man diff")
+rownames(results_stats)=c("IVHS est vol","CNN seg vol","Man seg vol","ivhs score","ogs","mgs","ivhs man diff","CNN man diff")
 
 #write.csv(results_stats, "C:/Users/alexw/Google Drive/Desktop files/Dal Med/ICH/IVH Table 2 stats.csv")
 
@@ -412,12 +430,24 @@ icc(data.frame(training_gs$`IVHS Estimated Volume (mL)`,
                training_gs$`Manual Segmentation IVH Volume (mL)`),
                model="twoway",type="agreement")
 
+#CNN vs manual segmentation
+icc(data.frame(training_gs$`CNN Segmentation IVH Volume (mL)`,
+               training_gs$`Manual Segmentation IVH Volume (mL)`),
+               model="twoway",type="agreement")
+
+
 #VALIDATION
 
 #IVHS vs manual segmentation
 icc(data.frame(validation_gs$`IVHS Estimated Volume (mL)`,
                validation_gs$`Manual Segmentation IVH Volume (mL)`),
                model="twoway",type="agreement")
+
+#CNN vs manual segmentation
+icc(data.frame(validation_gs$`CNN Segmentation IVH Volume (mL)`,
+               validation_gs$`Manual Segmentation IVH Volume (mL)`),
+    model="twoway",type="agreement")
+
 
 # Table 4 ----
 #Training
@@ -530,7 +560,7 @@ FisherZ(cor.test(subset(data_stats, data_stats$train_category=="validation")$`mG
 
 
 # Bland Altman Plots ----
-#PREDICT
+#TRAINING
 #IVHS estimate vs manual segmentation
 IVHS_est_man_seg_training=(blandr.draw(subset(data_stats, data_stats$train_category=="training")$`IVHS Estimated Volume (mL)`, 
                      subset(data_stats, data_stats$train_category=="training")$`Manual Segmentation IVH Volume (mL)`, 
@@ -551,15 +581,38 @@ IVHS_est_man_seg_training=(blandr.draw(subset(data_stats, data_stats$train_categ
                    axis.text=element_text(size=12),
                    axis.title=element_text(size=12)
                  )
-                 + expand_limits(x = 85, y = 0)
+                 + expand_limits(x = 100, y = 0)
                  + scale_x_continuous(expand = c(0, 1))
                  
                  + labs(title = element_blank())
 )
 
 #CNN vs manual segmentation
-
-#SPOTLIGHT
+CNN_man_seg_training=(blandr.draw(subset(data_stats, data_stats$train_category=="training")$`CNN Segmentation IVH Volume (mL)`, 
+                                       subset(data_stats, data_stats$train_category=="training")$`Manual Segmentation IVH Volume (mL)`, 
+                                       sig.level = 0.95, LoA.mode = 1, ciDisplay = FALSE,
+                                       ciShading = FALSE,
+                                       lowest_y_axis = ymin, highest_y_axis = ymax, point_size = 0.8,
+                                       overlapping = FALSE, plotter = "ggplot", x.plot.mode = "means",
+                                       y.plot.mode = "difference", plotProportionalBias = FALSE,
+                                       plotProportionalBias.se = TRUE, assume.differences.are.normal = TRUE) 
+                           + xlab("Mean IVH volume (mL)")
+                           + ylab("IVHS Estimated Volume - Manual Segmentation Volume (mL)")
+                           + theme(
+                             panel.border = element_blank(),  
+                             panel.grid.major = element_blank(),
+                             panel.grid.minor = element_blank(),
+                             panel.background = element_blank(),
+                             axis.line = element_line(colour = "black", size=1),
+                             axis.text=element_text(size=12),
+                             axis.title=element_text(size=12)
+                           )
+                           + expand_limits(x = 105, y = 0)
+                           + scale_x_continuous(expand = c(0, 1))
+                           
+                           + labs(title = element_blank())
+)
+#VALIDATION
 #IVHS estimate vs manual segmentation
 IVHS_est_man_seg_validation=(blandr.draw(subset(data_stats, data_stats$train_category=="validation")$`IVHS Estimated Volume (mL)`, 
                               subset(data_stats, data_stats$train_category=="validation")$`Manual Segmentation IVH Volume (mL)`, 
@@ -587,7 +640,30 @@ IVHS_est_man_seg_validation=(blandr.draw(subset(data_stats, data_stats$train_cat
 )
 
 #CNN vs manual segmentation
-
+CNN_man_seg_validation=(blandr.draw(subset(data_stats, data_stats$train_category=="validation")$`CNN Segmentation IVH Volume (mL)`, 
+                                         subset(data_stats, data_stats$train_category=="validation")$`Manual Segmentation IVH Volume (mL)`, 
+                                         sig.level = 0.95, LoA.mode = 1, ciDisplay = FALSE,
+                                         ciShading = FALSE,
+                                         lowest_y_axis = ymin, highest_y_axis = ymax, point_size = 0.8,
+                                         overlapping = FALSE, plotter = "ggplot", x.plot.mode = "means",
+                                         y.plot.mode = "difference", plotProportionalBias = FALSE,
+                                         plotProportionalBias.se = TRUE, assume.differences.are.normal = TRUE) 
+                             + xlab("Mean IVH volume (mL)")
+                             + ylab("IVHS Estimated Volume - Manual Segmentation Volume (mL)")
+                             + theme(
+                               panel.border = element_blank(),  
+                               panel.grid.major = element_blank(),
+                               panel.grid.minor = element_blank(),
+                               panel.background = element_blank(),
+                               axis.line = element_line(colour = "black", size=1),
+                               axis.text=element_text(size=12),
+                               axis.title=element_text(size=12)
+                             )
+                             + expand_limits(x = 80, y = 0)
+                             + scale_x_continuous(expand = c(0, 1))
+                             
+                             + labs(title = element_blank())
+)
 
 # Linear Regression ----
 #PREDICT
@@ -598,6 +674,10 @@ lml=lm(IVHS_manual_diff ~ IVHS_man_seg_avg, data=subset(data_stats, data_stats$t
 summary(lml)
 
 #CNN vs manual segmentation
+data_stats$CNN_man_seg_avg=(data_stats$`CNN Segmentation IVH Volume (mL)`+data_stats$`Manual Segmentation IVH Volume (mL)`)/2
+
+lml=lm(CNN_manual_diff ~ CNN_man_seg_avg, data=subset(data_stats, data_stats$train_category=="training"))
+summary(lml)
 
 
 
@@ -609,6 +689,10 @@ lml=lm(IVHS_manual_diff ~ IVHS_man_seg_avg, data=subset(data_stats, data_stats$t
 summary(lml)
 
 #CNN vs manual segmentation
+data_stats$CNN_man_seg_avg=(data_stats$`CNN Segmentation IVH Volume (mL)`+data_stats$`Manual Segmentation IVH Volume (mL)`)/2
+
+lml=lm(CNN_manual_diff ~ CNN_man_seg_avg, data=subset(data_stats, data_stats$train_category=="validation"))
+summary(lml)
 
 
 # Hematoma expansion analysis ----
@@ -667,10 +751,19 @@ for (study in levels(as.factor(predict_gs_expansion$PID))){
   } else {
     row=append(row, 0)
   }
+  
+  #CNN
+  if ((subtab_study[2,"CNN Segmentation IVH Volume (mL)"]-subtab_study[1,"CNN Segmentation IVH Volume (mL)"])>=1 |
+      ((subtab_study[2,"CNN Segmentation IVH Volume (mL)"]-subtab_study[1,"CNN Segmentation IVH Volume (mL)"])/subtab_study[1,"CNN Segmentation IVH Volume (mL)"])>=0.33){
+    row=append(row, 1)
+  } else {
+    row=append(row, 0)
+  }
+  
   row=as.numeric(row)
   if (n==0){
     expansion_predict=rbind(row)
-    colnames(expansion_predict)=c("study","Manual_segmentation","IVHS","oGS","mGS")
+    colnames(expansion_predict)=c("study","Manual_segmentation","IVHS","oGS","mGS","CNN")
   } else {
     expansion_predict=rbind(expansion_predict, row)
   }
@@ -712,6 +805,15 @@ auc(roccurve)
 ci.auc(roccurve)
 
 #CNN
+conf_matrix_predict_CNN=table(expansion_predict$CNN, expansion_predict$Manual_segmentation)
+sensitivity(conf_matrix_predict_CNN)
+specificity(conf_matrix_predict_CNN)
+
+logit<- glm(Manual_segmentation ~ CNN, family=binomial,data=expansion_predict)
+predicted_prob<-predict(logit,type="response")
+roccurve <- roc(expansion_predict$Manual_segmentation, predicted_prob)
+auc(roccurve)
+ci.auc(roccurve)
 
 #SPOTLIGHt/STOP-IT
 n=0
@@ -758,11 +860,20 @@ for (study in levels(as.factor(sl_si_gs_expansion$PID))){
       row=append(row, 0)
     }
     
+    #CNN
+    if ((subtab_study[i,"CNN Segmentation IVH Volume (mL)"]-subtab_study[1,"CNN Segmentation IVH Volume (mL)"])>=1 |
+        ((subtab_study[i,"CNN Segmentation IVH Volume (mL)"]-subtab_study[1,"CNN Segmentation IVH Volume (mL)"])/subtab_study[1,"CNN Segmentation IVH Volume (mL)"])>=0.33){
+      row=append(row, 1)
+    } else {
+      row=append(row, 0)
+    }
+    
+    
     row=as.numeric(row)
     
     if (n==0){
       expansion_sl_si=rbind(row)
-      colnames(expansion_sl_si)=c("study","Manual_segmentation","IVHS","oGS","mGS")
+      colnames(expansion_sl_si)=c("study","Manual_segmentation","IVHS","oGS","mGS","CNN")
     } else {
       expansion_sl_si=rbind(expansion_sl_si, row)
     }
@@ -804,6 +915,16 @@ roccurve <- roc(expansion_sl_si$Manual_segmentation, predicted_prob)
 auc(roccurve)
 ci.auc(roccurve)
 
+#CNN
+conf_matrix_sl_si_CNN=table(expansion_sl_si$CNN, expansion_sl_si$Manual_segmentation)
+sensitivity(conf_matrix_sl_si_CNN)
+specificity(conf_matrix_sl_si_CNN)
+
+logit<- glm(Manual_segmentation ~ CNN, family=binomial,data=expansion_sl_si)
+predicted_prob<-predict(logit,type="response")
+roccurve <- roc(expansion_sl_si$Manual_segmentation, predicted_prob)
+auc(roccurve)
+ci.auc(roccurve)
 
 
 
