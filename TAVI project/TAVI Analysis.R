@@ -14,7 +14,7 @@ data=read.csv("C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med2/TAVI Proje
 additional_data=read.csv("C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med2/TAVI Project/TAVI Additional Data.csv")
 additional_outcome_data=read.csv("C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med2/TAVI Project/supplementary outcome data.csv")
 data=merge(data, additional_data, by="id_tavi")
-data=merge(data, additional_outcome_data, by.x="id_tavi", by.y="ï..id_tavi")
+data=merge(data, additional_outcome_data, by.x="id_tavi", by.y="Ã¯..id_tavi")
 summary(data)
 data$dt_tavi <- as.Date(as.character(data$dt_tavi),"%d/%m/%Y")
 data$dt_dc_primary <- as.Date(as.character(data$dt_dc_primary),"%Y-%m-%d")
@@ -116,6 +116,8 @@ for (era in eras){
   
   column=append(column, median(subdata$rf_lvef, na.rm=TRUE))
   column=append(column, IQR(subdata$rf_lvef, na.rm=TRUE))
+  column=append(column, quantile(subdata$rf_lvef, na.rm=TRUE)[2])
+  column=append(column, quantile(subdata$rf_lvef, na.rm=TRUE)[4])
   column=append(column, nrow(subset(subdata, is.na(subdata$rf_lvef))))
   
   column=append(column, mean(subdata$echo_a_grad_mean, na.rm=TRUE))
@@ -195,7 +197,7 @@ rownames(result)=c("n",
                    "# cardiac sx","% cardiac sx","# cardiac sx NA",
                    "# cabg","% cabg","# cabg NA",
                    "# nyha3-4","% nyha3-4","# nyha NA",
-                   "median LVEF","IQR LVEF","# LVEF NA",
+                   "median LVEF","IQR LVEF","Q1 LVEF","Q3 LVEF","# LVEF NA",
                    "mean MVG","sd MVG","# MVG NA",
                    "# moca<26","% moca<26","# moca<26 NA",
                    "# katz<6","% katz<6","# katz<6 NA",
@@ -224,7 +226,7 @@ era2=subset(data, data$tavi_era==1)
 era3=subset(data, data$tavi_era==2)
 
 
-table1stats=append(table1stats, oneway.test(pt_age ~ tavi_era, data=data)$p.value)
+table1stats=append(table1stats, kruskal.test(pt_age ~ tavi_era, data=data)$p.value)
 
 
 M=as.table(cbind(c(nrow(subset(era1, era1$pt_sex=="M")),nrow(subset(era1, era1$pt_sex=="F"))),
@@ -327,9 +329,9 @@ M=as.table(cbind(c(nrow(subset(era1, era1$rf_nyha=="III"|era1$rf_nyha=="IV")),nr
 table1stats=append(table1stats,chisq.test(M)$p.value)
 
 
-table1stats=append(table1stats, oneway.test(rf_lvef ~ tavi_era, data=data)$p.value)
+table1stats=append(table1stats, kruskal.test(rf_lvef ~ tavi_era, data=data)$p.value)
 
-table1stats=append(table1stats, oneway.test(echo_a_grad_mean ~ tavi_era, data=data)$p.value)
+table1stats=append(table1stats, kruskal.test(echo_a_grad_mean ~ tavi_era, data=data)$p.value)
 
 M=as.table(cbind(c(nrow(subset(era1, era1$test_moca<26)),nrow(subset(era1, era1$test_moca>=26))),
                  c(nrow(subset(era2, era2$test_moca<26)),nrow(subset(era2, era2$test_moca>=26))),
@@ -345,9 +347,9 @@ M=as.table(cbind(c(nrow(subset(era1, era1$test_katz<6)),nrow(subset(era1, era1$t
 table1stats=append(table1stats,chisq.test(M)$p.value)
 
 
-table1stats=append(table1stats, oneway.test(rf_euroscore_log ~ tavi_era, data=data)$p.value)
+table1stats=append(table1stats, kruskal.test(rf_euroscore_log ~ tavi_era, data=data)$p.value)
 
-table1stats=append(table1stats, oneway.test(rf_sts ~ tavi_era, data=data)$p.value)
+table1stats=append(table1stats, kruskal.test(rf_sts ~ tavi_era, data=data)$p.value)
 
 
 M=as.table(cbind(c(nrow(subset(era1, era1$ind_risk_frail==1)),nrow(subset(era1, era1$ind_comorbid==1)),nrow(subset(era1, era1$ind_surg_tech==1))),
@@ -356,7 +358,7 @@ M=as.table(cbind(c(nrow(subset(era1, era1$ind_risk_frail==1)),nrow(subset(era1, 
 ))
 table1stats=append(table1stats,chisq.test(M)$p.value)
 
-table1stats=append(table1stats, oneway.test(los ~ tavi_era, data=data)$p.value)
+table1stats=append(table1stats, kruskal.test(los ~ tavi_era, data=data)$p.value)
 
 
 table1stats=as.data.frame(table1stats)
