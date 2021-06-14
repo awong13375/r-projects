@@ -4,11 +4,123 @@ library(psych)
 library(rel)
 setwd("C:/Users/alexw/Google Drive/Desktop files/Dal Med/RIM")
 
+data=read.csv("Data Collection Form - compiled.csv")
+
+# Agreement between CJC and JK ----
+pctagree=c()
+kappacoef=c()
+kappaCI=c()
+kappa_pval=c()
+
+pctagree=append(pctagree, agree(cbind(as.factor(data$Keros.Classification.CJC), 
+                                      as.factor(data$Keros.Classification.JK)))$value)
+pctagree=append(pctagree, agree(cbind(data$Asymmetry.CJC, 
+                                      data$Asymmetry.JK))$value)
+pctagree=append(pctagree, agree(cbind(data$Bony.dehiscence.CJC, 
+                                      data$Bony.dehiscence.JK))$value)
+pctagree=append(pctagree, agree(cbind(data$Intact.lamina.CJC, 
+                                      data$Intact.lamina.JK))$value)
+pctagree=append(pctagree, agree(cbind(data$Orbital.dehiscence.into.ethmoid.sinus.CJC, 
+                                      data$Orbital.dehiscence.into.ethmoid.sinus.JK))$value)
+pctagree=append(pctagree, agree(cbind(data$Ucinate.process.contacting.orbital.wall.CJC, 
+                                      data$Ucinate.process.contacting.orbital.wall.JK))$value)
+pctagree=append(pctagree, agree(cbind(data$Presence.CJC, 
+                                      data$Presence.JK))$value)
+pctagree=append(pctagree, agree(cbind(data$Carotid.dehiscence.CJC, 
+                                      data$Carotid.dehiscence.JK))$value)
+pctagree=append(pctagree, agree(cbind(data$Optic.nerve.dehiscence.CJC, 
+                                      data$Optic.nerve.dehiscence.JK))$value)
+pctagree=append(pctagree, agree(cbind(data$Sinus.septation.inserting.on.carotid.canal.CJC, 
+                                      data$Sinus.septation.inserting.on.carotid.canal.JK))$value)
+pctagree=append(pctagree, agree(cbind(data$Supraortibal.pneumatization.CJC, 
+                                      data$Supraortibal.pneumatization.JK))$value)
+
+
+kappacoef=append(kappacoef, ckap(cbind(as.factor(data$Keros.Classification.CJC), 
+                                         as.factor(data$Keros.Classification.JK)), weight="linear", std.err = "Cohen", conf.level = 0.95)$est)
+kappacoef=append(kappacoef, ckap(cbind(data$Asymmetry.CJC, 
+                                         data$Asymmetry.JK), weight="unweighted", std.err = "Cohen", conf.level = 0.95)$est)
+kappacoef=append(kappacoef, ckap(cbind(data$Bony.dehiscence.CJC, 
+                                         data$Bony.dehiscence.JK), weight="unweighted", std.err = "Cohen", conf.level = 0.95)$est)
+kappacoef=append(kappacoef, ckap(cbind(data$Intact.lamina.CJC, 
+                                         data$Intact.lamina.JK), weight="unweighted", std.err = "Cohen", conf.level = 0.95)$est)
+kappacoef=append(kappacoef, ckap(cbind(data$Orbital.dehiscence.into.ethmoid.sinus.CJC, 
+                                         data$Orbital.dehiscence.into.ethmoid.sinus.JK), weight="unweighted", std.err = "Cohen", conf.level = 0.95)$est)
+kappacoef=append(kappacoef, ckap(cbind(data$Ucinate.process.contacting.orbital.wall.CJC, 
+                                         data$Ucinate.process.contacting.orbital.wall.JK), weight="unweighted", std.err = "Cohen", conf.level = 0.95)$est)
+kappacoef=append(kappacoef, ckap(cbind(data$Presence.CJC, 
+                                         data$Presence.JK), weight="unweighted", std.err = "Cohen", conf.level = 0.95)$est)
+kappacoef=append(kappacoef, ckap(cbind(data$Carotid.dehiscence.CJC, 
+                                         data$Carotid.dehiscence.JK), weight="unweighted", std.err = "Cohen", conf.level = 0.95)$est)
+kappacoef=append(kappacoef, ckap(cbind(data$Optic.nerve.dehiscence.CJC, 
+                                         data$Optic.nerve.dehiscence.JK), weight="unweighted", std.err = "Cohen", conf.level = 0.95)$est)
+kappacoef=append(kappacoef, ckap(cbind(data$Sinus.septation.inserting.on.carotid.canal.CJC, 
+                                         data$Sinus.septation.inserting.on.carotid.canal.JK), weight="unweighted", std.err = "Cohen", conf.level = 0.95)$est)
+kappacoef=append(kappacoef, ckap(cbind(data$Supraortibal.pneumatization.CJC, 
+                                         data$Supraortibal.pneumatization.JK), weight="unweighted", std.err = "Cohen", conf.level = 0.95)$est)
+
+
+kappaCI=append(kappaCI, ckap(cbind(as.factor(data$Keros.Classification.CJC), 
+                                       as.factor(data$Keros.Classification.JK)), weight="linear", std.err = "Cohen", conf.level = 0.95)$se)
+kappaCI=append(kappaCI, ckap(cbind(data$Asymmetry.CJC, 
+                                       data$Asymmetry.JK), weight="unweighted", std.err = "Cohen", conf.level = 0.95)$se)
+kappaCI=append(kappaCI, ckap(cbind(data$Bony.dehiscence.CJC, 
+                                       data$Bony.dehiscence.JK), weight="unweighted", std.err = "Cohen", conf.level = 0.95)$se)
+kappaCI=append(kappaCI, ckap(cbind(data$Intact.lamina.CJC, 
+                                       data$Intact.lamina.JK), weight="unweighted", std.err = "Cohen", conf.level = 0.95)$se)
+kappaCI=append(kappaCI, ckap(cbind(data$Orbital.dehiscence.into.ethmoid.sinus.CJC, 
+                                       data$Orbital.dehiscence.into.ethmoid.sinus.JK), weight="unweighted", std.err = "Cohen", conf.level = 0.95)$se)
+kappaCI=append(kappaCI, ckap(cbind(data$Ucinate.process.contacting.orbital.wall.CJC, 
+                                       data$Ucinate.process.contacting.orbital.wall.JK), weight="unweighted", std.err = "Cohen", conf.level = 0.95)$se)
+kappaCI=append(kappaCI, ckap(cbind(data$Presence.CJC, 
+                                       data$Presence.JK), weight="unweighted", std.err = "Cohen", conf.level = 0.95)$se)
+kappaCI=append(kappaCI, ckap(cbind(data$Carotid.dehiscence.CJC, 
+                                       data$Carotid.dehiscence.JK), weight="unweighted", std.err = "Cohen", conf.level = 0.95)$se)
+kappaCI=append(kappaCI, ckap(cbind(data$Optic.nerve.dehiscence.CJC, 
+                                       data$Optic.nerve.dehiscence.JK), weight="unweighted", std.err = "Cohen", conf.level = 0.95)$se)
+kappaCI=append(kappaCI, ckap(cbind(data$Sinus.septation.inserting.on.carotid.canal.CJC, 
+                                       data$Sinus.septation.inserting.on.carotid.canal.JK), weight="unweighted", std.err = "Cohen", conf.level = 0.95)$se)
+kappaCI=append(kappaCI, ckap(cbind(data$Supraortibal.pneumatization.CJC, 
+                                       data$Supraortibal.pneumatization.JK), weight="unweighted", std.err = "Cohen", conf.level = 0.95)$se)
+
+
+kappa_pval=append(kappa_pval, kappa2(cbind(as.factor(data$Keros.Classification.CJC), 
+                                   as.factor(data$Keros.Classification.JK)), "equal")$p.value)
+kappa_pval=append(kappa_pval, kappa2(cbind(data$Asymmetry.CJC, 
+                                   data$Asymmetry.JK), weight="unweighted")$p.value)
+kappa_pval=append(kappa_pval, kappa2(cbind(data$Bony.dehiscence.CJC, 
+                                   data$Bony.dehiscence.JK), weight="unweighted")$p.value)
+kappa_pval=append(kappa_pval, kappa2(cbind(data$Intact.lamina.CJC, 
+                                   data$Intact.lamina.JK), weight="unweighted")$p.value)
+kappa_pval=append(kappa_pval, kappa2(cbind(data$Orbital.dehiscence.into.ethmoid.sinus.CJC, 
+                                   data$Orbital.dehiscence.into.ethmoid.sinus.JK), weight="unweighted")$p.value)
+kappa_pval=append(kappa_pval, kappa2(cbind(data$Ucinate.process.contacting.orbital.wall.CJC, 
+                                   data$Ucinate.process.contacting.orbital.wall.JK), weight="unweighted")$p.value)
+kappa_pval=append(kappa_pval, kappa2(cbind(data$Presence.CJC, 
+                                   data$Presence.JK), weight="unweighted")$p.value)
+kappa_pval=append(kappa_pval, kappa2(cbind(data$Carotid.dehiscence.CJC, 
+                                   data$Carotid.dehiscence.JK), weight="unweighted")$p.value)
+kappa_pval=append(kappa_pval, kappa2(cbind(data$Optic.nerve.dehiscence.CJC, 
+                                   data$Optic.nerve.dehiscence.JK), weight="unweighted")$p.value)
+kappa_pval=append(kappa_pval, kappa2(cbind(data$Sinus.septation.inserting.on.carotid.canal.CJC, 
+                                   data$Sinus.septation.inserting.on.carotid.canal.JK), weight="unweighted")$p.value)
+kappa_pval=append(kappa_pval, kappa2(cbind(data$Supraortibal.pneumatization.CJC, 
+                                   data$Supraortibal.pneumatization.JK), weight="unweighted")$p.value)
+
+
+agree_table=as.data.frame(pctagree)
+agree_table=cbind(agree_table, kappacoef)
+agree_table=cbind(agree_table, kappaCI)
+agree_table=cbind(agree_table, kappa_pval)
+
+rownames(agree_table)=c("keros","asym","bony dehisc","intact lamina","orbital dehisc","ucinate process",
+                        "onodi","carotid dehisc","ON dehisc","sinus sept","supraorb pneum")
+
+write.csv(agree_table, "CJC_JK_Agree_table.csv")
 
 # Match CJC and JK data ---------------------------------------------------
 
 
-data=read.csv("Data Collection Form - compiled.csv")
 data$keros=c(0)
 data$asym=c(0)
 data$bonydehisc=c(0)
