@@ -1,19 +1,23 @@
 library(WebPower)
 library(rqdatatable)
-#data merging
-old_data=read.csv("C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med3/TripleC/Data/Triple C raw data.csv")
-new_data=read.csv("C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med3/TripleC/Data/Triple C Data - 01Jun2021_rawdata.csv")
+
+#Data merging ----
+old_data=read.csv("C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med3/TripleC/Data/Triple C Data - Labels_22Dec2020.csv")
+new_data=read.csv("C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med3/TripleC/Data/Triple C Data - Labels_01Jun2021.csv")
 merged_data <- natural_join(old_data, new_data, by="ï..Record.Id", jointype="FULL")
 
 col_order=as.vector(colnames(new_data))
 merged_data=merged_data[,col_order]
 #write.csv(merged_data, "C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med3/TripleC/Data/merged_data.csv")
 
-#Power analysis
+
+#Power analysis ----
 wp.logistic(n = NULL, p0 = 0.53, p1 = 0.47, alpha = 0.05,
             power = 0.80, family = c("normal"), parameter = c(0,1))
 
-data=read.csv("C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med3/TripleC/Data/Triple C raw data.csv")
+#Data procurement ----
+#Open data
+data=read.csv("C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med3/TripleC/Data/Triple C Data - Combined_14Jun2021.csv")
 data[data==""]<-NA
 
 #subset data into pts with post infection syndrome vs. not
@@ -32,7 +36,24 @@ data$pis_status=factor(data$pis_status, levels=c("Yes","No"))
 
 data$covid_positive <- as.Date(as.character(data$covid_positive),"%d-%m-%Y")
 data$date_recovered <- as.Date(as.character(data$date_recovered),"%d-%m-%Y")
+data$post_recovery_follow.up.1 <- as.Date(as.character(data$post_recovery_follow.up.1),"%d-%m-%Y")
+data$post_recovery_follow.up.2 <- as.Date(as.character(data$post_recovery_follow.up.2),"%d-%m-%Y")
+data$post_recovery_follow.up.3 <- as.Date(as.character(data$post_recovery_follow.up.3),"%d-%m-%Y")
+data$post_recovery_follow.up.4 <- as.Date(as.character(data$post_recovery_follow.up.4),"%d-%m-%Y")
+data$post_recovery_follow.up.5 <- as.Date(as.character(data$post_recovery_follow.up.5),"%d-%m-%Y")
+data$post_recovery_follow.up.6 <- as.Date(as.character(data$post_recovery_follow.up.6),"%d-%m-%Y")
+data$post_recovery_follow.up.7 <- as.Date(as.character(data$post_recovery_follow.up.7),"%d-%m-%Y")
+data$post_recovery_follow.up.8 <- as.Date(as.character(data$post_recovery_follow.up.8),"%d-%m-%Y")
+
 data$duration_of_illness=difftime(data$date_recovered ,data$covid_positive , units = c("days"))
+data$days_to_followup1=difftime(data$post_recovery_follow.up.1, data$date_recovered, units = c("days"))
+data$days_to_followup2=difftime(data$post_recovery_follow.up.2, data$date_recovered, units = c("days"))
+data$days_to_followup3=difftime(data$post_recovery_follow.up.3, data$date_recovered, units = c("days"))
+data$days_to_followup4=difftime(data$post_recovery_follow.up.4, data$date_recovered, units = c("days"))
+data$days_to_followup5=difftime(data$post_recovery_follow.up.5, data$date_recovered, units = c("days"))
+data$days_to_followup6=difftime(data$post_recovery_follow.up.6, data$date_recovered, units = c("days"))
+data$days_to_followup7=difftime(data$post_recovery_follow.up.7, data$date_recovered, units = c("days"))
+data$days_to_followup8=difftime(data$post_recovery_follow.up.8, data$date_recovered, units = c("days"))
 
 
 # Table 1 ----
@@ -602,61 +623,124 @@ rownames(table1stats)=c("age","sex","ethnicity (fe)","housing (fe)","income (fe)
 
 # Table 2 ----
 
-table_2=c()
+days_to_fu=c("days_to_followup1", "days_to_followup2", "days_to_followup3", "days_to_followup4", "days_to_followup5", "days_to_followup6",
+             "days_to_followup7", "days_to_followup8")
+sob=c("post_recovery_sob_1", "post_recovery_sob_2", "post_recovery_sob_3", "post_recovery_sob_4", "post_recovery_sob_5", "post_recovery_sob_6", 
+      "post_recovery_sob_7", "post_recovery_sob_8")
+fatigue=c("post_recovery_fatigue_1", "post_recovery_fatigue_2", "post_recovery_fatigue_3", "post_recovery_fatigue_4", "post_recovery_fatigue_5", 
+          "post_recovery_fatigue_6", "post_recovery_fatigue_7", "post_recovery_fatigue_8")
+anosmia_ageusia=c("post_recovery_anosmia_ageusia_1", "post_recovery_anosmia_ageusia_2", "post_recovery_anosmia_ageusia_3", "post_recovery_anosmia_ageusia_4",
+                  "post_recovery_anosmia_ageusia_5", "post_recovery_anosmia_ageusia_6", "post_recovery_anosmia_ageusia_7", "post_recovery_anosmia_ageusia_8")
+hair_loss=c("post_recovery_hair_loss_1", "post_recovery_hair_loss_2", "post_recovery_hair_loss_3", "post_recovery_hair_loss_4", "post_recovery_hair_loss_5",
+            "post_recovery_hair_loss_6", "post_recovery_hair_loss_7", "post_recovery_hair_loss_8")
+brain_fog=c("post_recovery_brain_fog_1", "post_recovery_brain_fog_2", "post_recovery_brain_fog_3", "post_recovery_brain_fog_4", "post_recovery_brain_fog_5",
+            "post_recovery_brain_fog_6", "post_recovery_brain_fog_7", "post_recovery_brain_fog_8")
+weight_loss=c("post_recovery_weight_loss_1", "post_recovery_weight_loss_2", "post_recovery_weight_loss_3", "post_recovery_weight_loss_4", 
+              "post_recovery_weight_loss_5", "post_recovery_weight_loss_6", "post_recovery_weight_loss_7", "post_recovery_weight_loss_8")
+arthralgia_myalgia=c("post_recovery_arthralgia_myalgia_1", "post_recovery_arthralgia_myalgia_2", "post_recovery_arthralgia_myalgia_3", 
+                     "post_recovery_arthralgia_myalgia_4", "post_recovery_arthralgia_myalgia_5", "post_recovery_arthralgia_myalgia_6",
+                     "post_recovery_arthralgia_myalgia_7", "post_recovery_arthralgia_myalgia_8")
+headache=c("post_recovery_headache_1", "post_recovery_headache_2", "post_recovery_headache_3", "post_recovery_headache_4", "post_recovery_headache_5",
+           "post_recovery_headache_6", "post_recovery_headache_7", "post_recovery_headache_8")
+diarrhea=c("post_recovery_diarrhea_1", "post_recovery_diarrhea_2", "post_recovery_diarrhea_3", "post_recovery_diarrhea_4", "post_recovery_diarrhea_5",
+           "post_recovery_diarrhea_6", "post_recovery_diarrhea_7", "post_recovery_diarrhea_8")
+cough=c("post_recovery_cough_1", "post_recovery_cough_2", "post_recovery_cough_3", "post_recovery_cough_4", "post_recovery_cough_5", "post_recovery_cough_6",
+        "post_recovery_cough_7", "post_recovery_cough_8")
+fever=c("post_recovery_fever_1", "post_recovery_fever_2", "post_recovery_fever_3", "post_recovery_fever_4", "post_recovery_fever_5", "post_recovery_fever_6",
+        "post_recovery_fever_7", "post_recovery_fever_8")
+dizziness=c("post_recovery_dizziness_1", "post_recovery_dizziness_2", "post_recovery_dizziness_3", "post_recovery_dizziness_4", "post_recovery_dizziness_5",
+            "post_recovery_dizziness_6", "post_recovery_dizziness_7", "post_recovery_dizziness_8")
+anxiety=c("post_recovery_anxiety_1", "post_recovery_anxiety_2", "post_recovery_anxiety_3", "post_recovery_anxiety_4", "post_recovery_anxiety_5",
+          "post_recovery_anxiety_6", "post_recovery_anxiety_7", "post_recovery_anxiety_8")
+other=c("post_recovery_other_1", "post_recovery_other_2", "post_recovery_other_3", "post_recovery_other_4", "post_recovery_other_5", "post_recovery_other_6",
+        "post_recovery_other_7", "post_recovery_other_8")
 
-table_2=append(table_2, nrow(subset(data, data$physicalpostcovid=="Yes" | data$mhpostcovid=="Yes")))
+physicalpostcovid=c("physicalpostcovid", "physicalpostcovid_2", "physicalpostcovid_2_3", "physicalpostcovid_2_3_4", "physicalpostcovid_2_3_4_5", "physicalpostcovid_2_3_4_5_6",
+                    "physicalpostcovid_2_3_4_5_6_7", "physicalpostcovid_2_3_4_5_6_7_8")
+mhpostcovid=c("mhpostcovid", "mhpostcovid_2", "mhpostcovid_2_3", "mhpostcovid_2_3_4", "mhpostcovid_2_3_4_5", "mhpostcovid_2_3_4_5_6", "mhpostcovid_2_3_4_5_6_7", "mhpostcovid_2_3_4_5_6_7_8")
 
-table_2=append(table_2, nrow(subset(data, data$post_recovery_sob_1==1)))
-table_2=append(table_2, nrow(subset(data, data$post_recovery_sob_1==1))/nrow(subset(data, data$physicalpostcovid=="Yes" | data$mhpostcovid=="Yes"))*100)
+denominator = function(n) {
+  physical=data[physicalpostcovid[n]]
+  mh=data[mhpostcovid[n]]
+  tab=cbind(physical, mh)
+  tab=subset(tab, tab[1]=="Yes" | tab[2]=="Yes")
+  result=nrow(tab)
+  return(result)
+}
 
-table_2=append(table_2, nrow(subset(data, data$post_recovery_fatigue_1==1)))
-table_2=append(table_2, nrow(subset(data, data$post_recovery_fatigue_1==1))/nrow(subset(data, data$physicalpostcovid=="Yes" | data$mhpostcovid=="Yes"))*100)
+total_n_fu = function(n) {
+  physical=data[physicalpostcovid[n]]
+  mh=data[mhpostcovid[n]]
+  tab=cbind(physical, mh)
+  tab=subset(tab, !is.na(tab[1])&!is.na(tab[2]))
+  result=nrow(tab)
+  return(result)
+}
 
-table_2=append(table_2, nrow(subset(data, data$post_recovery_anosmia_ageusia_1==1)))
-table_2=append(table_2, nrow(subset(data, data$post_recovery_anosmia_ageusia_1==1))/nrow(subset(data, data$physicalpostcovid=="Yes" | data$mhpostcovid=="Yes"))*100)
+for (i in c(1:8)) {
+  table_2=c()
 
-table_2=append(table_2, nrow(subset(data, data$post_recovery_hair_loss_1==1)))
-table_2=append(table_2, nrow(subset(data, data$post_recovery_hair_loss_1==1))/nrow(subset(data, data$physicalpostcovid=="Yes" | data$mhpostcovid=="Yes"))*100)
+  table_2=append(table_2, as.vector(median(data[,days_to_fu[i]], na.rm=TRUE)))
+  
+  table_2=append(table_2, denominator(i))
+  table_2=append(table_2, denominator(i)/total_n_fu(i)*100)
 
-table_2=append(table_2, nrow(subset(data, data$post_recovery_brain_fog_1==1)))
-table_2=append(table_2, nrow(subset(data, data$post_recovery_brain_fog_1==1))/nrow(subset(data, data$physicalpostcovid=="Yes" | data$mhpostcovid=="Yes"))*100)
+  table_2=append(table_2, sum(data[,sob[i]], na.rm=TRUE))
+  table_2=append(table_2, sum(data[,sob[i]], na.rm=TRUE)/denominator(i)*100)
 
-table_2=append(table_2, nrow(subset(data, data$post_recovery_weight_loss_1==1)))
-table_2=append(table_2, nrow(subset(data, data$post_recovery_weight_loss_1==1))/nrow(subset(data, data$physicalpostcovid=="Yes" | data$mhpostcovid=="Yes"))*100)
+  table_2=append(table_2, sum(data[,fatigue[i]], na.rm=TRUE))
+  table_2=append(table_2, sum(data[,fatigue[i]], na.rm=TRUE)/denominator(i)*100)
 
-table_2=append(table_2, nrow(subset(data, data$post_recovery_arthralgia_myalgia_1==1)))
-table_2=append(table_2, nrow(subset(data, data$post_recovery_arthralgia_myalgia_1==1))/nrow(subset(data, data$physicalpostcovid=="Yes" | data$mhpostcovid=="Yes"))*100)
+  table_2=append(table_2, sum(data[,anosmia_ageusia[i]], na.rm=TRUE))
+  table_2=append(table_2, sum(data[,anosmia_ageusia[i]], na.rm=TRUE)/denominator(i)*100)
 
-table_2=append(table_2, nrow(subset(data, data$post_recovery_headache_1==1)))
-table_2=append(table_2, nrow(subset(data, data$post_recovery_headache_1==1))/nrow(subset(data, data$physicalpostcovid=="Yes" | data$mhpostcovid=="Yes"))*100)
+  table_2=append(table_2, sum(data[,hair_loss[i]], na.rm=TRUE))
+  table_2=append(table_2, sum(data[,hair_loss[i]], na.rm=TRUE)/denominator(i)*100)
 
-table_2=append(table_2, nrow(subset(data, data$post_recovery_diarrhea_1==1)))
-table_2=append(table_2, nrow(subset(data, data$post_recovery_diarrhea_1==1))/nrow(subset(data, data$physicalpostcovid=="Yes" | data$mhpostcovid=="Yes"))*100)
+  table_2=append(table_2, sum(data[,brain_fog[i]], na.rm=TRUE))
+  table_2=append(table_2, sum(data[,brain_fog[i]], na.rm=TRUE)/denominator(i)*100)
 
-table_2=append(table_2, nrow(subset(data, data$post_recovery_cough_1==1)))
-table_2=append(table_2, nrow(subset(data, data$post_recovery_cough_1==1))/nrow(subset(data, data$physicalpostcovid=="Yes" | data$mhpostcovid=="Yes"))*100)
+  table_2=append(table_2, sum(data[,weight_loss[i]], na.rm=TRUE))
+  table_2=append(table_2, sum(data[,weight_loss[i]], na.rm=TRUE)/denominator(i)*100)
 
-table_2=append(table_2, nrow(subset(data, data$post_recovery_fever_1==1)))
-table_2=append(table_2, nrow(subset(data, data$post_recovery_fever_1==1))/nrow(subset(data, data$physicalpostcovid=="Yes" | data$mhpostcovid=="Yes"))*100)
+  table_2=append(table_2, sum(data[,arthralgia_myalgia[i]], na.rm=TRUE))
+  table_2=append(table_2, sum(data[,arthralgia_myalgia[i]], na.rm=TRUE)/denominator(i)*100)
 
-table_2=append(table_2, nrow(subset(data, data$post_recovery_dizziness_1==1)))
-table_2=append(table_2, nrow(subset(data, data$post_recovery_dizziness_1==1))/nrow(subset(data, data$physicalpostcovid=="Yes" | data$mhpostcovid=="Yes"))*100)
+  table_2=append(table_2, sum(data[,headache[i]], na.rm=TRUE))
+  table_2=append(table_2, sum(data[,headache[i]], na.rm=TRUE)/denominator(i)*100)
 
-table_2=append(table_2, nrow(subset(data, data$post_recovery_anxiety_1==1)))
-table_2=append(table_2, nrow(subset(data, data$post_recovery_anxiety_1==1))/nrow(subset(data, data$physicalpostcovid=="Yes" | data$mhpostcovid=="Yes"))*100)
+  table_2=append(table_2, sum(data[,diarrhea[i]], na.rm=TRUE))
+  table_2=append(table_2, sum(data[,diarrhea[i]], na.rm=TRUE)/denominator(i)*100)
 
-table_2=append(table_2, nrow(subset(data, data$post_recovery_other_1==1)))
-table_2=append(table_2, nrow(subset(data, data$post_recovery_other_1==1))/nrow(subset(data, data$physicalpostcovid=="Yes" | data$mhpostcovid=="Yes"))*100)
+  table_2=append(table_2, sum(data[,cough[i]], na.rm=TRUE))
+  table_2=append(table_2, sum(data[,cough[i]], na.rm=TRUE)/denominator(i)*100)
 
+  table_2=append(table_2, sum(data[,fever[i]], na.rm=TRUE))
+  table_2=append(table_2, sum(data[,fever[i]], na.rm=TRUE)/denominator(i)*100)
 
-table_2=as.data.frame(table_2)
-colnames(table_2)=c("post recovery symptoms")
-rownames(table_2)=c("n at 1 month","sob", "sob_%","fatigue","fatigue_%","anosmia","anosmia_%","hair loss","hair loss_%","brain fog","brain fog_%","w/l","w/l_%",
+  table_2=append(table_2, sum(data[,dizziness[i]], na.rm=TRUE))
+  table_2=append(table_2, sum(data[,dizziness[i]], na.rm=TRUE)/denominator(i)*100)
+
+  table_2=append(table_2, sum(data[,anxiety[i]], na.rm=TRUE))
+  table_2=append(table_2, sum(data[,anxiety[i]], na.rm=TRUE)/denominator(i)*100)
+
+  table_2=append(table_2, sum(data[,other[i]], na.rm=TRUE))
+  table_2=append(table_2, sum(data[,other[i]], na.rm=TRUE)/denominator(i)*100)
+
+  if (i==1) {
+    result=as.data.frame(table_2)
+  } else {
+    result=cbind(result, table_2)
+  }
+  }
+
+colnames(result)=c("fu_1", "fu_2", "fu_3", "fu_4", "fu_5", "fu_6", "fu_7", "fu_8")
+rownames(result)=c("median days to fu","any_sx_fu","%_any_sx_fu", "sob", "sob_%","fatigue","fatigue_%","anosmia","anosmia_%","hair loss","hair loss_%","brain fog","brain fog_%","w/l","w/l_%",
                     "arth/myalgia","arth/myalgia_%","h/a","h/a_%","diarrhea","diarrhea_%","cough","cough_%","fever","fever_%","dizziness","dizziness_%",
                     "anxiety","anxiety_%","other","other_%")
 
 # Table 2 export ----
-#write.csv(table_2, "C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med3/TripleC/table_2.csv")
+#write.csv(result, "C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med3/TripleC/table_2.csv")
 
 
 
