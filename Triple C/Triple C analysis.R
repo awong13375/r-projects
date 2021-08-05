@@ -2,20 +2,21 @@ library(WebPower)
 library(rqdatatable)
 
 #Data merging ----
-old_data=read.csv("C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med3/TripleC/Data/Triple C Data - Labels_22Dec2020.csv")
-new_data=read.csv("C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med3/TripleC/Data/Triple C Data - Labels_01Jun2021.csv")
+old_data=read.csv("G:/My Drive/Desktop files/Dal Med/Med3/TripleC/Data/Triple C Data - Combined_14Jun2021.csv")
+new_data=read.csv("G:/My Drive/Desktop files/Dal Med/Med3/TripleC/Data/Triple C Data - Labels_03Aug2021.csv")
+colnames(new_data)[1]="ï..Record.Id"
 merged_data <- natural_join(old_data, new_data, by="ï..Record.Id", jointype="FULL")
 
 col_order=as.vector(colnames(new_data))
 merged_data=merged_data[,col_order]
-#write.csv(merged_data, "C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med3/TripleC/Data/merged_data.csv")
+#write.csv(merged_data, "G:/My Drive/Desktop files/Dal Med/Med3/TripleC/Data/merged_data.csv")
 
 
 #Power analysis ----
 wp.logistic(n = NULL, p0 = 0.53, p1 = 0.47, alpha = 0.05,
             power = 0.80, family = c("normal"), parameter = c(0,1))
 
-#Data procurement ----
+#Data consolidation ----
 #Open data
 data=read.csv("C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med3/TripleC/Data/Triple C Data - Combined_14Jun2021.csv")
 data[data==""]<-NA
@@ -55,6 +56,89 @@ data$days_to_followup6=difftime(data$post_recovery_follow.up.6, data$date_recove
 data$days_to_followup7=difftime(data$post_recovery_follow.up.7, data$date_recovered, units = c("days"))
 data$days_to_followup8=difftime(data$post_recovery_follow.up.8, data$date_recovered, units = c("days"))
 
+data$post_covid_syndrome_1=c(0)
+data$post_covid_syndrome_2=c(0)
+data$post_covid_syndrome_3=c(0)
+data$post_covid_syndrome_4=c(0)
+data$post_covid_syndrome_5=c(0)
+data$post_covid_syndrome_6=c(0)
+data$post_covid_syndrome_7=c(0)
+data$post_covid_syndrome_8=c(0)
+
+data$post_covid_syndrome_1[data$physicalpostcovid=="Yes" | data$mhpostcovid=="Yes"]=1
+data$post_covid_syndrome_2[data$physicalpostcovid_2=="Yes" | data$mhpostcovid_2=="Yes"]=1
+data$post_covid_syndrome_3[data$physicalpostcovid_2_3=="Yes" | data$mhpostcovid_2_3=="Yes"]=1
+data$post_covid_syndrome_4[data$physicalpostcovid_2_3_4=="Yes" | data$mhpostcovid_2_3_4=="Yes"]=1
+data$post_covid_syndrome_5[data$physicalpostcovid_2_3_4_5=="Yes" | data$mhpostcovid_2_3_4_5=="Yes"]=1
+data$post_covid_syndrome_6[data$physicalpostcovid_2_3_4_5_6=="Yes" | data$mhpostcovid_2_3_4_5_6=="Yes"]=1
+data$post_covid_syndrome_7[data$physicalpostcovid_2_3_4_5_6_7=="Yes" | data$mhpostcovid_2_3_4_5_6_7=="Yes"]=1
+data$post_covid_syndrome_8[data$physicalpostcovid_2_3_4_5_6_7_8=="Yes" | data$mhpostcovid_2_3_4_5_6_7_8=="Yes"]=1
+
+data$sex[data$sex=="Unknown"]=NA
+data$ethnic[data$ethnic=="Unknown"]=NA
+data$housing[data$housing=="Unknown"]=NA
+data$income[data$income=="Unknown"]=NA
+data$cardiac[data$cardiac=="Unknown"]=NA
+data$pulmonary[data$pulmonary=="Unknown"]=NA
+data$hypertension[data$hypertension=="Unknown"]=NA
+data$asthma[data$asthma=="Unknown"]=NA
+data$diabetes1[data$diabetes1=="Unknown"]=NA
+data$diabetes2[data$diabetes2=="Unknown"]=NA
+data$liver[data$liver=="Unknown"]=NA
+data$rheum[data$rheum=="Unknown"]=NA
+data$neuro[data$neuro=="Unknown"]=NA
+data$dementia[data$dementia=="Unknown"]=NA
+data$hematologic[data$hematologic=="Unknown"]=NA
+data$malnutrition[data$malnutrition=="Unknown"]=NA
+data$malignant[data$malignant=="Unknown"]=NA
+data$hiv[data$hiv=="Unknown"]=NA
+data$smoker[data$smoker=="Unknown"]=NA
+data$obesity[data$obesity=="Unknown"]=NA
+data$snore[data$snore=="Unknown"]=NA
+data$cpap[data$cpap=="Unknown"]=NA
+data$acei[data$acei=="Unknown"]=NA
+data$acei[!(is.na(data$acei)) & !(data$acei=="No")]="Yes"
+
+data$arbs[data$arbs=="Unknown"]=NA
+data$arbs[!(is.na(data$arbs)) & !(data$arbs=="No")]="Yes"
+
+data$nsaids[data$nsaids=="Unknown"]=NA
+data$nsaids[!(is.na(data$nsaids)) & !(data$nsaids=="No")]="Yes"
+
+data$steroid[data$steroid=="Unknown"]=NA
+data$statin[data$statin=="Unknown"]=NA
+data$statin[!(is.na(data$statin)) & !(data$statin=="No")]="Yes"
+
+data$metformin[data$metformin=="Unknown"]=NA
+data$acetamin[data$acetamin=="Unknown"]=NA
+data$verapamil[data$verapamil=="Unknown"]=NA
+data$fever_documented[data$fever_documented=="Unknown"]=NA
+data$jointpain[data$jointpain=="Unknown"]=NA
+data$cough[data$cough=="Unknown"]=NA
+data$fatigue[data$fatigue=="Unknown"]=NA
+data$sorethroat[data$sorethroat=="Unknown"]=NA
+data$runnynose[data$runnynose=="Unknown"]=NA
+data$sob[data$sob=="Unknown"]=NA
+data$earpain[data$earpain=="Unknown"]=NA
+data$wheezing[data$wheezing=="Unknown"]=NA
+data$chestpain[data$chestpain=="Unknown"]=NA
+data$muscleaches[data$muscleaches=="Unknown"]=NA
+data$headache[data$headache=="Unknown"]=NA
+data$aloc[data$aloc=="Unknown"]=NA
+data$losstaste[data$losstaste=="Unknown"]=NA
+data$abdominalpain[data$abdominalpain=="Unknown"]=NA
+data$nausea[data$nausea=="Unknown"]=NA
+data$diarrhea[data$diarrhea=="Unknown"]=NA
+data$skinrash[data$skinrash=="Unknown"]=NA
+data$hemoptysis[data$hemoptysis=="Unknown"]=NA
+data$travel_canada[data$travel_canada=="Unknown"]=NA
+data$travel_intl[data$travel_intl=="Unknown"]=NA
+data$hospital_admit[data$hospital_admit=="Unknown"]=NA
+data$hospital_admit[!(is.na(data$hospital_admit)) & !(data$hospital_admit=="No")]="Yes"
+data$hospital_admit[is.na(data$hospital_admit) & !is.na(data$sex)]="No"
+
+data$icu=c("No")
+data$icu[data$where_admit=="Intensive Care Unit"]="Yes"
 
 # Table 1 ----
 for (status in levels(as.factor(data$pis_status))){
@@ -102,8 +186,8 @@ for (status in levels(as.factor(data$pis_status))){
   result=append(result, nrow(subset(pis_data, pis_data$income=="High Income (> $60,000)")))
   result=append(result, nrow(subset(pis_data, pis_data$income=="High Income (> $60,000)"))/nrow(!is.na(pis_data))*100)
   
-  result=append(result, nrow(subset(pis_data, pis_data$income=="Unknown")))
-  result=append(result, nrow(subset(pis_data, pis_data$income=="Unknown"))/nrow(!is.na(pis_data))*100)
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$income))))
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$income)))/nrow(!is.na(pis_data))*100)
   
   result=append(result, nrow(subset(pis_data, pis_data$cardiac=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$cardiac=="Yes"))/nrow(!is.na(pis_data))*100)
@@ -123,8 +207,8 @@ for (status in levels(as.factor(data$pis_status))){
   result=append(result, nrow(subset(pis_data, pis_data$liver=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$liver=="Yes"))/nrow(!is.na(pis_data))*100)
   
-  result=append(result, nrow(subset(pis_data, pis_data$rhuem=="Yes")))
-  result=append(result, nrow(subset(pis_data, pis_data$rhuem=="Yes"))/nrow(!is.na(pis_data))*100)
+  result=append(result, nrow(subset(pis_data, pis_data$rheum=="Yes")))
+  result=append(result, nrow(subset(pis_data, pis_data$rheum=="Yes"))/nrow(!is.na(pis_data))*100)
   
   result=append(result, nrow(subset(pis_data, pis_data$neuro=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$neuro=="Yes"))/nrow(!is.na(pis_data))*100)
@@ -137,19 +221,19 @@ for (status in levels(as.factor(data$pis_status))){
   
   result=append(result, nrow(subset(pis_data, pis_data$malnutrition=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$malnutrition=="Yes"))/nrow(!is.na(pis_data))*100)
-  result=append(result, nrow(subset(pis_data, pis_data$malnutrition=="Unknown")))
-  result=append(result, nrow(subset(pis_data, pis_data$malnutrition=="Unknown"))/nrow(!is.na(pis_data))*100)
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$malnutrition))))
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$malnutrition)))/nrow(!is.na(pis_data))*100)
   
   result=append(result, nrow(subset(pis_data, pis_data$malignant=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$malignant=="Yes"))/nrow(!is.na(pis_data))*100)
-  result=append(result, nrow(subset(pis_data, pis_data$malignant=="Unknown")))
-  result=append(result, nrow(subset(pis_data, pis_data$malignant=="Unknown"))/nrow(!is.na(pis_data))*100)
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$malignant))))
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$malignant)))/nrow(!is.na(pis_data))*100)
   
   
   result=append(result, nrow(subset(pis_data, pis_data$hiv=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$hiv=="Yes"))/nrow(!is.na(pis_data))*100)
-  result=append(result, nrow(subset(pis_data, pis_data$hiv=="Unknown")))
-  result=append(result, nrow(subset(pis_data, pis_data$hiv=="Unknown"))/nrow(!is.na(pis_data))*100)
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$hiv))))
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$hiv)))/nrow(!is.na(pis_data))*100)
   
   
   result=append(result, nrow(subset(pis_data, pis_data$smoker=="Yes")))
@@ -157,14 +241,14 @@ for (status in levels(as.factor(data$pis_status))){
   
   result=append(result, nrow(subset(pis_data, pis_data$obesity=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$obesity=="Yes"))/nrow(!is.na(pis_data))*100)
-  result=append(result, nrow(subset(pis_data, pis_data$obesity=="Unknown")))
-  result=append(result, nrow(subset(pis_data, pis_data$obesity=="Unknown"))/nrow(!is.na(pis_data))*100)
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$obesity))))
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$obesity)))/nrow(!is.na(pis_data))*100)
   
   
   result=append(result, nrow(subset(pis_data, pis_data$snore=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$snore=="Yes"))/nrow(!is.na(pis_data))*100)
-  result=append(result, nrow(subset(pis_data, pis_data$snore=="Unknown")))
-  result=append(result, nrow(subset(pis_data, pis_data$snore=="Unknown"))/nrow(!is.na(pis_data))*100)
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$snore))))
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$snore)))/nrow(!is.na(pis_data))*100)
   
   result=append(result, nrow(subset(pis_data, pis_data$cpap=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$cpap=="Yes"))/nrow(!is.na(pis_data))*100)
@@ -177,8 +261,8 @@ for (status in levels(as.factor(data$pis_status))){
   
   result=append(result, nrow(subset(pis_data, pis_data$steroid=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$steroid=="Yes"))/nrow(!is.na(pis_data))*100)
-  result=append(result, nrow(subset(pis_data, pis_data$steroid=="Unknown")))
-  result=append(result, nrow(subset(pis_data, pis_data$steroid=="Unknown"))/nrow(!is.na(pis_data))*100)
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$steroid))))
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$steroid)))/nrow(!is.na(pis_data))*100)
   
   result=append(result, nrow(subset(pis_data, pis_data$statin!="No")))
   result=append(result, nrow(subset(pis_data, pis_data$statin!="No"))/nrow(!is.na(pis_data))*100)
@@ -197,116 +281,116 @@ for (status in levels(as.factor(data$pis_status))){
   
   result=append(result, nrow(subset(pis_data, pis_data$fever_documented=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$fever_documented=="Yes"))/nrow(!is.na(pis_data))*100)
-  result=append(result, nrow(subset(pis_data, pis_data$fever_documented=="Unknown")))
-  result=append(result, nrow(subset(pis_data, pis_data$fever_documented=="Unknown"))/nrow(!is.na(pis_data))*100)
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$fever_documented))))
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$fever_documented)))/nrow(!is.na(pis_data))*100)
   
   result=append(result, nrow(subset(pis_data, pis_data$jointpain=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$jointpain=="Yes"))/nrow(!is.na(pis_data))*100)
-  result=append(result, nrow(subset(pis_data, pis_data$jointpain=="Unknown")))
-  result=append(result, nrow(subset(pis_data, pis_data$jointpain=="Unknown"))/nrow(!is.na(pis_data))*100)
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$jointpain))))
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$jointpain)))/nrow(!is.na(pis_data))*100)
   
   result=append(result, nrow(subset(pis_data, pis_data$cough=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$cough=="Yes"))/nrow(!is.na(pis_data))*100)
-  result=append(result, nrow(subset(pis_data, pis_data$cough=="Unknown")))
-  result=append(result, nrow(subset(pis_data, pis_data$cough=="Unknown"))/nrow(!is.na(pis_data))*100)
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$cough))))
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$cough)))/nrow(!is.na(pis_data))*100)
   
   result=append(result, nrow(subset(pis_data, pis_data$fatigue=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$fatigue=="Yes"))/nrow(!is.na(pis_data))*100)
-  result=append(result, nrow(subset(pis_data, pis_data$fatigue=="Unknown")))
-  result=append(result, nrow(subset(pis_data, pis_data$fatigue=="Unknown"))/nrow(!is.na(pis_data))*100)
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$fatigue))))
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$fatigue)))/nrow(!is.na(pis_data))*100)
   
   result=append(result, nrow(subset(pis_data, pis_data$sorethroat=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$sorethroat=="Yes"))/nrow(!is.na(pis_data))*100)
-  result=append(result, nrow(subset(pis_data, pis_data$sorethroat=="Unknown")))
-  result=append(result, nrow(subset(pis_data, pis_data$sorethroat=="Unknown"))/nrow(!is.na(pis_data))*100)
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$sorethroat))))
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$sorethroat)))/nrow(!is.na(pis_data))*100)
   
   result=append(result, nrow(subset(pis_data, pis_data$runnynose=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$runnynose=="Yes"))/nrow(!is.na(pis_data))*100)
-  result=append(result, nrow(subset(pis_data, pis_data$runnynose=="Unknown")))
-  result=append(result, nrow(subset(pis_data, pis_data$runnynose=="Unknown"))/nrow(!is.na(pis_data))*100)
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$runnynose))))
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$runnynose)))/nrow(!is.na(pis_data))*100)
   
   result=append(result, nrow(subset(pis_data, pis_data$sob=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$sob=="Yes"))/nrow(!is.na(pis_data))*100)
-  result=append(result, nrow(subset(pis_data, pis_data$sob=="Unknown")))
-  result=append(result, nrow(subset(pis_data, pis_data$sob=="Unknown"))/nrow(!is.na(pis_data))*100)
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$sob))))
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$sob)))/nrow(!is.na(pis_data))*100)
   
   result=append(result, nrow(subset(pis_data, pis_data$earpain=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$earpain=="Yes"))/nrow(!is.na(pis_data))*100)
-  result=append(result, nrow(subset(pis_data, pis_data$earpain=="Unknown")))
-  result=append(result, nrow(subset(pis_data, pis_data$earpain=="Unknown"))/nrow(!is.na(pis_data))*100)
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$earpain))))
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$earpain)))/nrow(!is.na(pis_data))*100)
   
   result=append(result, nrow(subset(pis_data, pis_data$wheeze=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$wheeze=="Yes"))/nrow(!is.na(pis_data))*100)
-  result=append(result, nrow(subset(pis_data, pis_data$wheeze=="Unknown")))
-  result=append(result, nrow(subset(pis_data, pis_data$wheeze=="Unknown"))/nrow(!is.na(pis_data))*100)
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$wheeze))))
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$wheeze)))/nrow(!is.na(pis_data))*100)
   
   result=append(result, nrow(subset(pis_data, pis_data$chestpain=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$chestpain=="Yes"))/nrow(!is.na(pis_data))*100)
-  result=append(result, nrow(subset(pis_data, pis_data$chestpain=="Unknown")))
-  result=append(result, nrow(subset(pis_data, pis_data$chestpain=="Unknown"))/nrow(!is.na(pis_data))*100)
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$chestpain))))
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$chestpain)))/nrow(!is.na(pis_data))*100)
   
   result=append(result, nrow(subset(pis_data, pis_data$muscleaches=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$muscleaches=="Yes"))/nrow(!is.na(pis_data))*100)
-  result=append(result, nrow(subset(pis_data, pis_data$muscleaches=="Unknown")))
-  result=append(result, nrow(subset(pis_data, pis_data$muscleaches=="Unknown"))/nrow(!is.na(pis_data))*100)
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$muscleaches))))
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$muscleaches)))/nrow(!is.na(pis_data))*100)
   
   result=append(result, nrow(subset(pis_data, pis_data$headache=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$headache=="Yes"))/nrow(!is.na(pis_data))*100)
-  result=append(result, nrow(subset(pis_data, pis_data$headache=="Unknown")))
-  result=append(result, nrow(subset(pis_data, pis_data$headache=="Unknown"))/nrow(!is.na(pis_data))*100)
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$headache))))
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$headache)))/nrow(!is.na(pis_data))*100)
   
   result=append(result, nrow(subset(pis_data, pis_data$aloc=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$aloc=="Yes"))/nrow(!is.na(pis_data))*100)
-  result=append(result, nrow(subset(pis_data, pis_data$aloc=="Unknown")))
-  result=append(result, nrow(subset(pis_data, pis_data$aloc=="Unknown"))/nrow(!is.na(pis_data))*100)
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$aloc))))
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$aloc)))/nrow(!is.na(pis_data))*100)
   
   result=append(result, nrow(subset(pis_data, pis_data$losstaste=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$losstaste=="Yes"))/nrow(!is.na(pis_data))*100)
-  result=append(result, nrow(subset(pis_data, pis_data$losstaste=="Unknown")))
-  result=append(result, nrow(subset(pis_data, pis_data$losstaste=="Unknown"))/nrow(!is.na(pis_data))*100)
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$losstaste))))
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$losstaste)))/nrow(!is.na(pis_data))*100)
   
   result=append(result, nrow(subset(pis_data, pis_data$abdominalpain=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$abdominalpain=="Yes"))/nrow(!is.na(pis_data))*100)
-  result=append(result, nrow(subset(pis_data, pis_data$abdominalpain=="Unknown")))
-  result=append(result, nrow(subset(pis_data, pis_data$abdominalpain=="Unknown"))/nrow(!is.na(pis_data))*100)
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$abdominalpain))))
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$abdominalpain)))/nrow(!is.na(pis_data))*100)
   
   result=append(result, nrow(subset(pis_data, pis_data$nausea=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$nausea=="Yes"))/nrow(!is.na(pis_data))*100)
-  result=append(result, nrow(subset(pis_data, pis_data$nausea=="Unknown")))
-  result=append(result, nrow(subset(pis_data, pis_data$nausea=="Unknown"))/nrow(!is.na(pis_data))*100)
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$nausea))))
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$nausea)))/nrow(!is.na(pis_data))*100)
   
   result=append(result, nrow(subset(pis_data, pis_data$diarrhea=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$diarrhea=="Yes"))/nrow(!is.na(pis_data))*100)
-  result=append(result, nrow(subset(pis_data, pis_data$diarrhea=="Unknown")))
-  result=append(result, nrow(subset(pis_data, pis_data$diarrhea=="Unknown"))/nrow(!is.na(pis_data))*100)
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$diarrhea))))
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$diarrhea)))/nrow(!is.na(pis_data))*100)
   
   result=append(result, nrow(subset(pis_data, pis_data$skinrash=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$skinrash=="Yes"))/nrow(!is.na(pis_data))*100)
-  result=append(result, nrow(subset(pis_data, pis_data$skinrash=="Unknown")))
-  result=append(result, nrow(subset(pis_data, pis_data$skinrash=="Unknown"))/nrow(!is.na(pis_data))*100)
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$skinrash))))
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$skinrash)))/nrow(!is.na(pis_data))*100)
   
   result=append(result, nrow(subset(pis_data, pis_data$hemoptysis=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$hemoptysis=="Yes"))/nrow(!is.na(pis_data))*100)
-  result=append(result, nrow(subset(pis_data, pis_data$hemoptysis=="Unknown")))
-  result=append(result, nrow(subset(pis_data, pis_data$hemoptysis=="Unknown"))/nrow(!is.na(pis_data))*100)
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$hemoptysis))))
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$hemoptysis)))/nrow(!is.na(pis_data))*100)
   
   result=append(result, nrow(subset(pis_data, pis_data$travel_canada=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$travel_canada=="Yes"))/nrow(!is.na(pis_data))*100)
-  result=append(result, nrow(subset(pis_data, pis_data$travel_canada=="Unknown")))
-  result=append(result, nrow(subset(pis_data, pis_data$travel_canada=="Unknown"))/nrow(!is.na(pis_data))*100)
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$travel_canada))))
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$travel_canada)))/nrow(!is.na(pis_data))*100)
   
   result=append(result, nrow(subset(pis_data, pis_data$travel_intl=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$travel_intl=="Yes"))/nrow(!is.na(pis_data))*100)
-  result=append(result, nrow(subset(pis_data, pis_data$travel_intl=="Unknown")))
-  result=append(result, nrow(subset(pis_data, pis_data$travel_intl=="Unknown"))/nrow(!is.na(pis_data))*100)
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$travel_intl))))
+  result=append(result, nrow(subset(pis_data, is.na(pis_data$travel_intl)))/nrow(!is.na(pis_data))*100)
   
-  result=append(result, nrow(subset(pis_data, !is.na(pis_data$hospital_admit))))
-  result=append(result, nrow(subset(pis_data, !is.na(pis_data$hospital_admit)))/nrow(!is.na(pis_data))*100)
+  result=append(result, nrow(subset(pis_data, pis_data$hospital_admit=="Yes")))
+  result=append(result, nrow(subset(pis_data, pis_data$hospital_admit=="Yes"))/nrow(!is.na(pis_data))*100)
   result=append(result, nrow(subset(pis_data, is.na(pis_data$hospital_admit))))
   result=append(result, nrow(subset(pis_data, is.na(pis_data$hospital_admit)))/nrow(!is.na(pis_data))*100)
                 
-  result=append(result, nrow(subset(pis_data, pis_data$where_admit=="Intensive Care Unit")))
-  result=append(result, nrow(subset(pis_data, pis_data$where_admit=="Intensive Care Unit"))/nrow(!is.na(pis_data))*100)
+  result=append(result, nrow(subset(pis_data, pis_data$icu=="Yes")))
+  result=append(result, nrow(subset(pis_data, pis_data$icu=="Yes"))/nrow(!is.na(pis_data))*100)
   result=append(result, nrow(subset(pis_data, is.na(pis_data$hospital_admit))))
   result=append(result, nrow(subset(pis_data, is.na(pis_data$hospital_admit)))/nrow(!is.na(pis_data))*100)
   
@@ -323,7 +407,7 @@ colnames(table_1)=c("PIS","No PIS")
 rownames(table_1)=c("n","age","age_sd","gender","gender_%","white","white_%","asian","asian_%","black","black_%","other","other_%",
                     "rooming_house","rooming_house_%","apartment","apartment_%","townhome","townhome_%","detatched house","detatched house_%",
                     "low$","low$_%","middle$","middle$_%","high$","high$_%","unknown$","unknown_%","cardiac","cardiac_%","pulm","pulm_%","htn","htn_%","asthma","asthma_%",
-                    "DM","DM_%","liver","liver_%","rhuem","rhuem_%","neuro","neuro_%","dementia","dementia_%","hematologic","hematologic_%","malnutrition","malnutrition_%",
+                    "DM","DM_%","liver","liver_%","rheum","rheum_%","neuro","neuro_%","dementia","dementia_%","hematologic","hematologic_%","malnutrition","malnutrition_%",
                     "unknown_malnutrition","unknown_malnutrition_%","malignant","malignant_%","unknown_malignant","unknown_malignant_%",
                     "hiv","hiv_%","unknown_hiv","unknown_hiv_%","smoker","smoker_%","obesity","obesity_%","unknown_obesity","unknown_obesity_%","snore","snore_%",
                     "unknown_snore","unknown_snore_%","cpap","cpap_%","acei/arb","acei/arb_%","nsaids","nsaids_%","steroid","steroid_%","unknown_steroid","unknown_steroid_%",
@@ -369,7 +453,7 @@ table1stats=append(table1stats,fisher.test(M)$p.value)
 M=as.table(cbind(c(nrow(subset(pis_group, pis_group$income=="Low Income (<= $35,999)")),nrow(subset(pis_group, pis_group$income=="Middle Income ($36-60,000)")),nrow(subset(pis_group, pis_group$income=="High Income (> $60,000)"))),
                  c(nrow(subset(no_pis_group, no_pis_group$income=="Low Income (<= $35,999)")),nrow(subset(no_pis_group, no_pis_group$income=="Middle Income ($36-60,000)")),nrow(subset(pis_group, pis_group$income=="High Income (> $60,000)")))
 ))
-table1stats=append(table1stats,fisher.test(M)$p.value)
+table1stats=append(table1stats,chisq.test(M)$p.value)
 
 M=as.table(cbind(c(nrow(subset(pis_group, pis_group$cardiac=="Yes")),nrow(subset(pis_group, pis_group$cardiac=="No"))),
                  c(nrow(subset(no_pis_group, no_pis_group$cardiac=="Yes")),nrow(subset(no_pis_group, no_pis_group$cardiac=="No")))
@@ -389,7 +473,7 @@ table1stats=append(table1stats,chisq.test(M)$p.value)
 M=as.table(cbind(c(nrow(subset(pis_group, pis_group$asthma=="Yes")),nrow(subset(pis_group, pis_group$asthma=="No"))),
                  c(nrow(subset(no_pis_group, no_pis_group$asthma=="Yes")),nrow(subset(no_pis_group, no_pis_group$asthma=="No")))
 ))
-table1stats=append(table1stats,fisher.test(M)$p.value)
+table1stats=append(table1stats,chisq.test(M)$p.value)
 
 M=as.table(cbind(c(nrow(subset(pis_group, pis_group$diabetes1=="Yes" | pis_group$diabetes2=="Yes")),nrow(subset(pis_group, pis_group$diabetes1=="No" | pis_group$diabetes2=="No"))),
                  c(nrow(subset(no_pis_group, no_pis_group$diabetes1=="Yes" | no_pis_group$diabetes2=="Yes")),nrow(subset(no_pis_group, no_pis_group$diabetes1=="No"| no_pis_group$diabetes2=="No")))
@@ -464,7 +548,7 @@ table1stats=append(table1stats,chisq.test(M)$p.value)
 M=as.table(cbind(c(nrow(subset(pis_group, pis_group$nsaids=="Yes")),nrow(subset(pis_group, pis_group$nsaids=="No"))),
                  c(nrow(subset(no_pis_group, no_pis_group$nsaids=="Yes")),nrow(subset(no_pis_group, no_pis_group$nsaids=="No")))
 ))
-table1stats=append(table1stats,fisher.test(M)$p.value)
+table1stats=append(table1stats,chisq.test(M)$p.value)
 
 M=as.table(cbind(c(nrow(subset(pis_group, pis_group$steroid=="Yes")),nrow(subset(pis_group, pis_group$steroid=="No"))),
                  c(nrow(subset(no_pis_group, no_pis_group$steroid=="Yes")),nrow(subset(no_pis_group, no_pis_group$steroid=="No")))
@@ -742,28 +826,100 @@ rownames(result)=c("median days to fu","any_sx_fu","%_any_sx_fu", "sob", "sob_%"
 # Table 2 export ----
 #write.csv(result, "C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med3/TripleC/table_2.csv")
 
+# Table 3 ----
+#Crude odds ratios
+#At first f/u
+crude_sex=glm(post_covid_syndrome_1 ~ sex, data=data, family="binomial")
+summary(crude_sex)
+exp(cbind(OR=coef(crude_sex), confint(crude_sex)))
 
+crude_rheum=glm(post_covid_syndrome_1 ~ rheum, data=data, family="binomial")
+summary(crude_rheum)
+exp(cbind(OR=coef(crude_rheum), confint(crude_rheum)))
 
+crude_hematologic=glm(post_covid_syndrome_1 ~ hematologic, data=data, family="binomial")
+summary(crude_hematologic)
+exp(cbind(OR=coef(crude_hematologic), confint(crude_hematologic)))
 
+crude_obesity=glm(post_covid_syndrome_1 ~ obesity, data=data, family="binomial")
+summary(crude_obesity)
+exp(cbind(OR=coef(crude_obesity), confint(crude_obesity)))
 
+crude_snore=glm(post_covid_syndrome_1 ~ snore, data=data, family="binomial")
+summary(crude_snore)
+exp(cbind(OR=coef(crude_snore), confint(crude_snore)))
 
+crude_statin=glm(post_covid_syndrome_1 ~ statin, data=data, family="binomial")
+summary(crude_statin)
+exp(cbind(OR=coef(crude_statin), confint(crude_statin)))
 
+crude_acetamin=glm(post_covid_syndrome_1 ~ acetamin, data=data, family="binomial")
+summary(crude_acetamin)
+exp(cbind(OR=coef(crude_acetamin), confint(crude_acetamin)))
 
+crude_cpap=glm(post_covid_syndrome_1 ~ cpap, data=data, family="binomial")
+summary(crude_cpap)
+exp(cbind(OR=coef(crude_cpap), confint(crude_cpap)))
 
+crude_jointpain=glm(post_covid_syndrome_1 ~ jointpain, data=data, family="binomial")
+summary(crude_jointpain)
+exp(cbind(OR=coef(crude_jointpain), confint(crude_jointpain)))
 
+crude_fatigue=glm(post_covid_syndrome_1 ~ fatigue, data=data, family="binomial")
+summary(crude_fatigue)
+exp(cbind(OR=coef(crude_fatigue), confint(crude_fatigue)))
 
+crude_sorethroat=glm(post_covid_syndrome_1 ~ sorethroat, data=data, family="binomial")
+summary(crude_sorethroat)
+exp(cbind(OR=coef(crude_sorethroat), confint(crude_sorethroat)))
 
+crude_sob=glm(post_covid_syndrome_1 ~ sob, data=data, family="binomial")
+summary(crude_sob)
+exp(cbind(OR=coef(crude_sob), confint(crude_sob)))
 
+crude_earpain=glm(post_covid_syndrome_1 ~ earpain, data=data, family="binomial")
+summary(crude_earpain)
+exp(cbind(OR=coef(crude_earpain), confint(crude_earpain)))
 
+crude_wheezing=glm(post_covid_syndrome_1 ~ wheezing, data=data, family="binomial")
+summary(crude_wheezing)
+exp(cbind(OR=coef(crude_wheezing), confint(crude_wheezing)))
 
+crude_muscleaches=glm(post_covid_syndrome_1 ~ muscleaches, data=data, family="binomial")
+summary(crude_muscleaches)
+exp(cbind(OR=coef(crude_muscleaches), confint(crude_muscleaches)))
 
+crude_headache=glm(post_covid_syndrome_1 ~ headache, data=data, family="binomial")
+summary(crude_headache)
+exp(cbind(OR=coef(crude_headache), confint(crude_headache)))
 
+crude_aloc=glm(post_covid_syndrome_1 ~ aloc, data=data, family="binomial")
+summary(crude_aloc)
+exp(cbind(OR=coef(crude_aloc), confint(crude_aloc)))
 
+crude_losstaste=glm(post_covid_syndrome_1 ~ losstaste, data=data, family="binomial")
+summary(crude_losstaste)
+exp(cbind(OR=coef(crude_losstaste), confint(crude_losstaste)))
 
+crude_abdominalpain=glm(post_covid_syndrome_1 ~ abdominalpain, data=data, family="binomial")
+summary(crude_abdominalpain)
+exp(cbind(OR=coef(crude_abdominalpain), confint(crude_abdominalpain)))
 
+crude_nausea=glm(post_covid_syndrome_1 ~ nausea, data=data, family="binomial")
+summary(crude_nausea)
+exp(cbind(OR=coef(crude_nausea), confint(crude_nausea)))
 
+crude_diarrhea=glm(post_covid_syndrome_1 ~ diarrhea, data=data, family="binomial")
+summary(crude_diarrhea)
+exp(cbind(OR=coef(crude_diarrhea), confint(crude_diarrhea)))
 
+crude_skinrash=glm(post_covid_syndrome_1 ~ skinrash, data=data, family="binomial")
+summary(crude_skinrash)
+exp(cbind(OR=coef(crude_skinrash), confint(crude_skinrash)))
 
+crude_hospitaladmit=glm(post_covid_syndrome_1 ~ hospital_admit, data=data, family="binomial")
+summary(crude_hospitaladmit)
+exp(cbind(OR=coef(crude_hospitaladmit), confint(crude_hospitaladmit)))
 
 
 
