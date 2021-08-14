@@ -18,7 +18,7 @@ wp.logistic(n = NULL, p0 = 0.53, p1 = 0.47, alpha = 0.05,
 
 #Data consolidation ----
 #Open data
-data=read.csv("C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med3/TripleC/Data/Triple C Data - Combined_14Jun2021.csv")
+data=read.csv("G:/My Drive/Desktop files/Dal Med/Med3/TripleC/Data/Triple C Data - Combined_14Aug2021.csv")
 data[data==""]<-NA
 
 #subset data into pts with post infection syndrome vs. not
@@ -425,7 +425,7 @@ rownames(table_1)=c("n","age","age_sd","gender","gender_%","white","white_%","as
                     "unknown_ICU","unknown_ICU_%"
                     )
 # Table 1 export ----
-#write.csv(table_1, "C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med3/TripleC/table_1.csv")
+#write.csv(table_1, "G:/My Drive/Desktop files/Dal Med/Med3/TripleC/table_1.csv")
 
 # Table 1 stats ----
 table1stats=c()
@@ -703,7 +703,7 @@ rownames(table1stats)=c("age","sex","ethnicity (fe)","housing (fe)","income (fe)
                         "h/a","aloc (fe)","losstaste","abpain (fe)","nausea","diarrhea","skinrash (fe)","hemoptysis (fe)","travel canada","travel int",
                         "admission (fe)","icu (fe)")
 # Table 1 stats export----
-#write.csv(table1stats, "C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med3/TripleC/table_1_stats.csv")
+#write.csv(table1stats, "G:/My Drive/Desktop files/Dal Med/Med3/TripleC/table_1_stats.csv")
 
 # Table 2 ----
 
@@ -824,7 +824,7 @@ rownames(result)=c("median days to fu","any_sx_fu","%_any_sx_fu", "sob", "sob_%"
                     "anxiety","anxiety_%","other","other_%")
 
 # Table 2 export ----
-#write.csv(result, "C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med3/TripleC/table_2.csv")
+#write.csv(result, "G:/My Drive/Desktop files/Dal Med/Med3/TripleC/table_2.csv")
 
 # Table 3 ----
 #Crude odds ratios
