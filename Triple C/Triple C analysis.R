@@ -18,7 +18,7 @@ wp.logistic(n = NULL, p0 = 0.53, p1 = 0.47, alpha = 0.05,
 
 #Data consolidation ----
 #Open data
-data=read.csv("C:/Users/alexw/Google Drive/Desktop files/Dal Med/Med3/TripleC/Data/Triple C Data - Combined_14Jun2021.csv")
+data=read.csv("G:/My Drive/Desktop files/Dal Med/Med3/TripleC/Data/Triple C Data - Combined_14Aug2021.csv")
 data[data==""]<-NA
 
 #subset data into pts with post infection syndrome vs. not
@@ -161,6 +161,9 @@ for (status in levels(as.factor(data$pis_status))){
   
   result=append(result, nrow(subset(pis_data, pis_data$ethnic=="Black")))
   result=append(result, nrow(subset(pis_data, pis_data$ethnic=="Black"))/nrow(!is.na(pis_data))*100)
+  
+  result=append(result, nrow(subset(pis_data, pis_data$ethnic=="Indigenous")))
+  result=append(result, nrow(subset(pis_data, pis_data$ethnic=="Indigenous"))/nrow(!is.na(pis_data))*100)
   
   result=append(result, nrow(subset(pis_data, pis_data$ethnic=="Other")))
   result=append(result, nrow(subset(pis_data, pis_data$ethnic=="Other"))/nrow(!is.na(pis_data))*100)
@@ -404,7 +407,7 @@ for (status in levels(as.factor(data$pis_status))){
 
 
 colnames(table_1)=c("PIS","No PIS")
-rownames(table_1)=c("n","age","age_sd","gender","gender_%","white","white_%","asian","asian_%","black","black_%","other","other_%",
+rownames(table_1)=c("n","age","age_sd","gender","gender_%","white","white_%","asian","asian_%","black","black_%","indigenous","indigenous_%","other","other_%",
                     "rooming_house","rooming_house_%","apartment","apartment_%","townhome","townhome_%","detatched house","detatched house_%",
                     "low$","low$_%","middle$","middle$_%","high$","high$_%","unknown$","unknown_%","cardiac","cardiac_%","pulm","pulm_%","htn","htn_%","asthma","asthma_%",
                     "DM","DM_%","liver","liver_%","rheum","rheum_%","neuro","neuro_%","dementia","dementia_%","hematologic","hematologic_%","malnutrition","malnutrition_%",
@@ -920,6 +923,12 @@ exp(cbind(OR=coef(crude_skinrash), confint(crude_skinrash)))
 crude_hospitaladmit=glm(post_covid_syndrome_1 ~ hospital_admit, data=data, family="binomial")
 summary(crude_hospitaladmit)
 exp(cbind(OR=coef(crude_hospitaladmit), confint(crude_hospitaladmit)))
+
+# Table 4 ----
+# Adjusted odds ratios
+adjusted_model=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic, data=data, family="binomial")
+summary(adjusted_model)
+exp(cbind(OR=coef(adjusted_model), confint(adjusted_model)))
 
 
 
