@@ -443,18 +443,18 @@ M=as.table(cbind(c(nrow(subset(pis_group, pis_group$sex=="Male")),nrow(subset(pi
                  ))
 table1stats=append(table1stats,chisq.test(M)$p.value)
 
-M=as.table(cbind(c(nrow(subset(pis_group, pis_group$ethnic=="White/Caucasian")),nrow(subset(pis_group, pis_group$ethnic=="East Asian")),nrow(subset(pis_group, pis_group$ethnic=="Black")),nrow(subset(pis_group, pis_group$ethnic=="Other"))),
-                 c(nrow(subset(no_pis_group, no_pis_group$ethnic=="White/Caucasian")),nrow(subset(no_pis_group, no_pis_group$ethnic=="East Asian")),nrow(subset(pis_group, pis_group$ethnic=="Black")),nrow(subset(pis_group, pis_group$ethnic=="Other")))
+M=as.table(cbind(c(nrow(subset(pis_group, pis_group$ethnic=="White/Caucasian")),nrow(subset(pis_group, pis_group$ethnic=="East Asian")),nrow(subset(pis_group, pis_group$ethnic=="Black")),nrow(subset(pis_group, pis_group$ethnic=="Indigenous")),nrow(subset(pis_group, pis_group$ethnic=="Other"))),
+                 c(nrow(subset(no_pis_group, no_pis_group$ethnic=="White/Caucasian")),nrow(subset(no_pis_group, no_pis_group$ethnic=="East Asian")),nrow(subset(no_pis_group, no_pis_group$ethnic=="Black")),nrow(subset(no_pis_group, no_pis_group$ethnic=="Indigenous")),nrow(subset(no_pis_group, no_pis_group$ethnic=="Other")))
 ))
 table1stats=append(table1stats,fisher.test(M)$p.value)
 
 M=as.table(cbind(c(nrow(subset(pis_group, pis_group$housing=="Rooming house")),nrow(subset(pis_group, pis_group$housing=="Apartment")),nrow(subset(pis_group, pis_group$housing=="Townhome/Semi-detatched")),nrow(subset(pis_group, pis_group$housing=="Detatched house"))),
-                 c(nrow(subset(no_pis_group, no_pis_group$housing=="Rooming house")),nrow(subset(no_pis_group, no_pis_group$housing=="Apartment")),nrow(subset(pis_group, pis_group$housing=="Townhome/Semi-detatched")),nrow(subset(pis_group, pis_group$housing=="Detatched house")))
+                 c(nrow(subset(no_pis_group, no_pis_group$housing=="Rooming house")),nrow(subset(no_pis_group, no_pis_group$housing=="Apartment")),nrow(subset(no_pis_group, no_pis_group$housing=="Townhome/Semi-detatched")),nrow(subset(no_pis_group, no_pis_group$housing=="Detatched house")))
 ))
 table1stats=append(table1stats,fisher.test(M)$p.value)
 
 M=as.table(cbind(c(nrow(subset(pis_group, pis_group$income=="Low Income (<= $35,999)")),nrow(subset(pis_group, pis_group$income=="Middle Income ($36-60,000)")),nrow(subset(pis_group, pis_group$income=="High Income (> $60,000)"))),
-                 c(nrow(subset(no_pis_group, no_pis_group$income=="Low Income (<= $35,999)")),nrow(subset(no_pis_group, no_pis_group$income=="Middle Income ($36-60,000)")),nrow(subset(pis_group, pis_group$income=="High Income (> $60,000)")))
+                 c(nrow(subset(no_pis_group, no_pis_group$income=="Low Income (<= $35,999)")),nrow(subset(no_pis_group, no_pis_group$income=="Middle Income ($36-60,000)")),nrow(subset(no_pis_group, no_pis_group$income=="High Income (> $60,000)")))
 ))
 table1stats=append(table1stats,chisq.test(M)$p.value)
 
