@@ -1,6 +1,9 @@
 library(WebPower)
 library(rqdatatable)
-
+library(lmtest)
+library(epicalc)
+library(lawstat)
+library(BSDA)
 #Data merging ----
 old_data=read.csv("G:/My Drive/Desktop files/Dal Med/Med3/TripleC/Data/Triple C Data - Combined_14Jun2021.csv")
 new_data=read.csv("G:/My Drive/Desktop files/Dal Med/Med3/TripleC/Data/Triple C Data - Labels_03Aug2021.csv")
@@ -147,7 +150,7 @@ for (status in levels(as.factor(data$pis_status))){
   
   result=append(result, nrow(pis_data))
   
-  result=append(result, mean(pis_data$age_years))
+  result=append(result, median(pis_data$age_years))
   result=append(result, sd(pis_data$age_years))
   
   result=append(result, nrow(subset(pis_data, pis_data$sex=="Female")))
@@ -279,8 +282,8 @@ for (status in levels(as.factor(data$pis_status))){
   result=append(result, nrow(subset(pis_data, pis_data$verapamil=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$verapamil=="Yes"))/nrow(!is.na(pis_data))*100)
   
-  result=append(result, mean(pis_data$duration_of_illness, na.rm=TRUE))
-  result=append(result, sd(pis_data$age_years, na.rm=TRUE))
+  result=append(result, median(pis_data$duration_of_illness, na.rm=TRUE))
+  result=append(result, sd(pis_data$duration_of_illness, na.rm=TRUE))
   
   result=append(result, nrow(subset(pis_data, pis_data$fever_documented=="Yes")))
   result=append(result, nrow(subset(pis_data, pis_data$fever_documented=="Yes"))/nrow(!is.na(pis_data))*100)
@@ -436,7 +439,7 @@ table1stats=c()
 pis_group=subset(data, data$pis_status=="Yes")
 no_pis_group=subset(data, data$pis_status=="No")
 
-table1stats=append(table1stats, t.test(age_years ~ pis_status, data=data)$p.value)
+table1stats=append(table1stats, SIGN.test(data$age_years, data$pis_status)$p.value)
 
 M=as.table(cbind(c(nrow(subset(pis_group, pis_group$sex=="Male")),nrow(subset(pis_group, pis_group$sex=="Female"))),
                  c(nrow(subset(no_pis_group, no_pis_group$sex=="M")),nrow(subset(no_pis_group, no_pis_group$sex=="Female")))
@@ -578,7 +581,7 @@ M=as.table(cbind(c(nrow(subset(pis_group, pis_group$verapamil=="Yes")),nrow(subs
 ))
 table1stats=append(table1stats,fisher.test(M)$p.value)
 
-table1stats=append(table1stats, t.test(duration_of_illness ~ pis_status, data=data)$p.value)
+table1stats=append(table1stats, SIGN.test(as.numeric(data$duration_of_illness), data$pis_status)$p.value)
 
 M=as.table(cbind(c(nrow(subset(pis_group, pis_group$fever_documented=="Yes")),nrow(subset(pis_group, pis_group$fever_documented=="No"))),
                  c(nrow(subset(no_pis_group, no_pis_group$fever_documented=="Yes")),nrow(subset(no_pis_group, no_pis_group$fever_documented=="No")))
@@ -830,11 +833,27 @@ rownames(result)=c("median days to fu","any_sx_fu","%_any_sx_fu", "sob", "sob_%"
 #write.csv(result, "G:/My Drive/Desktop files/Dal Med/Med3/TripleC/table_2.csv")
 
 # Table 3 ----
+
+# Category merging
+data$ethnic_merged=c(0)
+data$ethnic_merged[data$ethnic=="White/Caucasian"]=0
+data$ethnic_merged[data$ethnic=="Black" | data$ethnic=="East Asian" | data$ethnic=="Indigenous" | 
+                     data$ethnic=="Other"]=1
+data$ethnic_merged[is.na(data$ethnic)]=NA
+
 #Crude odds ratios
 #At first f/u
+crude_age=glm(post_covid_syndrome_1 ~ age_years, data=data, family="binomial")
+summary(crude_age)
+exp(cbind(OR=coef(crude_age), confint(crude_age)))
+
 crude_sex=glm(post_covid_syndrome_1 ~ sex, data=data, family="binomial")
 summary(crude_sex)
 exp(cbind(OR=coef(crude_sex), confint(crude_sex)))
+
+crude_ethnic=glm(post_covid_syndrome_1 ~ ethnic_merged, data=data, family="binomial")
+summary(crude_ethnic)
+exp(cbind(OR=coef(crude_ethnic), confint(crude_ethnic)))
 
 crude_rheum=glm(post_covid_syndrome_1 ~ rheum, data=data, family="binomial")
 summary(crude_rheum)
@@ -844,57 +863,13 @@ crude_hematologic=glm(post_covid_syndrome_1 ~ hematologic, data=data, family="bi
 summary(crude_hematologic)
 exp(cbind(OR=coef(crude_hematologic), confint(crude_hematologic)))
 
-crude_obesity=glm(post_covid_syndrome_1 ~ obesity, data=data, family="binomial")
-summary(crude_obesity)
-exp(cbind(OR=coef(crude_obesity), confint(crude_obesity)))
-
-crude_snore=glm(post_covid_syndrome_1 ~ snore, data=data, family="binomial")
-summary(crude_snore)
-exp(cbind(OR=coef(crude_snore), confint(crude_snore)))
-
-crude_statin=glm(post_covid_syndrome_1 ~ statin, data=data, family="binomial")
-summary(crude_statin)
-exp(cbind(OR=coef(crude_statin), confint(crude_statin)))
-
-crude_acetamin=glm(post_covid_syndrome_1 ~ acetamin, data=data, family="binomial")
-summary(crude_acetamin)
-exp(cbind(OR=coef(crude_acetamin), confint(crude_acetamin)))
-
-crude_cpap=glm(post_covid_syndrome_1 ~ cpap, data=data, family="binomial")
-summary(crude_cpap)
-exp(cbind(OR=coef(crude_cpap), confint(crude_cpap)))
-
-crude_jointpain=glm(post_covid_syndrome_1 ~ jointpain, data=data, family="binomial")
-summary(crude_jointpain)
-exp(cbind(OR=coef(crude_jointpain), confint(crude_jointpain)))
-
 crude_fatigue=glm(post_covid_syndrome_1 ~ fatigue, data=data, family="binomial")
 summary(crude_fatigue)
 exp(cbind(OR=coef(crude_fatigue), confint(crude_fatigue)))
 
-crude_sorethroat=glm(post_covid_syndrome_1 ~ sorethroat, data=data, family="binomial")
-summary(crude_sorethroat)
-exp(cbind(OR=coef(crude_sorethroat), confint(crude_sorethroat)))
-
 crude_sob=glm(post_covid_syndrome_1 ~ sob, data=data, family="binomial")
 summary(crude_sob)
 exp(cbind(OR=coef(crude_sob), confint(crude_sob)))
-
-crude_earpain=glm(post_covid_syndrome_1 ~ earpain, data=data, family="binomial")
-summary(crude_earpain)
-exp(cbind(OR=coef(crude_earpain), confint(crude_earpain)))
-
-crude_wheezing=glm(post_covid_syndrome_1 ~ wheezing, data=data, family="binomial")
-summary(crude_wheezing)
-exp(cbind(OR=coef(crude_wheezing), confint(crude_wheezing)))
-
-crude_muscleaches=glm(post_covid_syndrome_1 ~ muscleaches, data=data, family="binomial")
-summary(crude_muscleaches)
-exp(cbind(OR=coef(crude_muscleaches), confint(crude_muscleaches)))
-
-crude_headache=glm(post_covid_syndrome_1 ~ headache, data=data, family="binomial")
-summary(crude_headache)
-exp(cbind(OR=coef(crude_headache), confint(crude_headache)))
 
 crude_aloc=glm(post_covid_syndrome_1 ~ aloc, data=data, family="binomial")
 summary(crude_aloc)
@@ -904,31 +879,324 @@ crude_losstaste=glm(post_covid_syndrome_1 ~ losstaste, data=data, family="binomi
 summary(crude_losstaste)
 exp(cbind(OR=coef(crude_losstaste), confint(crude_losstaste)))
 
-crude_abdominalpain=glm(post_covid_syndrome_1 ~ abdominalpain, data=data, family="binomial")
-summary(crude_abdominalpain)
-exp(cbind(OR=coef(crude_abdominalpain), confint(crude_abdominalpain)))
-
-crude_nausea=glm(post_covid_syndrome_1 ~ nausea, data=data, family="binomial")
-summary(crude_nausea)
-exp(cbind(OR=coef(crude_nausea), confint(crude_nausea)))
-
-crude_diarrhea=glm(post_covid_syndrome_1 ~ diarrhea, data=data, family="binomial")
-summary(crude_diarrhea)
-exp(cbind(OR=coef(crude_diarrhea), confint(crude_diarrhea)))
-
-crude_skinrash=glm(post_covid_syndrome_1 ~ skinrash, data=data, family="binomial")
-summary(crude_skinrash)
-exp(cbind(OR=coef(crude_skinrash), confint(crude_skinrash)))
-
-crude_hospitaladmit=glm(post_covid_syndrome_1 ~ hospital_admit, data=data, family="binomial")
-summary(crude_hospitaladmit)
-exp(cbind(OR=coef(crude_hospitaladmit), confint(crude_hospitaladmit)))
-
 # Table 4 ----
-# Adjusted odds ratios
-adjusted_model=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic, data=data, family="binomial")
-summary(adjusted_model)
-exp(cbind(OR=coef(adjusted_model), confint(adjusted_model)))
+
+
+# Step-wise multivariable model building
+model_1=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged, data=data, family="binomial")
+summary(model_1)
+exp(cbind(OR=coef(model_1), confint(model_1)))
+
+# # Housing (NOT SIGNIFICANT)
+model_2=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + housing, data=data, family="binomial")
+summary(model_2)
+exp(cbind(OR=coef(model_2), confint(model_2)))
+
+lrtest(model_1, model_2)
+
+# # Asthma (NOT SIGNIFICANT)
+data_NA_asthma=data[!is.na(data$asthma),]
+model_1=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged, data=data_NA_asthma, family="binomial")
+summary(model_1)
+exp(cbind(OR=coef(model_1), confint(model_1)))
+
+model_3=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + asthma, data=data_NA_asthma, family="binomial")
+summary(model_3)
+exp(cbind(OR=coef(model_3), confint(model_3)))
+
+lrtest(model_1, model_3)
+
+# # Rheum (SIGNIFICANT)
+data_NA_rheum=data[!is.na(data$rheum),]
+model_1=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged, data=data_NA_rheum, family="binomial")
+summary(model_1)
+exp(cbind(OR=coef(model_1), confint(model_1)))
+
+model_4=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum, data=data_NA_rheum, family="binomial")
+summary(model_4)
+exp(cbind(OR=coef(model_4), confint(model_4)))
+
+lrtest(model_1, model_4)
+
+# # Hematologic (SIGNIFICANT)
+data_NA_rheum_heme=data_NA_rheum[!is.na(data_NA_rheum$hematologic),]
+model_4=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum, data=data_NA_rheum_heme, family="binomial")
+summary(model_4)
+exp(cbind(OR=coef(model_4), confint(model_4)))
+
+model_5=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic, data=data_NA_rheum_heme, family="binomial")
+summary(model_5)
+exp(cbind(OR=coef(model_5), confint(model_5)))
+
+lrtest(model_4, model_5)
+
+# # Malignant (NOT SIGNIFICANT)
+data_NA_rheum_heme_malignant=data_NA_rheum_heme[!is.na(data_NA_rheum_heme$malignant),]
+model_5=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic, data=data_NA_rheum_heme_malignant, family="binomial")
+summary(model_5)
+exp(cbind(OR=coef(model_5), confint(model_5)))
+
+model_6=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + malignant, data=data_NA_rheum_heme_malignant, family="binomial")
+summary(model_6)
+exp(cbind(OR=coef(model_6), confint(model_6)))
+
+lrtest(model_5, model_6)
+
+# # Obesity (NOT SIGNIFICANT)
+data_NA_rheum_heme_obesity=data_NA_rheum_heme[!is.na(data_NA_rheum_heme$obesity),]
+model_5=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic, data=data_NA_rheum_heme_obesity, family="binomial")
+summary(model_5)
+exp(cbind(OR=coef(model_5), confint(model_5)))
+
+model_6=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + obesity, data=data_NA_rheum_heme_obesity, family="binomial")
+summary(model_6)
+exp(cbind(OR=coef(model_6), confint(model_6)))
+
+lrtest(model_5, model_6)
+
+# # Snore (NOT SIGNIFICANT)
+data_NA_rheum_heme_snore=data_NA_rheum_heme[!is.na(data_NA_rheum_heme$snore),]
+model_5=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic, data=data_NA_rheum_heme_snore, family="binomial")
+summary(model_5)
+exp(cbind(OR=coef(model_5), confint(model_5)))
+
+model_6=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + snore, data=data_NA_rheum_heme_snore, family="binomial")
+summary(model_6)
+exp(cbind(OR=coef(model_6), confint(model_6)))
+
+lrtest(model_5, model_6)
+
+# # Statin and acetaminophen (too much missing data)
+
+# # Fever (NOT SIGNIFICANT)
+data_NA_rheum_heme_fever=data_NA_rheum_heme[!is.na(data_NA_rheum_heme$fever_documented),]
+model_5=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic, data=data_NA_rheum_heme_fever, family="binomial")
+summary(model_5)
+exp(cbind(OR=coef(model_5), confint(model_5)))
+
+model_6=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + fever_documented, data=data_NA_rheum_heme_fever, family="binomial")
+summary(model_6)
+exp(cbind(OR=coef(model_6), confint(model_6)))
+
+lrtest(model_5, model_6)
+
+# # Joint pain (NOT SIGNIFICANT)
+data_NA_rheum_heme_joint=data_NA_rheum_heme[!is.na(data_NA_rheum_heme$jointpain),]
+model_5=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic, data=data_NA_rheum_heme_joint, family="binomial")
+summary(model_5)
+exp(cbind(OR=coef(model_5), confint(model_5)))
+
+model_6=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + jointpain, data=data_NA_rheum_heme_joint, family="binomial")
+summary(model_6)
+exp(cbind(OR=coef(model_6), confint(model_6)))
+
+lrtest(model_5, model_6)
+
+# # Fatigue (SIGNIFICANT)
+data_NA_rheum_heme_fatigue=data_NA_rheum_heme[!is.na(data_NA_rheum_heme$fatigue),]
+model_5=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic, data=data_NA_rheum_heme_fatigue, family="binomial")
+summary(model_5)
+exp(cbind(OR=coef(model_5), confint(model_5)))
+
+model_6=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + fatigue, data=data_NA_rheum_heme_fatigue, family="binomial")
+summary(model_6)
+exp(cbind(OR=coef(model_6), confint(model_6)))
+
+lrtest(model_5, model_6)
+
+# # Sore throat (NOT SIGNIFICANT)
+data_NA_rheum_heme_fatigue_sorethroat=data_NA_rheum_heme_fatigue[!is.na(data_NA_rheum_heme_fatigue$sorethroat),]
+model_6=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + fatigue, data=data_NA_rheum_heme_fatigue_sorethroat, family="binomial")
+summary(model_6)
+exp(cbind(OR=coef(model_6), confint(model_6)))
+
+model_7=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + fatigue + sorethroat, data=data_NA_rheum_heme_fatigue_sorethroat, family="binomial")
+summary(model_7)
+exp(cbind(OR=coef(model_7), confint(model_7)))
+
+lrtest(model_6, model_7)
+
+# # SOB (SIGNIFICANT)
+data_NA_rheum_heme_fatigue_sob=data_NA_rheum_heme_fatigue[!is.na(data_NA_rheum_heme_fatigue$sob),]
+model_6=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + fatigue, data=data_NA_rheum_heme_fatigue_sob, family="binomial")
+summary(model_6)
+exp(cbind(OR=coef(model_6), confint(model_6)))
+
+model_7=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + fatigue + sob, data=data_NA_rheum_heme_fatigue_sob, family="binomial")
+summary(model_7)
+exp(cbind(OR=coef(model_7), confint(model_7)))
+
+lrtest(model_6, model_7)
+
+# # Ear pain (NOT SIGNIFICANT)
+data_NA_rheum_heme_fatigue_sob_earpain=data_NA_rheum_heme_fatigue_sob[!is.na(data_NA_rheum_heme_fatigue_sob$earpain),]
+model_7=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + fatigue + sob, data=data_NA_rheum_heme_fatigue_sob_earpain, family="binomial")
+summary(model_7)
+exp(cbind(OR=coef(model_7), confint(model_7)))
+
+model_8=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + fatigue + sob + earpain, data=data_NA_rheum_heme_fatigue_sob_earpain, family="binomial")
+summary(model_8)
+exp(cbind(OR=coef(model_8), confint(model_8)))
+
+lrtest(model_7, model_8)
+
+# # Wheeze (NOT SIGNIFICANT)
+data_NA_rheum_heme_fatigue_sob_wheezing=data_NA_rheum_heme_fatigue_sob[!is.na(data_NA_rheum_heme_fatigue_sob$wheezing),]
+model_7=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + fatigue + sob, data=data_NA_rheum_heme_fatigue_sob_wheezing, family="binomial")
+summary(model_7)
+exp(cbind(OR=coef(model_7), confint(model_7)))
+
+model_8=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + fatigue + sob + wheezing, data=data_NA_rheum_heme_fatigue_sob_wheezing, family="binomial")
+summary(model_8)
+exp(cbind(OR=coef(model_8), confint(model_8)))
+
+lrtest(model_7, model_8)
+
+# # chest pain (NOT SIGNIFICANT)
+data_NA_rheum_heme_fatigue_sob_cp=data_NA_rheum_heme_fatigue_sob[!is.na(data_NA_rheum_heme_fatigue_sob$chestpain),]
+model_7=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + fatigue + sob, data=data_NA_rheum_heme_fatigue_sob_cp, family="binomial")
+summary(model_7)
+exp(cbind(OR=coef(model_7), confint(model_7)))
+
+model_8=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + fatigue + sob + chestpain, data=data_NA_rheum_heme_fatigue_sob_cp, family="binomial")
+summary(model_8)
+exp(cbind(OR=coef(model_8), confint(model_8)))
+
+lrtest(model_7, model_8)
+
+# # muscle aches (NOT SIGNIFICANT)
+data_NA_rheum_heme_fatigue_sob_muscleaches=data_NA_rheum_heme_fatigue_sob[!is.na(data_NA_rheum_heme_fatigue_sob$muscleaches),]
+model_7=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + fatigue + sob, data=data_NA_rheum_heme_fatigue_sob_muscleaches, family="binomial")
+summary(model_7)
+exp(cbind(OR=coef(model_7), confint(model_7)))
+
+model_8=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + fatigue + sob + muscleaches, data=data_NA_rheum_heme_fatigue_sob_muscleaches, family="binomial")
+summary(model_8)
+exp(cbind(OR=coef(model_8), confint(model_8)))
+
+lrtest(model_7, model_8)
+
+# # h/a (NOT SIGNIFICANT)
+data_NA_rheum_heme_fatigue_sob_ha=data_NA_rheum_heme_fatigue_sob[!is.na(data_NA_rheum_heme_fatigue_sob$headache),]
+model_7=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + fatigue + sob, data=data_NA_rheum_heme_fatigue_sob_ha, family="binomial")
+summary(model_7)
+exp(cbind(OR=coef(model_7), confint(model_7)))
+
+model_8=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + fatigue + sob + headache, data=data_NA_rheum_heme_fatigue_sob_ha, family="binomial")
+summary(model_8)
+exp(cbind(OR=coef(model_8), confint(model_8)))
+
+lrtest(model_7, model_8)
+
+# # aloc (SIGNIFICANT)
+data_NA_rheum_heme_fatigue_sob_aloc=data_NA_rheum_heme_fatigue_sob[!is.na(data_NA_rheum_heme_fatigue_sob$aloc),]
+model_7=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + fatigue + sob, data=data_NA_rheum_heme_fatigue_sob_aloc, family="binomial")
+summary(model_7)
+exp(cbind(OR=coef(model_7), confint(model_7)))
+
+model_8=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + fatigue + sob + aloc, data=data_NA_rheum_heme_fatigue_sob_aloc, family="binomial")
+summary(model_8)
+exp(cbind(OR=coef(model_8), confint(model_8)))
+
+lrtest(model_7, model_8)
+
+# # losstaste (SIGNIFICANT)
+data_NA_rheum_heme_fatigue_sob_aloc_losstaste=data_NA_rheum_heme_fatigue_sob_aloc[!is.na(data_NA_rheum_heme_fatigue_sob_aloc$losstaste),]
+model_8=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + fatigue + sob + aloc, data=data_NA_rheum_heme_fatigue_sob_aloc_losstaste, family="binomial")
+summary(model_8)
+exp(cbind(OR=coef(model_8), confint(model_8)))
+
+model_9=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + fatigue + sob + aloc + losstaste, data=data_NA_rheum_heme_fatigue_sob_aloc_losstaste, family="binomial")
+summary(model_9)
+exp(cbind(OR=coef(model_9), confint(model_9)))
+
+lrtest(model_8, model_9)
+
+# # abpain (NOT SIGNIFICANT)
+data_NA_rheum_heme_fatigue_sob_aloc_losstaste_abpain=data_NA_rheum_heme_fatigue_sob_aloc_losstaste[!is.na(data_NA_rheum_heme_fatigue_sob_aloc_losstaste$abdominalpain),]
+
+model_9=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + fatigue + sob + aloc + losstaste, data=data_NA_rheum_heme_fatigue_sob_aloc_losstaste_abpain, family="binomial")
+summary(model_9)
+exp(cbind(OR=coef(model_9), confint(model_9)))
+
+model_10=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + fatigue + sob + aloc + losstaste + abdominalpain, data=data_NA_rheum_heme_fatigue_sob_aloc_losstaste_abpain, family="binomial")
+summary(model_10)
+exp(cbind(OR=coef(model_10), confint(model_10)))
+
+lrtest(model_9, model_10)
+
+# # Nausea (NOT SIGNIFICANT)
+data_NA_rheum_heme_fatigue_sob_aloc_losstaste_nausea=data_NA_rheum_heme_fatigue_sob_aloc_losstaste[!is.na(data_NA_rheum_heme_fatigue_sob_aloc_losstaste$nausea),]
+
+model_9=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + fatigue + sob + aloc + losstaste, data=data_NA_rheum_heme_fatigue_sob_aloc_losstaste_nausea, family="binomial")
+summary(model_9)
+exp(cbind(OR=coef(model_9), confint(model_9)))
+
+model_10=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + fatigue + sob + aloc + losstaste + nausea, data=data_NA_rheum_heme_fatigue_sob_aloc_losstaste_nausea, family="binomial")
+summary(model_10)
+exp(cbind(OR=coef(model_10), confint(model_10)))
+
+lrtest(model_9, model_10)
+
+# # Diarrhea (NOT SIGNIFICANT)
+data_NA_rheum_heme_fatigue_sob_aloc_losstaste_diarrhea=data_NA_rheum_heme_fatigue_sob_aloc_losstaste[!is.na(data_NA_rheum_heme_fatigue_sob_aloc_losstaste$diarrhea),]
+
+model_9=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + fatigue + sob + aloc + losstaste, data=data_NA_rheum_heme_fatigue_sob_aloc_losstaste_diarrhea, family="binomial")
+summary(model_9)
+exp(cbind(OR=coef(model_9), confint(model_9)))
+
+model_10=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + fatigue + sob + aloc + losstaste + diarrhea, data=data_NA_rheum_heme_fatigue_sob_aloc_losstaste_diarrhea, family="binomial")
+summary(model_10)
+exp(cbind(OR=coef(model_10), confint(model_10)))
+
+lrtest(model_9, model_10)
+
+# # Skin rash (NOT SIGNIFICANT)
+data_NA_rheum_heme_fatigue_sob_aloc_losstaste_skinrash=data_NA_rheum_heme_fatigue_sob_aloc_losstaste[!is.na(data_NA_rheum_heme_fatigue_sob_aloc_losstaste$skinrash),]
+
+model_9=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + fatigue + sob + aloc + losstaste, data=data_NA_rheum_heme_fatigue_sob_aloc_losstaste_skinrash, family="binomial")
+summary(model_9)
+exp(cbind(OR=coef(model_9), confint(model_9)))
+
+model_10=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + fatigue + sob + aloc + losstaste + skinrash, data=data_NA_rheum_heme_fatigue_sob_aloc_losstaste_skinrash, family="binomial")
+summary(model_10)
+exp(cbind(OR=coef(model_10), confint(model_10)))
+
+lrtest(model_9, model_10)
+
+# # Admission ward (NOT SIGNIFICANT)
+data_NA_rheum_heme_fatigue_sob_aloc_losstaste_admit=data_NA_rheum_heme_fatigue_sob_aloc_losstaste[!is.na(data_NA_rheum_heme_fatigue_sob_aloc_losstaste$hospital_admit),]
+
+model_9=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + fatigue + sob + aloc + losstaste, data=data_NA_rheum_heme_fatigue_sob_aloc_losstaste_admit, family="binomial")
+summary(model_9)
+exp(cbind(OR=coef(model_9), confint(model_9)))
+
+model_10=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + fatigue + sob + aloc + losstaste + hospital_admit, data=data_NA_rheum_heme_fatigue_sob_aloc_losstaste_admit, family="binomial")
+summary(model_10)
+exp(cbind(OR=coef(model_10), confint(model_10)))
+
+lrtest(model_9, model_10)
+
+#Final model
+model_9=glm(post_covid_syndrome_1 ~ age_years + sex + ethnic_merged + rheum + hematologic + fatigue + sob + aloc + losstaste, data=data_NA_rheum_heme_fatigue_sob_aloc_losstaste, family="binomial")
+summary(model_9)
+exp(cbind(OR=coef(model_9), confint(model_9)))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
